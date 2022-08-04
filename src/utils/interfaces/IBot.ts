@@ -1,3 +1,4 @@
+import { Player } from "discord-player";
 import { Client, Collection } from "discord.js";
 import { ICommand } from "./ICommand";
 import { IEvent } from "./IEvent";
@@ -10,5 +11,6 @@ export interface IBot {
     slashCommands: Collection<string, ISlashCommand>,
     owners: string[],
     testServers: string[],
-    prefix: string
+    prefix: string,
+    player: Player
 }

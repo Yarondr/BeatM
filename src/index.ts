@@ -1,5 +1,5 @@
 console.log("Starting bot...")
-import { Client, Intents, Collection } from 'discord.js';
+import { Client, GatewayIntentBits, Collection } from 'discord.js';
 import dotenv from 'dotenv';
 import { loadEvents } from './handlers/eventsHandler';
 import { loadCommands } from './handlers/commandsHandler';
@@ -8,6 +8,7 @@ import { IBot } from './utils/interfaces/IBot';
 import { ISlashCommand } from './utils/interfaces/ISlashCommand';
 import { IEvent } from './utils/interfaces/IEvent';
 import { ICommand } from './utils/interfaces/ICommand';
+import { Player } from 'discord-player';
 dotenv.config();
 
 const myTestServerId = process.env.TEST_SERVER || '';
@@ -17,9 +18,10 @@ export const owners = [process.env.OWNER_ID || ''];
 
 const client = new Client({
     intents: [
-        Intents.FLAGS.GUILDS,
-        Intents.FLAGS.GUILD_MESSAGES,
-        Intents.FLAGS.GUILD_MEMBERS
+        GatewayIntentBits.Guilds,
+        GatewayIntentBits.GuildMembers,
+        GatewayIntentBits.GuildMessages,
+        GatewayIntentBits.GuildVoiceStates,
     ]
 });
 
@@ -34,7 +36,13 @@ const bot: IBot = {
     slashCommands,
     owners,
     testServers,
-    prefix: '!'
+    prefix: '!',
+    player: new Player(client, {
+        ytdlOptions: {
+            quality: 'highestaudio',
+            highWaterMark: 1 << 25
+        }
+    })
 };
 
 loadEvents(bot, false);

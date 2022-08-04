@@ -5,8 +5,8 @@ import { ICommand } from "../../utils/interfaces/ICommand";
 module.exports = {
     name: "ping",
     category: "info",
-    permissions: ['SEND_MESSAGES'],
-    botPermissions: ['SEND_MESSAGES'],
+    permissions: ['SendMessages'],
+    botPermissions: ['SendMessages'],
     devOnly: true,
     execute: async (bot: IBot, message: Message, ...args: any) => {
         message.reply("Pong!");
