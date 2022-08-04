@@ -1,0 +1,44 @@
+console.log("Starting bot...")
+import { Client, Intents, Collection } from 'discord.js';
+import dotenv from 'dotenv';
+import { loadEvents } from './handlers/eventsHandler';
+import { loadCommands } from './handlers/commandsHandler';
+import { loadSlashCommands } from './handlers/slashCommandsHandler';
+import { IBot } from './utils/interfaces/IBot';
+import { ISlashCommand } from './utils/interfaces/ISlashCommand';
+import { IEvent } from './utils/interfaces/IEvent';
+import { ICommand } from './utils/interfaces/ICommand';
+dotenv.config();
+
+const myTestServerId = process.env.TEST_SERVER || '';
+const testServers = [myTestServerId];
+
+export const owners = [process.env.OWNER_ID || ''];
+
+const client = new Client({
+    intents: [
+        Intents.FLAGS.GUILDS,
+        Intents.FLAGS.GUILD_MESSAGES,
+        Intents.FLAGS.GUILD_MEMBERS
+    ]
+});
+
+const commands = new Collection<string, ICommand>();
+const events = new Collection<string, IEvent>();
+const slashCommands = new Collection<string, ISlashCommand>();
+
+const bot: IBot = {
+    client,
+    commands,
+    events,
+    slashCommands,
+    owners,
+    testServers,
+    prefix: '!'
+};
+
+loadEvents(bot, false);
+loadCommands(bot, false);
+loadSlashCommands(bot, false);
+
+client.login(process.env.TOKEN);
