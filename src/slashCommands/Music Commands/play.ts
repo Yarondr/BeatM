@@ -89,5 +89,6 @@ function buildEmbed(res: PlayerSearchResult, embedTitle: string, member: GuildMe
             {name: 'Requested By:', value: member.user.tag},
             {name: 'Duration:', value: duration}
         )
+        .setTimestamp();
         // TODO: set footer with loop and queue loop status
 }

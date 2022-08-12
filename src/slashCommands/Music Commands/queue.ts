@@ -69,6 +69,7 @@ module.exports = {
             }).join('\n');
         const songsText = queue.tracks.length > 1 ? "songs" : "song";
         embed.addFields({name: "\u200b", value: `**${queue.tracks.length} ${songsText} waiting in queue | ${convertMilisecondsToTime(queue.totalTime)} total length**`, inline: false});
+        embed.setTimestamp();
         await interaction.editReply({embeds: [embed]});
 
         // TODO: set footer to page number with loop and queue loop
