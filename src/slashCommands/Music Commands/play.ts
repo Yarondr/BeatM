@@ -3,7 +3,7 @@ import { ApplicationCommandOptionType, CommandInteraction, EmbedBuilder, GuildCh
 import { getMember } from "../../utils/djs";
 import { IBot } from "../../utils/interfaces/IBot";
 import { ISlashCommand } from "../../utils/interfaces/ISlashCommand";
-import { convertMilisecondsToTime, playlistLength } from "../../utils/player";
+import { convertMilisecondsToTime, isTrackLive, playlistLength } from "../../utils/player";
 
 module.exports = {
     name: "play",
@@ -77,7 +77,8 @@ module.exports = {
 
 function buildEmbed(res: PlayerSearchResult, embedTitle: string, member: GuildMember) {
     const url = res.playlist ? res.playlist.url : res.tracks[0].url;
-    const duration = res.playlist ? playlistLength(res.playlist) : convertMilisecondsToTime(res.tracks[0].durationMS);
+    let duration = res.playlist ? playlistLength(res.playlist) : convertMilisecondsToTime(res.tracks[0].durationMS);
+    if (!res.playlist && isTrackLive(res.tracks[0])) duration = "LIVE";
 
     return new EmbedBuilder()
         .setColor("Random")
