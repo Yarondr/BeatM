@@ -1,7 +1,6 @@
-import { Playlist } from "discord-player";
+import { Playlist, Queue, Track } from "discord-player";
 
 export function convertMilisecondsToTime(miliseconds: number) {
-    if (miliseconds === 0) return "LIVE";
     const date = new Date(miliseconds);
     const hours = date.getUTCHours();
     const minutes = date.getUTCMinutes();
@@ -15,4 +14,12 @@ export function playlistLength(playlist: Playlist) {
         length += track.durationMS;
     })
     return convertMilisecondsToTime(length);
+}
+
+export function isTrackLive(track: Track) {
+    return track.durationMS == 0;
+}
+
+export function haveLiveTrack(queue: Queue) {
+    return queue.tracks.some(track => isTrackLive(track));
 }

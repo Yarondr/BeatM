@@ -2,7 +2,7 @@ import { ApplicationCommandOptionType, CommandInteraction, EmbedBuilder, GuildMe
 import { getMember } from "../../utils/djs";
 import { IBot } from "../../utils/interfaces/IBot";
 import { ISlashCommand } from "../../utils/interfaces/ISlashCommand";
-import { convertMilisecondsToTime } from "../../utils/player";
+import { convertMilisecondsToTime, haveLiveTrack, isTrackLive } from "../../utils/player";
 
 module.exports = {
     name: "queue",
@@ -49,8 +49,9 @@ module.exports = {
         
         const current = queue.current;
         const space = queue.tracks.length > 0 ? "\n\u200b" : "";
+        const duration = isTrackLive(current) ? "LIVE" : convertMilisecondsToTime(current.durationMS);
         const nowPlaying = current ?
-            ` [${current.title}](${current.url}) | \`${convertMilisecondsToTime(current.durationMS)} Requested by: ${current.requestedBy.tag}\`` :
+            ` [${current.title}](${current.url}) | \`${duration} Requested by: ${current.requestedBy.tag}\`` :
             `Nothing`
         
         // build the embed message
@@ -63,12 +64,16 @@ module.exports = {
         // add tracks to embed
         queue.tracks.slice(page * 10, page * 10 + 10)
             .map((track, index) => {
-                const value = `\`${index + 1}.\` [${track.title}](${track.url}) | \`${convertMilisecondsToTime(track.durationMS)} Requested by: ${track.requestedBy.tag}\``
+                const duration = isTrackLive(track) ? "LIVE" : convertMilisecondsToTime(track.durationMS);
+                const value = `\`${index + 1}.\` [${track.title}](${track.url}) | \`${duration} Requested by: ${track.requestedBy.tag}\``
                 const title = index == 0 ? "Up Next:" : "\u200b";
                 embed.addFields({name: title, value: value, inline: false});
             }).join('\n');
         const songsText = queue.tracks.length > 1 ? "songs" : "song";
-        embed.addFields({name: "\u200b", value: `**${queue.tracks.length} ${songsText} waiting in queue | ${convertMilisecondsToTime(queue.totalTime)} total length**`, inline: false});
+        const totalTime = queue.tracks.length > 0
+            ? haveLiveTrack(queue) ? "Infinite" : convertMilisecondsToTime(queue.totalTime)
+            : "0:00";
+        embed.addFields({name: "\u200b", value: `**${queue.tracks.length} ${songsText} waiting in queue | ${totalTime} total length**`, inline: false});
         embed.setTimestamp();
         await interaction.editReply({embeds: [embed]});
 
