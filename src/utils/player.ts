@@ -1,6 +1,7 @@
 import { Playlist } from "discord-player";
 
 export function convertMilisecondsToTime(miliseconds: number) {
+    if (miliseconds === 0) return "LIVE";
     const date = new Date(miliseconds);
     const hours = date.getUTCHours();
     const minutes = date.getUTCMinutes();
