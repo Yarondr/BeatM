@@ -6,7 +6,7 @@ import { ISlashCommand } from "../../utils/interfaces/ISlashCommand";
 module.exports = {
     name: "disconnect",
     category: "Music Commands",
-    description: "Disconnect from the voice channel and clears the queue.",
+    description: "Disconnect from the voice channel and clears the queue",
     botPermissions: ['SendMessages', 'EmbedLinks'],
     
     execute: async (bot: IBot, interaction: CommandInteraction) => {

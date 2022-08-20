@@ -6,7 +6,7 @@ import { ISlashCommand } from "../../utils/interfaces/ISlashCommand";
 module.exports = {
     name: "shuffle",
     category: "Music Commands",
-    description: "Shuffle the queue.",
+    description: "Shuffle the queue",
     botPermissions: ['SendMessages', 'EmbedLinks'],
     
     execute: async (bot: IBot, interaction: CommandInteraction) => {

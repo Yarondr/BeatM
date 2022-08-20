@@ -8,7 +8,7 @@ import { convertMilisecondsToTime, isTrackLive, playlistLength } from "../../uti
 module.exports = {
     name: "play",
     category: "Music Commands",
-    description: "Plays a song from a url or a search query.",
+    description: "Plays a song from a url or a search query",
     botPermissions: ['SendMessages', 'EmbedLinks', 'Connect', 'Speak'],
     options: [
         {

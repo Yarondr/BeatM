@@ -6,7 +6,7 @@ import { ISlashCommand } from "../../utils/interfaces/ISlashCommand";
 module.exports = {
     name: "join",
     category: "Music Commands",
-    description: "Join to the user's voice channel.",
+    description: "Join to the user's voice channel",
     botPermissions: ['SendMessages', 'EmbedLinks', 'Connect', 'Speak'],
     
     execute: async (bot: IBot, interaction: CommandInteraction) => {
