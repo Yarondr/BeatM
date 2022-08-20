@@ -43,17 +43,14 @@ export function createQueue(guild: Guild, player: Player, channel: TextChannel) 
         async onBeforeCreateStream(track: Track, source: TrackSource, queue: Queue): Promise<Readable> {
             if (track.url.includes("spotify.com")) source = "spotify";
             if (source == "youtube") {
-                console.log("Creating stream for youtube track");
                 const stream = await playdl.stream(track.url, { discordPlayerCompatibility: true });
                 return stream.stream;
             } else if (source == "spotify") {
-                console.log("Creating stream for spotify track");
                 const search = await playdl.search(`${track.author} ${track.title} lyrics`,
                     { limit: 1, source: { youtube: "video"}}).then(res => res[0].url);
                 const stream = await playdl.stream(search, { discordPlayerCompatibility: true });
                 return stream.stream;
             } else {
-                console.log("Creating stream for local track");
                 const stream = await playdl.stream(track.url, { discordPlayerCompatibility: true });
                 return stream.stream;
             }
