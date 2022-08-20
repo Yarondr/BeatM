@@ -26,7 +26,7 @@ module.exports = {
         const queue = bot.player.getQueue(interaction.guildId!);
         
         if (!member.voice.channel) {
-            return interaction.reply("You must be in a voice channel to play music.");
+            return interaction.reply("You must be in a voice channel to use this command!.");
         }
         if (!queue || !queue.connection) {
             return interaction.reply("I'm not in a voice channel!");
