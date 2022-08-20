@@ -75,10 +75,10 @@ client.login(process.env.TOKEN);
  * - skip to
  * - back
  * - clear queue
- * - loop
- * - queue loop
+ * V loop
+ * V queue loop
  * - remove from queue
- * - stop
+ * V stop
  * - volume
  * - play next
  * - save
