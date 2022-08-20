@@ -69,7 +69,7 @@ client.login(process.env.TOKEN);
  * V skip
  * V pause
  * V resume
- * - force skip
+ * V force skip
  * - forward
  * - backward
  * - skip to
