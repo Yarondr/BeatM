@@ -1,6 +1,7 @@
 import { CommandInteraction, GuildMember, TextChannel } from "discord.js";
 import { getMember } from "../../utils/djs";
 import { IBot } from "../../utils/interfaces/IBot";
+import { IQueueMetadata } from "../../utils/interfaces/IQueueMetadata";
 import { ISlashCommand } from "../../utils/interfaces/ISlashCommand";
 
 module.exports = {
@@ -25,7 +26,10 @@ module.exports = {
 
         // create queue and join voice channel
         const queue = player.createQueue(guild, {
-            metadata: channel,
+            metadata: {
+                channel,
+                skipVotes: [],
+            } as IQueueMetadata
         });
         try {
             if (!queue.connection) {

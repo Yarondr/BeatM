@@ -9,6 +9,7 @@ import { ISlashCommand } from './utils/interfaces/ISlashCommand';
 import { IEvent } from './utils/interfaces/IEvent';
 import { ICommand } from './utils/interfaces/ICommand';
 import { Player } from 'discord-player';
+import { IQueueMetadata } from './utils/interfaces/IQueueMetadata';
 dotenv.config();
 
 const myTestServerId = process.env.TEST_SERVER || '';
@@ -45,8 +46,43 @@ const bot: IBot = {
     })
 };
 
+bot.player.on('trackStart', (queue, track) => {
+    // TODO: check if event called on track repeat too
+    const metadata = queue.metadata as IQueueMetadata;
+    metadata.skipVotes = [];
+});
+
 loadEvents(bot, false);
 loadCommands(bot, false);
 loadSlashCommands(bot, false);
 
 client.login(process.env.TOKEN);
+
+/**
+ * TODO:
+ * V play
+ * V join
+ * V disconnect
+ * V queue
+ * V shuffle
+ * V nowplaying
+ * V skip
+ * - pause
+ * - resume
+ * - force skip
+ * - forward
+ * - backward
+ * - skip to
+ * - back
+ * - clear queue
+ * - loop
+ * - queue loop
+ * - remove from queue
+ * - stop
+ * - volume
+ * - play next
+ * - save
+ * - search
+ * - jump to track
+ * - controller
+ */

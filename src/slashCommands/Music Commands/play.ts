@@ -2,6 +2,7 @@ import { PlayerSearchResult, Playlist, QueryType } from "discord-player";
 import { ApplicationCommandOptionType, CommandInteraction, EmbedBuilder, GuildChannel, GuildMember, PermissionFlagsBits, TextChannel } from "discord.js";
 import { getMember } from "../../utils/djs";
 import { IBot } from "../../utils/interfaces/IBot";
+import { IQueueMetadata } from "../../utils/interfaces/IQueueMetadata";
 import { ISlashCommand } from "../../utils/interfaces/ISlashCommand";
 import { convertMilisecondsToTime, isTrackLive, playlistLength } from "../../utils/player";
 
@@ -37,7 +38,10 @@ module.exports = {
 
         // create queue and join voice channel
         const queue = player.createQueue(guild, {
-            metadata: channel
+            metadata: {
+                channel,
+                skipVotes: [],
+            } as IQueueMetadata
         });
         // create a connect var
         const connected: boolean = queue.connection ? true : false;
@@ -66,7 +70,7 @@ module.exports = {
         if (!queue.playing) {
             await queue.play();
             const embed = buildEmbed(res, `Playing "${res.tracks[0].title}"`, member);
-            await queue.metadata!.send({embeds: [embed]});
+            await queue.metadata!.channel.send({embeds: [embed]});
         } else {
             const title = res.playlist ? res.playlist.title : res.tracks[0].title;
             const embed = buildEmbed(res, `Added "${title}" to queue`, member);

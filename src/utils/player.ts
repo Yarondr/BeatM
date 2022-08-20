@@ -1,4 +1,5 @@
 import { Playlist, Queue, Track } from "discord-player";
+import { VoiceBasedChannel } from "discord.js";
 
 export function convertMilisecondsToTime(miliseconds: number) {
     const date = new Date(miliseconds);
@@ -22,4 +23,9 @@ export function isTrackLive(track: Track) {
 
 export function haveLiveTrack(queue: Queue) {
     return queue.tracks.some(track => isTrackLive(track));
+}
+
+export function checkSkippingPlayers(skip_votes: string[], voice: VoiceBasedChannel) {
+    const memberIds = voice.members.map(member => member.id);
+    return skip_votes.filter(id => memberIds.includes(id));
 }
