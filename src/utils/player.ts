@@ -1,5 +1,5 @@
 import { Player, Playlist, Queue, Track, TrackSource } from "discord-player";
-import { Guild, TextChannel, VoiceBasedChannel } from "discord.js";
+import { Guild, GuildMember, TextChannel, VoiceBasedChannel } from "discord.js";
 import { IQueueMetadata } from "./interfaces/IQueueMetadata";
 import * as playdl from "play-dl";
 import { Readable } from "stream";
@@ -56,4 +56,8 @@ export function createQueue(guild: Guild, player: Player, channel: TextChannel) 
             }
         },
     });
+}
+
+export function isDJ(member: GuildMember) {
+    return !member.permissions.has("ManageGuild") && !member.roles.cache.some(r => r.name === "DJ")
 }

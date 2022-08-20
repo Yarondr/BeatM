@@ -2,6 +2,7 @@ import { CacheType, Client, Guild, GuildMember, Interaction, TextChannel } from 
 import { IBot } from "../utils/interfaces/IBot"
 import { IEvent } from "../utils/interfaces/IEvent"
 import { ISlashCommand } from "../utils/interfaces/ISlashCommand";
+import { isDJ } from "../utils/player";
 
 module.exports = {
     name: "interactionCreate",
@@ -19,6 +20,10 @@ module.exports = {
 
         if (slashCommand.devOnly && !owners.includes(member.id)) {
             return interaction.reply("This command is only for developers!");
+        }
+
+        if (slashCommand.DJOnly && !isDJ(member)) {
+            return interaction.reply("This command is only for DJs!");
         }
         
         if (slashCommand.permissions && !channel.permissionsFor(member).has(slashCommand.permissions)) {
