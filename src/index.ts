@@ -67,8 +67,8 @@ client.login(process.env.TOKEN);
  * V shuffle
  * V nowplaying
  * V skip
- * - pause
- * - resume
+ * V pause
+ * V resume
  * - force skip
  * - forward
  * - backward
