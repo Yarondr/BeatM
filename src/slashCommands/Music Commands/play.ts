@@ -43,7 +43,7 @@ module.exports = {
         try {
             if (!connected) {
                 await queue.connect(member.voice.channel);
-                await interaction.editReply(`Joined \`${member.voice.channel.name}\` And bound to <#${channel.id}>`);
+                await interaction.editReply(`Joined \`${member.voice.channel.name}\` and bound to <#${channel.id}>`);
             } else if (queue.connection.channel.id !== member.voice.channel.id) {
                 return interaction.editReply(`Can't join to \`${member.voice.channel.name}\` because I'm already in another voice channel.`);
             }

@@ -4,9 +4,9 @@ import { IBot } from "../../utils/interfaces/IBot";
 import { ISlashCommand } from "../../utils/interfaces/ISlashCommand";
 
 module.exports = {
-    name: "pause",
+    name: "resume",
     category: "Music Commands",
-    description: "Pause the current track",
+    description: "Resume the current track",
     botPermissions: ['SendMessages', 'EmbedLinks'],
 
     execute: async (bot: IBot, interaction: CommandInteraction) => {
@@ -25,15 +25,15 @@ module.exports = {
             return interaction.reply("You must be in the same voice channel as the bot to use this command.");
         }
         if (!queue.current) {
-            return interaction.reply("Can't pause, I am not playing anything right now!");
+            return interaction.reply("Can't resume, I am not playing anything right now!");
         }
         
-        if (queue.connection.paused) {
-            return interaction.reply("The track is already paused");
+        if (!queue.connection.paused) {
+            return interaction.reply("The track is already playing");
         }
-        queue.connection.pause(true);
-        // queue.setPaused(true);
-        return interaction.reply("Paused!");
+        queue.connection.resume();
+        // queue.setPaused(false);
+        return interaction.reply("Resumed!");
     }
 
 } as ISlashCommand;

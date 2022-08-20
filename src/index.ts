@@ -85,4 +85,5 @@ client.login(process.env.TOKEN);
  * - search
  * - jump to track
  * - controller
+ * - move track (to another position in queue)
  */

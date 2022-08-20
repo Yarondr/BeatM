@@ -39,6 +39,9 @@ module.exports = {
         skipVotes.push(member.id);
         if (skipVotes.length >= voiceMembers) {
             const success = queue.skip();
+            if (queue.connection.paused) {
+                queue.connection.resume();
+            }
             const reply = success ? "Skipped!" : "Something went wrong...";
             return interaction.reply(reply);
         } else {
