@@ -59,5 +59,5 @@ export function createQueue(guild: Guild, player: Player, channel: TextChannel) 
 }
 
 export function isDJ(member: GuildMember) {
-    return !member.permissions.has("ManageGuild") && !member.roles.cache.some(r => r.name === "DJ")
+    return member.permissions.has("ManageGuild") || member.roles.cache.some(r => r.name === "DJ")
 }
