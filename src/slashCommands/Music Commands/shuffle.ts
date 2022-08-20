@@ -8,6 +8,7 @@ module.exports = {
     category: "Music Commands",
     description: "Shuffle the queue",
     botPermissions: ['SendMessages', 'EmbedLinks'],
+    DJOnly: true,
     
     execute: async (bot: IBot, interaction: CommandInteraction) => {
         if (!interaction.isChatInputCommand()) return;
