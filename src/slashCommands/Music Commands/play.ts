@@ -4,7 +4,7 @@ import { getMember } from "../../utils/djs";
 import { IBot } from "../../utils/interfaces/IBot";
 import { IQueueMetadata } from "../../utils/interfaces/IQueueMetadata";
 import { ISlashCommand } from "../../utils/interfaces/ISlashCommand";
-import { convertMilisecondsToTime, isTrackLive, playlistLength } from "../../utils/player";
+import { convertMilisecondsToTime, createQueue, isTrackLive, playlistLength } from "../../utils/player";
 
 module.exports = {
     name: "play",
@@ -37,12 +37,7 @@ module.exports = {
         await interaction.deferReply();
 
         // create queue and join voice channel
-        const queue = player.createQueue(guild, {
-            metadata: {
-                channel,
-                skipVotes: [],
-            } as IQueueMetadata
-        });
+        const queue = createQueue(guild, player, channel);
         // create a connect var
         const connected: boolean = queue.connection ? true : false;
         try {
@@ -62,7 +57,7 @@ module.exports = {
         else await interaction.editReply("Searching...");
         const res = await player.search(search, {
             requestedBy: member,
-            searchEngine: QueryType.AUTO
+            searchEngine: QueryType.AUTO,
         });
         if (!res || !res.tracks.length) return interaction.editReply({content: "No results found."});
         res.playlist ? queue.addTracks(res.tracks) : queue.addTrack(res.tracks[0]);

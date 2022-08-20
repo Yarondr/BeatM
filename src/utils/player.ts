@@ -1,5 +1,8 @@
-import { Playlist, Queue, Track } from "discord-player";
-import { VoiceBasedChannel } from "discord.js";
+import { Player, Playlist, Queue, Track, TrackSource } from "discord-player";
+import { Guild, TextChannel, VoiceBasedChannel } from "discord.js";
+import { IQueueMetadata } from "./interfaces/IQueueMetadata";
+import * as playdl from "play-dl";
+import { Readable } from "stream";
 
 export function convertMilisecondsToTime(miliseconds: number) {
     const date = new Date(miliseconds);
@@ -28,4 +31,32 @@ export function haveLiveTrack(queue: Queue) {
 export function checkSkippingPlayers(skip_votes: string[], voice: VoiceBasedChannel) {
     const memberIds = voice.members.map(member => member.id);
     return skip_votes.filter(id => memberIds.includes(id));
+}
+
+export function createQueue(guild: Guild, player: Player, channel: TextChannel) {
+    return player.createQueue(guild, {
+        metadata: {
+            channel,
+            skipVotes: [],
+        } as IQueueMetadata,
+
+        async onBeforeCreateStream(track: Track, source: TrackSource, queue: Queue): Promise<Readable> {
+            if (track.url.includes("spotify.com")) source = "spotify";
+            if (source == "youtube") {
+                console.log("Creating stream for youtube track");
+                const stream = await playdl.stream(track.url, { discordPlayerCompatibility: true });
+                return stream.stream;
+            } else if (source == "spotify") {
+                console.log("Creating stream for spotify track");
+                const search = await playdl.search(`${track.author} ${track.title} lyrics`,
+                    { limit: 1, source: { youtube: "video"}}).then(res => res[0].url);
+                const stream = await playdl.stream(search, { discordPlayerCompatibility: true });
+                return stream.stream;
+            } else {
+                console.log("Creating stream for local track");
+                const stream = await playdl.stream(track.url, { discordPlayerCompatibility: true });
+                return stream.stream;
+            }
+        },
+    });
 }

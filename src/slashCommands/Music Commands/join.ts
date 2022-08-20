@@ -3,6 +3,7 @@ import { getMember } from "../../utils/djs";
 import { IBot } from "../../utils/interfaces/IBot";
 import { IQueueMetadata } from "../../utils/interfaces/IQueueMetadata";
 import { ISlashCommand } from "../../utils/interfaces/ISlashCommand";
+import { createQueue } from "../../utils/player";
 
 module.exports = {
     name: "join",
@@ -25,12 +26,7 @@ module.exports = {
         await interaction.deferReply();
 
         // create queue and join voice channel
-        const queue = player.createQueue(guild, {
-            metadata: {
-                channel,
-                skipVotes: [],
-            } as IQueueMetadata
-        });
+        const queue = createQueue(guild, player, channel);
         try {
             if (!queue.connection) {
                 await queue.connect(member.voice.channel);
