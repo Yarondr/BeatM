@@ -73,8 +73,8 @@ client.login(process.env.TOKEN);
  * - forward
  * - backward
  * - skip to
- * - back
- * - clear queue
+ * V back
+ * V clear queue
  * V loop
  * V queue loop
  * - remove from queue

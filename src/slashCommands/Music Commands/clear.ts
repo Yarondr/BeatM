@@ -4,9 +4,9 @@ import { IBot } from "../../utils/interfaces/IBot";
 import { ISlashCommand } from "../../utils/interfaces/ISlashCommand";
 
 module.exports = {
-    name: "back",
+    name: "clear",
     category: "Music Commands",
-    description: "Go back to the previous track",
+    description: "Clears the queue",
     botPermissions: ['SendMessages', 'EmbedLinks'],
     DJOnly: true,
     
@@ -26,14 +26,11 @@ module.exports = {
         if (member.voice.channel.id != queue.connection.channel.id) {
             return interaction.reply("You must be in the same voice channel as the bot to use this command.");
         }
-        if (!queue.current) {
-            return interaction.reply("Can't go back, I am not playing anything right now!");
-        }
-        if (!queue.previousTracks[1]) {
-            return interaction.reply("Can't go back, There is no previous track!");
+        if (queue.tracks.length == 0) {
+            return interaction.reply("Can't clear, the queue is already empty!");
         }
 
-        await queue.back();
-        return interaction.reply("Going back to previous track!");
+        queue.clear();
+        await interaction.reply("Cleared!");
     }
 } as ISlashCommand
