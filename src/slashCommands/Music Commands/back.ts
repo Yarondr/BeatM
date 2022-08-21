@@ -5,9 +5,9 @@ import { ISlashCommand } from "../../utils/interfaces/ISlashCommand";
 import { createQueue } from "../../utils/player";
 
 module.exports = {
-    name: "stop",
+    name: "back",
     category: "Music Commands",
-    description: "Stops the player",
+    description: "Go back to the previous track",
     botPermissions: ['SendMessages', 'EmbedLinks'],
     DJOnly: true,
     
@@ -28,12 +28,13 @@ module.exports = {
             return interaction.reply("You must be in the same voice channel as the bot to use this command.");
         }
         if (!queue.current) {
-            return interaction.reply("Can't stop, I am not playing anything right now!");
+            return interaction.reply("Can't go back, I am not playing anything right now!");
+        }
+        if (!queue.previousTracks[1]) {
+            return interaction.reply("Can't go back, There is no previous track!");
         }
 
-        queue.stop();
-        queue = createQueue(guild, bot.player, channel);
-        await queue.connect(member.voice.channel);
-        return interaction.reply("Stopped!");
+        await queue.back();
+        return interaction.reply("Going back to previous track!");
     }
 } as ISlashCommand
