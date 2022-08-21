@@ -34,7 +34,7 @@ module.exports = {
         if (member.voice.channel.id != queue.connection.channel.id) {
             return interaction.reply("You must be in the same voice channel as the bot to use this command.");
         }
-        if (!queue) {
+        if (!queue.current && queue.tracks.length == 0) {
             return interaction.reply("The queue is empty!\nUse the /play command to add a song to the queue.");
         }
         await interaction.deferReply();

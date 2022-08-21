@@ -24,7 +24,7 @@ module.exports = {
         if (member.voice.channel.id != queue.connection.channel.id) {
             return interaction.reply("You must be in the same voice channel as the bot to use this command.");
         }
-        queue.destroy()
+        queue.destroy(true)
         await interaction.reply(`Disconnected from \`${member.voice.channel.name}\``);
     }
 } as ISlashCommand

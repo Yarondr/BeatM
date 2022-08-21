@@ -40,6 +40,8 @@ export function createQueue(guild: Guild, player: Player, channel: TextChannel) 
             skipVotes: [],
         } as IQueueMetadata,
 
+        leaveOnStop: false,
+
         async onBeforeCreateStream(track: Track, source: TrackSource, queue: Queue): Promise<Readable> {
             if (track.url.includes("spotify.com")) source = "spotify";
             if (source == "youtube") {

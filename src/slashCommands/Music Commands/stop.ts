@@ -1,7 +1,8 @@
-import { CommandInteraction, GuildMember } from "discord.js";
+import { CommandInteraction, GuildMember, TextChannel } from "discord.js";
 import { getMember } from "../../utils/djs";
 import { IBot } from "../../utils/interfaces/IBot";
 import { ISlashCommand } from "../../utils/interfaces/ISlashCommand";
+import { createQueue } from "../../utils/player";
 
 module.exports = {
     name: "stop",
@@ -14,7 +15,8 @@ module.exports = {
         if (!interaction.isChatInputCommand()) return;
         const guild = bot.client.guilds.cache.get(interaction.guildId!)!;
         const member: GuildMember = await getMember(guild, interaction.member?.user.id!);
-        const queue = bot.player.getQueue(interaction.guildId!);
+        const channel = guild?.channels.cache.get(interaction.channelId!)! as TextChannel;
+        let queue = bot.player.getQueue(interaction.guildId!);
         
         if (!member.voice.channel) {
             return interaction.reply("You must be in a voice channel to use this command!.");
@@ -30,6 +32,8 @@ module.exports = {
         }
 
         queue.stop();
+        queue = createQueue(guild, bot.player, channel);
+        await queue.connect(member.voice.channel);
         return interaction.reply("Stopped!");
         // TODO: Fix that bot is disconnecting from voice channel
     }
