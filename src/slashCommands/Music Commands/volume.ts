@@ -1,14 +1,24 @@
-import { CommandInteraction, GuildMember, TextChannel } from "discord.js";
+import { ApplicationCommandOptionType, CommandInteraction, GuildMember, TextChannel } from "discord.js";
 import { getMember } from "../../utils/djs";
 import { IBot } from "../../utils/interfaces/IBot";
 import { ISlashCommand } from "../../utils/interfaces/ISlashCommand";
+import { isIntNumber } from "../../utils/numbers";
 
 module.exports = {
-    name: "back",
+    name: "volume",
     category: "Music Commands",
-    description: "Go back to the previous track",
+    description: "Sets the volume of the bot",
     botPermissions: ['SendMessages', 'EmbedLinks'],
     DJOnly: true,
+    options: [
+        {
+            name: "volume",
+            description: "The volume to set the bot to",
+            minValue: 1,
+            type: ApplicationCommandOptionType.String,
+            required: true,
+        }
+    ],
     
     execute: async (bot: IBot, interaction: CommandInteraction) => {
         if (!interaction.isChatInputCommand()) return;
@@ -25,14 +35,20 @@ module.exports = {
         if (member.voice.channel.id != queue.connection.channel.id) {
             return interaction.reply("You must be in the same voice channel as the bot to use this command.");
         }
-        if (!queue.current) {
-            return interaction.reply("Can't go back, I am not playing anything right now!");
-        }
-        if (!queue.previousTracks[1]) {
-            return interaction.reply("Can't go back, There is no previous track!");
-        }
 
-        await queue.back();
-        return interaction.reply("Going back to previous track!");
+        let volume: number | string = interaction.options.get("volume")!.value!.toString();
+        if (!isIntNumber(volume) && volume != "reset") {
+            return interaction.reply("The volume must be a number or \"reset\"!");
+        }
+        if (volume == "reset") {
+            volume = 100;
+        }
+        volume = parseInt(volume.toString());
+        if (volume < 1 || volume > 200) {
+            return interaction.reply("The volume must be between 1 and 200!");
+        }
+        const success = queue.setVolume(volume);
+        const reply = success ? `The volume has been set to ${volume}` : "Failed to set the volume";
+        await interaction.reply(reply);
     }
 } as ISlashCommand

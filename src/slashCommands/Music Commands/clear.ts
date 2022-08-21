@@ -14,7 +14,6 @@ module.exports = {
         if (!interaction.isChatInputCommand()) return;
         const guild = bot.client.guilds.cache.get(interaction.guildId!)!;
         const member: GuildMember = await getMember(guild, interaction.member?.user.id!);
-        const channel = guild?.channels.cache.get(interaction.channelId!)! as TextChannel;
         let queue = bot.player.getQueue(interaction.guildId!);
         
         if (!member.voice.channel) {
