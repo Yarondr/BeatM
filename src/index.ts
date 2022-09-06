@@ -83,7 +83,7 @@ client.login(process.env.TOKEN);
  * V play next
  * V save
  * - search
- * - jump to track
+ * V jump to track
  * - controller
  * V move track (to another position in queue)
  * - help

@@ -4,7 +4,7 @@ import { getMember } from "../../utils/djs";
 import { IBot } from "../../utils/interfaces/IBot";
 import { IQueueMetadata } from "../../utils/interfaces/IQueueMetadata";
 import { ISlashCommand } from "../../utils/interfaces/ISlashCommand";
-import { buildPlayEmbed, convertMilisecondsToTime, createQueue, isTrackLive, play, playlistLength, searchQuery } from "../../utils/player";
+import { buildPlayEmbed, convertMilisecondsToTime, createQueue, isTrackLive, joinChannel, play, playlistLength, searchQuery } from "../../utils/player";
 
 module.exports = {
     name: "playnext",
@@ -39,18 +39,8 @@ module.exports = {
         const queue = createQueue(guild, player, channel);
         // create a connect var
         const connected: boolean = queue.connection ? true : false;
-        try {
-            if (!connected) {
-                await queue.connect(member.voice.channel);
-                await interaction.editReply(`Joined \`${member.voice.channel.name}\` and bound to <#${channel.id}>`);
-            } else if (queue.connection.channel.id !== member.voice.channel.id) {
-                return interaction.editReply(`Can't join to \`${member.voice.channel.name}\` because I'm already in another voice channel.`);
-            }
-        } catch {
-            player.deleteQueue(guild.id);
-            return interaction.editReply(`I can't join your voice channel. ${member.id}`);
-        }
-
+        joinChannel(connected, queue, member, interaction, player, guild, channel);
+        
         const res = await searchQuery(connected, player, member, interaction, channel);
         if (!res || !res.tracks.length) return interaction.editReply({content: "No results found."});
         const newTracks = res.playlist ? res.tracks : [res.tracks[0]];

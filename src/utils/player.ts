@@ -78,16 +78,17 @@ export function isDJ(member: GuildMember) {
     return member.permissions.has("ManageGuild") || member.roles.cache.some(r => r.name === "DJ")
 }
 
-export function buildPlayEmbed(res: PlayerSearchResult, embedTitle: string, member: GuildMember) {
-    const url = res.playlist ? res.playlist.url : res.tracks[0].url;
-    let duration = res.playlist ? playlistLength(res.playlist) : convertMilisecondsToTime(res.tracks[0].durationMS);
-    if (!res.playlist && isTrackLive(res.tracks[0])) duration = "LIVE";
+export function buildPlayEmbed(res: PlayerSearchResult, embedTitle: string, member: GuildMember, index:number = 0) {
+    const track = res.tracks[index];
+    const url = res.playlist ? res.playlist.url : track.url;
+    let duration = res.playlist ? playlistLength(res.playlist) : convertMilisecondsToTime(track.durationMS);
+    if (!res.playlist && isTrackLive(track)) duration = "LIVE";
 
     return new EmbedBuilder()
         .setColor("Random")
         .setTitle(embedTitle)
         // TODO: support spotify thumbnail
-        .setThumbnail(res.tracks[0].thumbnail)
+        .setThumbnail(track.thumbnail)
         .setURL(url)
         .addFields(
             {name: 'Requested By:', value: member.user.tag},
@@ -108,14 +109,29 @@ export async function searchQuery(connected: boolean, player: Player, member: Gu
     });
 }
 
-export async function play(queue: Queue<IQueueMetadata>, res: PlayerSearchResult, member: GuildMember, interaction: CommandInteraction) {
+export async function play(queue: Queue<IQueueMetadata>, res: PlayerSearchResult, member: GuildMember, interaction: CommandInteraction, index:number = 0) {
     if (!queue.playing) {
         await queue.play();
-        const embed = buildPlayEmbed(res, `Playing "${res.tracks[0].title}"`, member);
+        const embed = buildPlayEmbed(res, `Playing "${res.tracks[index].title}"`, member);
         await queue.metadata!.channel.send({embeds: [embed]});
     } else {
-        const title = res.playlist ? res.playlist.title : res.tracks[0].title;
+        const title = res.playlist ? res.playlist.title : res.tracks[index].title;
         const embed = buildPlayEmbed(res, `Added "${title}" to queue`, member);
         await interaction.editReply({embeds: [embed]});
+    }
+}
+
+export async function joinChannel(connected: boolean, queue: Queue<IQueueMetadata>, member: GuildMember, interaction: CommandInteraction, player: Player, guild: Guild, channel: TextChannel) {
+    if (!member.voice.channel) return;
+    try {
+        if (!connected) {
+            await queue.connect(member.voice.channel);
+            await interaction.editReply(`Joined \`${member.voice.channel.name}\` and bound to <#${channel.id}>`);
+        } else if (queue.connection.channel.id !== member.voice.channel.id) {
+            return interaction.editReply(`Can't join to \`${member.voice.channel.name}\` because I'm already in another voice channel.`);
+        }
+    } catch {
+        player.deleteQueue(guild.id);
+        return interaction.editReply(`I can't join your voice channel. Please check my permissions.`);
     }
 }

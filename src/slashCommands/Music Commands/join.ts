@@ -3,7 +3,7 @@ import { getMember } from "../../utils/djs";
 import { IBot } from "../../utils/interfaces/IBot";
 import { IQueueMetadata } from "../../utils/interfaces/IQueueMetadata";
 import { ISlashCommand } from "../../utils/interfaces/ISlashCommand";
-import { createQueue } from "../../utils/player";
+import { createQueue, joinChannel } from "../../utils/player";
 
 module.exports = {
     name: "join",
@@ -27,16 +27,7 @@ module.exports = {
 
         // create queue and join voice channel
         const queue = createQueue(guild, player, channel);
-        try {
-            if (!queue.connection) {
-                await queue.connect(member.voice.channel);
-                await interaction.editReply(`Joined \`${member.voice.channel.name}\` and bound to <#${channel.id}>`);
-            } else {
-                await interaction.editReply(`Can't join to \`${member.voice.channel.name}\` because I'm already in a voice channel.`);
-            }
-        } catch {
-            player.deleteQueue(guild.id);
-            return interaction.editReply(`I can't join your voice channel. ${member.id}`);
-        }
+        const connected: boolean = queue.connection ? true : false;
+        joinChannel(connected, queue, member, interaction, player, guild, channel);
     }
 } as ISlashCommand;
