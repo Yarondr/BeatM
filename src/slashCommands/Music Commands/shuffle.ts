@@ -12,6 +12,7 @@ module.exports = {
     
     execute: async (bot: IBot, interaction: CommandInteraction) => {
         if (!interaction.isChatInputCommand()) return;
+        
         const guild = bot.client.guilds.cache.get(interaction.guildId!)!;
         const member: GuildMember = await getMember(guild, interaction.member?.user.id!);
         const queue = bot.player.getQueue(interaction.guildId!);
@@ -26,7 +27,12 @@ module.exports = {
             return interaction.reply("You must be in the same voice channel as the bot to use this command.");
         }
         if (queue.tracks.length > 0) {
-            queue.shuffle()
+            for (let i = 0; i < queue.tracks.length; i++) {
+                const random = Math.floor(Math.random() * queue.tracks.length);
+                const temp = queue.tracks[i];
+                queue.tracks[i] = queue.tracks[random];
+                queue.tracks[random] = temp;
+            }
             await interaction.reply(`The queue of ${queue.tracks.length} songs has been shuffled!`);
         } else {
             await interaction.reply(`Can't shuffle the queue because it's empty.`);

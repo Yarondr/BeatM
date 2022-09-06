@@ -2,20 +2,21 @@ import { ApplicationCommandOptionType, CommandInteraction, GuildMember, TextChan
 import { getMember } from "../../utils/djs";
 import { IBot } from "../../utils/interfaces/IBot";
 import { ISlashCommand } from "../../utils/interfaces/ISlashCommand";
-import { isIntNumber } from "../../utils/numbers";
+import { createQueue, playerDurationToMiliseconds } from "../../utils/player";
 
 module.exports = {
-    name: "volume",
+    name: "forward",
     category: "Music Commands",
-    description: "Sets the volume of the bot",
+    //TODO: let copilot put the desc
+    description: "Skips forward",
     botPermissions: ['SendMessages', 'EmbedLinks'],
     DJOnly: true,
     options: [
         {
-            name: "volume",
-            description: "The volume to set the bot to",
+            name: "seconds",
+            description: "The amount of seconds to skip forward.",
+            type: ApplicationCommandOptionType.Integer,
             minValue: 1,
-            type: ApplicationCommandOptionType.String,
             required: true,
         }
     ],
@@ -25,6 +26,7 @@ module.exports = {
         
         const guild = bot.client.guilds.cache.get(interaction.guildId!)!;
         const member: GuildMember = await getMember(guild, interaction.member?.user.id!);
+        const secondToSkip = interaction.options.getInteger('seconds')!;
         let queue = bot.player.getQueue(interaction.guildId!);
         
         if (!member.voice.channel) {
@@ -36,20 +38,22 @@ module.exports = {
         if (member.voice.channel.id != queue.connection.channel.id) {
             return interaction.reply("You must be in the same voice channel as the bot to use this command.");
         }
+        if (!queue.current) {
+            return interaction.reply("Can't skip forward, I am not playing anything right now!");
+        }
 
-        let volume: number | string = interaction.options.getString('volume')!;
-        if (!isIntNumber(volume) && volume != "reset") {
-            return interaction.reply("The volume must be a number or \"reset\"!");
+        const timestamp = queue.getPlayerTimestamp();   
+        console.log(timestamp);
+        console.log(timestamp.current);
+        console.log(timestamp.end);
+        console.log(timestamp.progress);
+        const currentTime = playerDurationToMiliseconds(timestamp.current);
+        const timeToSkip = secondToSkip * 1000;
+        const newTime = currentTime + timeToSkip
+        if (newTime > playerDurationToMiliseconds(timestamp.end)) {
+            return interaction.reply("Can't skip out of the song!")
         }
-        if (volume == "reset") {
-            volume = 100;
-        }
-        volume = parseInt(volume.toString());
-        if (volume < 1 || volume > 200) {
-            return interaction.reply("The volume must be between 1 and 200!");
-        }
-        const success = queue.setVolume(volume);
-        const reply = success ? `The volume has been set to ${volume}` : "Failed to set the volume";
-        await interaction.reply(reply);
+        await queue.seek(newTime);
+        return interaction.reply(`Skipped forward to: ${newTime}.`);
     }
 } as ISlashCommand

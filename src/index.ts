@@ -70,20 +70,20 @@ client.login(process.env.TOKEN);
  * V pause
  * V resume
  * V force skip
- * - forward
- * - backward
- * - skip to
+ * V forward
+ * V backward
+ * V skip to
  * V back
  * V clear queue
  * V loop
  * V queue loop
- * - remove from queue
+ * V remove from queue
  * V stop
- * - volume
- * - play next
+ * V volume
+ * V play next
  * - save
  * - search
  * - jump to track
  * - controller
- * - move track (to another position in queue)
+ * V move track (to another position in queue)
  */

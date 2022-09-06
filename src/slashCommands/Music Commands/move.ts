@@ -2,20 +2,27 @@ import { ApplicationCommandOptionType, CommandInteraction, GuildMember, TextChan
 import { getMember } from "../../utils/djs";
 import { IBot } from "../../utils/interfaces/IBot";
 import { ISlashCommand } from "../../utils/interfaces/ISlashCommand";
-import { isIntNumber } from "../../utils/numbers";
+import { createQueue } from "../../utils/player";
 
 module.exports = {
-    name: "volume",
+    name: "move",
     category: "Music Commands",
-    description: "Sets the volume of the bot",
+    description: "Move a specific song in the queue to a different position.",
     botPermissions: ['SendMessages', 'EmbedLinks'],
     DJOnly: true,
     options: [
         {
-            name: "volume",
-            description: "The volume to set the bot to",
+            name: "song-number",
+            description: "The number of the song to move",
+            type: ApplicationCommandOptionType.Integer,
             minValue: 1,
-            type: ApplicationCommandOptionType.String,
+            required: true,
+        },
+        {
+            name: "new-song-number",
+            description: "The new position of the song",
+            type: ApplicationCommandOptionType.Integer,
+            minValue: 1,
             required: true,
         }
     ],
@@ -25,6 +32,8 @@ module.exports = {
         
         const guild = bot.client.guilds.cache.get(interaction.guildId!)!;
         const member: GuildMember = await getMember(guild, interaction.member?.user.id!);
+        const songIndex = interaction.options.getInteger('song-number')! -1;
+        const newSongIndex = interaction.options.getInteger('new-song-number')! -1;
         let queue = bot.player.getQueue(interaction.guildId!);
         
         if (!member.voice.channel) {
@@ -36,20 +45,19 @@ module.exports = {
         if (member.voice.channel.id != queue.connection.channel.id) {
             return interaction.reply("You must be in the same voice channel as the bot to use this command.");
         }
+        if (queue.tracks.length === 0) {
+            return interaction.reply("Can't remove a song from the queue, because the queue is empty!");
+        }
+        if (songIndex >= queue.tracks.length) {
+            return interaction.reply("Invalid song number!");
+        }
+        if (newSongIndex >= queue.tracks.length) {
+            return interaction.reply("Invalid new song number!");
+        }
 
-        let volume: number | string = interaction.options.getString('volume')!;
-        if (!isIntNumber(volume) && volume != "reset") {
-            return interaction.reply("The volume must be a number or \"reset\"!");
-        }
-        if (volume == "reset") {
-            volume = 100;
-        }
-        volume = parseInt(volume.toString());
-        if (volume < 1 || volume > 200) {
-            return interaction.reply("The volume must be between 1 and 200!");
-        }
-        const success = queue.setVolume(volume);
-        const reply = success ? `The volume has been set to ${volume}` : "Failed to set the volume";
-        await interaction.reply(reply);
+        const song = queue.tracks[songIndex];
+        queue.tracks.splice(songIndex, 1);
+        queue.tracks.splice(newSongIndex, 0, song);
+        return interaction.reply(`Moved song to position ${newSongIndex + 1}!`);
     }
 } as ISlashCommand

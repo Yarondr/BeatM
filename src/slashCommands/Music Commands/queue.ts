@@ -21,6 +21,7 @@ module.exports = {
 
     execute: async (bot: IBot, interaction: CommandInteraction) => {
         if (!interaction.isChatInputCommand()) return;
+        
         const guild = bot.client.guilds.cache.get(interaction.guildId!)!;
         const member: GuildMember = await getMember(guild, interaction.member?.user.id!);
         const queue = bot.player.getQueue(interaction.guildId!);
@@ -41,7 +42,7 @@ module.exports = {
 
         // check for pages
         const totalPages = Math.ceil(queue.tracks.length / 10) || 1;
-        const page = (interaction.options.get('page')?.value || 1) as number -1;
+        const page = (interaction.options.getInteger('page') || 1) - 1;
         if (page + 1 > totalPages) {
             return await interaction.editReply(`Invalid Page. There are only a total of ${totalPages} pages.`);
         }

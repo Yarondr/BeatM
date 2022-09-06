@@ -1,22 +1,32 @@
-import { QueueRepeatMode } from "discord-player";
-import { CommandInteraction, GuildMember } from "discord.js";
+import { ApplicationCommandOptionType, CommandInteraction, GuildMember, TextChannel } from "discord.js";
 import { getMember } from "../../utils/djs";
 import { IBot } from "../../utils/interfaces/IBot";
 import { ISlashCommand } from "../../utils/interfaces/ISlashCommand";
+import { createQueue } from "../../utils/player";
 
 module.exports = {
-    name: "loop",
+    name: "remove",
     category: "Music Commands",
-    description: "Loop the current track",
+    description: "Remove a specific song from the queue.",
     botPermissions: ['SendMessages', 'EmbedLinks'],
     DJOnly: true,
+    options: [
+        {
+            name: "song-number",
+            description: "The number of the song to remove",
+            type: ApplicationCommandOptionType.Integer,
+            minValue: 1,
+            required: true,
+        }
+    ],
     
     execute: async (bot: IBot, interaction: CommandInteraction) => {
         if (!interaction.isChatInputCommand()) return;
         
         const guild = bot.client.guilds.cache.get(interaction.guildId!)!;
         const member: GuildMember = await getMember(guild, interaction.member?.user.id!);
-        const queue = bot.player.getQueue(interaction.guildId!);
+        const songIndex = interaction.options.getInteger('song-number')! -1;
+        let queue = bot.player.getQueue(interaction.guildId!);
         
         if (!member.voice.channel) {
             return interaction.reply("You must be in a voice channel to use this command!.");
@@ -27,15 +37,14 @@ module.exports = {
         if (member.voice.channel.id != queue.connection.channel.id) {
             return interaction.reply("You must be in the same voice channel as the bot to use this command.");
         }
-        if (!queue.current) {
-            return interaction.reply("Can't loop, I am not playing anything right now!");
+        if (queue.tracks.length === 0) {
+            return interaction.reply("Can't remove a song from the queue, because the queue is empty!");
         }
-        if (queue.repeatMode != QueueRepeatMode.TRACK) {
-            queue.setRepeatMode(QueueRepeatMode.TRACK);
-            return interaction.reply("Looped!");
-        } else {
-            queue.setRepeatMode(QueueRepeatMode.OFF);
-            return interaction.reply("Loop disabled!");
+        if (songIndex >= queue.tracks.length) {
+            return interaction.reply("Invalid song number!");
         }
+
+        queue.tracks.splice(songIndex, 1);
+        return interaction.reply("Removed song from queue!");
     }
 } as ISlashCommand

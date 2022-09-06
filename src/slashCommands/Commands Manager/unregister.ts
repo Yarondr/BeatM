@@ -19,9 +19,10 @@ module.exports = {
     ],
     execute: async (bot: IBot, interaction: CommandInteraction) => {
         if (!interaction.isChatInputCommand()) return;
+        
         const { options } = interaction;
         const { slashCommands } = bot;
-        const command = options.get('command')?.value?.toString()!;
+        const command = options.getString('command')!;
 
         try {
             interaction.deferReply({ephemeral: true});

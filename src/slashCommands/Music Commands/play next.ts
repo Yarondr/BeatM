@@ -7,9 +7,9 @@ import { ISlashCommand } from "../../utils/interfaces/ISlashCommand";
 import { buildPlayEmbed, convertMilisecondsToTime, createQueue, isTrackLive, play, playlistLength, searchQuery } from "../../utils/player";
 
 module.exports = {
-    name: "play",
+    name: "playnext",
     category: "Music Commands",
-    description: "Plays a song from a url or a search query",
+    description: "Plays a song from a url or a search query next in the queue",
     botPermissions: ['SendMessages', 'EmbedLinks', 'Connect', 'Speak'],
     options: [
         {
@@ -53,7 +53,8 @@ module.exports = {
 
         const res = await searchQuery(connected, player, member, interaction, channel);
         if (!res || !res.tracks.length) return interaction.editReply({content: "No results found."});
-        res.playlist ? queue.addTracks(res.tracks) : queue.addTrack(res.tracks[0]);
+        const newTracks = res.playlist ? res.tracks : [res.tracks[0]];
+        queue.tracks.unshift(...newTracks);
         
         play(queue, res, member, interaction);
     }
