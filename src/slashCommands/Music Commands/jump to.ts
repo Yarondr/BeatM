@@ -27,24 +27,26 @@ module.exports = {
         const member: GuildMember = await getMember(guild, interaction.member?.user.id!);
         const songIndex = interaction.options.getInteger('song-number')! -1;
         let queue = bot.player.getQueue(interaction.guildId!);
+
+        await interaction.deferReply();
         
         if (!member.voice.channel) {
-            return interaction.reply("You must be in a voice channel to use this command!.");
+            return interaction.editReply("You must be in a voice channel to use this command!.");
         }
         if (!queue || !queue.connection) {
-            return interaction.reply("I'm not in a voice channel!");
+            return interaction.editReply("I'm not in a voice channel!");
         }
         if (member.voice.channel.id != queue.connection.channel.id) {
-            return interaction.reply("You must be in the same voice channel as the bot to use this command.");
+            return interaction.editReply("You must be in the same voice channel as the bot to use this command.");
         }
         if (queue.tracks.length === 0) {
-            return interaction.reply("Can't remove a song from the queue, because the queue is empty!");
+            return interaction.editReply("Can't jump to a song when there are no songs in the queue!");
         }
         if (songIndex >= queue.tracks.length) {
-            return interaction.reply("Invalid song number!");
+            return interaction.editReply("Invalid song number!");
         }
 
         queue.skipTo(songIndex);
-        return interaction.reply(`Jumped to song number ${songIndex + 1}!`);
+        return interaction.editReply(`Jumped to song number ${songIndex + 1}!`);
     }
 } as ISlashCommand

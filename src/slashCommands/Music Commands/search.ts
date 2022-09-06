@@ -53,7 +53,9 @@ module.exports = {
                 embed.addFields({name: "\u200b", value: value, inline: false});
         }); //.join('\n');
 
-        const collector = channel.createMessageCollector({
+        await interaction.editReply({content: "Enter your choice (1-10) or type `cancel` to cancel the search.", embeds: [embed]});
+
+        const collector = interaction.channel!.createMessageCollector({
             filter: (msg) => {
                 return msg.author.id === member.id && msg.content.length >= 1 && msg.content.length <= 10;
             },
@@ -62,21 +64,23 @@ module.exports = {
         });
 
         collector.on('collect', async (query) => {
-            if (query.content.toLowerCase() === 'cancel') await interaction.editReply({content: "Cancelled."}) && collector.stop();
+            if (query.content.toLowerCase() == 'cancel') return await interaction.editReply({content: "Cancelled."}), collector.stop();
+            if (isNaN(parseInt(query.content))) return await interaction.editReply({content: "Invalid number.", embeds: []}), collector.stop();
 
             const songNumber = parseInt(query.content);
             if (!songNumber || songNumber < 1 || songNumber > maxTracks.length) {
-                await interaction.editReply({content: `Invalid song number. Please enter a number between 1 and ${maxTracks.length}, or cancel.`});
+                return await interaction.editReply({content: `Invalid song number. Please enter a number between 1 and ${maxTracks.length}, or cancel.`}), collector.stop();
             }
 
             collector.stop();
             const connected: boolean = queue.connection ? true : false;
-            joinChannel(connected, queue, member, interaction, player, guild, channel);
-            await play(queue, res, member, interaction, songNumber - 1);
+            await joinChannel(connected, queue, member, interaction, player, guild, channel);
+            queue.addTrack(res.tracks[songNumber - 1]);
+            await play(queue, res, member, interaction, songNumber - 1, true);
         });
 
         collector.on('end', async (collected, reason) => {
-            if (reason === 'time') await interaction.editReply({content: "Search timed out."});
+            if (reason == 'time') await interaction.editReply({content: "Search timed out."});
         });
     }
 } as ISlashCommand;

@@ -17,19 +17,20 @@ module.exports = {
         const member: GuildMember = await getMember(guild, interaction.member?.user.id!);
         const queue = bot.player.getQueue(interaction.guildId!);
 
+        await interaction.deferReply();
+
         if (!member.voice.channel) {
-            return interaction.reply("You must be in a voice channel to use this command!.");
+            return interaction.editReply("You must be in a voice channel to use this command!.");
         }
         if (!queue || !queue.connection) {
-            return interaction.reply("I'm not in a voice channel!");
+            return interaction.editReply("I'm not in a voice channel!");
         }
         if (member.voice.channel.id != queue.connection.channel.id) {
-            return interaction.reply("You must be in the same voice channel as the bot to use this command.");
+            return interaction.editReply("You must be in the same voice channel as the bot to use this command.");
         }
         if (!queue.playing) {
-            return interaction.reply("I am not playing anything right now!");
+            return interaction.editReply("I am not playing anything right now!");
         }
-        await interaction.deferReply();
 
         const loopMethods = ['Off', 'Track', 'Queue'];
         const track = queue.current;

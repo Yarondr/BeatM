@@ -14,7 +14,7 @@ export function convertMilisecondsToTime(miliseconds: number) {
 
 export function playerDurationToMiliseconds(duration: string): number {
     const regex = /^(\d+):?(\d{1,2})?:(\d{1,2})$/;
-    const matches = duration.match(regex);
+    const matches = duration.match(regex)?.filter((match) => match !== undefined);
     if (!matches) return 0;
     let [_, hours, minutes, seconds]: number[] = matches.map(Number);
     if (!seconds) {
@@ -59,9 +59,11 @@ export function createQueue(guild: Guild, player: Player, channel: TextChannel) 
         async onBeforeCreateStream(track: Track, source: TrackSource, queue: Queue): Promise<Readable> {
             if (track.url.includes("spotify.com")) source = "spotify";
             if (source == "youtube") {
+                console.log("Creating stream for youtube track");
                 const stream = await playdl.stream(track.url, { discordPlayerCompatibility: true });
                 return stream.stream;
             } else if (source == "spotify") {
+                console.log("Creating stream for spotify track");
                 const search = await playdl.search(`${track.author} ${track.title} lyrics`,
                     { limit: 1, source: { youtube: "video"}}).then(res => res[0].url);
                 const stream = await playdl.stream(search, { discordPlayerCompatibility: true });
@@ -101,19 +103,19 @@ export function buildPlayEmbed(res: PlayerSearchResult, embedTitle: string, memb
 export async function searchQuery(connected: boolean, player: Player, member: GuildMember, interaction: CommandInteraction, channel: TextChannel) {
     if (!interaction.isChatInputCommand()) return;
     const search = interaction.options.getString('search-query')!
-    if (!connected) await channel.send("Searching...");
-    else await interaction.editReply("Searching...");
+    await interaction.editReply("Searching...");
     return await player.search(search, {
         requestedBy: member,
         searchEngine: QueryType.AUTO,
     });
 }
 
-export async function play(queue: Queue<IQueueMetadata>, res: PlayerSearchResult, member: GuildMember, interaction: CommandInteraction, index:number = 0) {
+export async function play(queue: Queue<IQueueMetadata>, res: PlayerSearchResult, member: GuildMember, interaction: CommandInteraction, index:number = 0, searchCmd: boolean = false) {
     if (!queue.playing) {
         await queue.play();
         const embed = buildPlayEmbed(res, `Playing "${res.tracks[index].title}"`, member);
-        await queue.metadata!.channel.send({embeds: [embed]});
+        if (searchCmd) await interaction.editReply({ embeds: [embed] });
+        else await queue.metadata!.channel.send({embeds: [embed]});
     } else {
         const title = res.playlist ? res.playlist.title : res.tracks[index].title;
         const embed = buildPlayEmbed(res, `Added "${title}" to queue`, member);

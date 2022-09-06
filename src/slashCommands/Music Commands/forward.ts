@@ -2,7 +2,7 @@ import { ApplicationCommandOptionType, CommandInteraction, GuildMember, TextChan
 import { getMember } from "../../utils/djs";
 import { IBot } from "../../utils/interfaces/IBot";
 import { ISlashCommand } from "../../utils/interfaces/ISlashCommand";
-import { createQueue, playerDurationToMiliseconds } from "../../utils/player";
+import { convertMilisecondsToTime, createQueue, playerDurationToMiliseconds } from "../../utils/player";
 
 module.exports = {
     name: "forward",
@@ -28,32 +28,30 @@ module.exports = {
         const member: GuildMember = await getMember(guild, interaction.member?.user.id!);
         const secondToSkip = interaction.options.getInteger('seconds')!;
         let queue = bot.player.getQueue(interaction.guildId!);
+
+        await interaction.deferReply();
         
         if (!member.voice.channel) {
-            return interaction.reply("You must be in a voice channel to use this command!.");
+            return interaction.editReply("You must be in a voice channel to use this command!.");
         }
         if (!queue || !queue.connection) {
-            return interaction.reply("I'm not in a voice channel!");
+            return interaction.editReply("I'm not in a voice channel!");
         }
         if (member.voice.channel.id != queue.connection.channel.id) {
-            return interaction.reply("You must be in the same voice channel as the bot to use this command.");
+            return interaction.editReply("You must be in the same voice channel as the bot to use this command.");
         }
         if (!queue.current) {
-            return interaction.reply("Can't skip forward, I am not playing anything right now!");
+            return interaction.editReply("Can't skip forward, I am not playing anything right now!");
         }
 
         const timestamp = queue.getPlayerTimestamp();   
-        console.log(timestamp);
-        console.log(timestamp.current);
-        console.log(timestamp.end);
-        console.log(timestamp.progress);
         const currentTime = playerDurationToMiliseconds(timestamp.current);
         const timeToSkip = secondToSkip * 1000;
         const newTime = currentTime + timeToSkip
         if (newTime > playerDurationToMiliseconds(timestamp.end)) {
-            return interaction.reply("Can't skip out of the song!")
+            return interaction.editReply("Can't skip out of the song!")
         }
         await queue.seek(newTime);
-        return interaction.reply(`Skipped forward to: ${newTime}.`);
+        return interaction.editReply(`Skipped forward to: ${convertMilisecondsToTime(newTime)}.`);
     }
 } as ISlashCommand

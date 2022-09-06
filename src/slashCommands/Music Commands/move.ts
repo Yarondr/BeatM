@@ -35,29 +35,31 @@ module.exports = {
         const songIndex = interaction.options.getInteger('song-number')! -1;
         const newSongIndex = interaction.options.getInteger('new-song-number')! -1;
         let queue = bot.player.getQueue(interaction.guildId!);
+
+        await interaction.deferReply();
         
         if (!member.voice.channel) {
-            return interaction.reply("You must be in a voice channel to use this command!.");
+            return interaction.editReply("You must be in a voice channel to use this command!.");
         }
         if (!queue || !queue.connection) {
-            return interaction.reply("I'm not in a voice channel!");
+            return interaction.editReply("I'm not in a voice channel!");
         }
         if (member.voice.channel.id != queue.connection.channel.id) {
-            return interaction.reply("You must be in the same voice channel as the bot to use this command.");
+            return interaction.editReply("You must be in the same voice channel as the bot to use this command.");
         }
         if (queue.tracks.length === 0) {
-            return interaction.reply("Can't remove a song from the queue, because the queue is empty!");
+            return interaction.editReply("Can't move a song when there are no songs in the queue!");
         }
         if (songIndex >= queue.tracks.length) {
-            return interaction.reply("Invalid song number!");
+            return interaction.editReply("Invalid song number!");
         }
         if (newSongIndex >= queue.tracks.length) {
-            return interaction.reply("Invalid new song number!");
+            return interaction.editReply("Invalid new song number!");
         }
 
         const song = queue.tracks[songIndex];
         queue.tracks.splice(songIndex, 1);
         queue.tracks.splice(newSongIndex, 0, song);
-        return interaction.reply(`Moved song to position ${newSongIndex + 1}!`);
+        return interaction.editReply(`Moved song to position ${newSongIndex + 1}!`);
     }
 } as ISlashCommand

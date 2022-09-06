@@ -17,29 +17,27 @@ module.exports = {
         const guild = bot.client.guilds.cache.get(interaction.guildId!)!;
         const member: GuildMember = await getMember(guild, interaction.member?.user.id!);
         let queue = bot.player.getQueue(interaction.guildId!);
+
+        await interaction.deferReply();
         
         if (!member.voice.channel) {
-            return interaction.reply("You must be in a voice channel to use this command!.");
+            return interaction.editReply("You must be in a voice channel to use this command!.");
         }
         if (!queue || !queue.connection) {
-            return interaction.reply("I'm not in a voice channel!");
+            return interaction.editReply("I'm not in a voice channel!");
         }
         if (member.voice.channel.id != queue.connection.channel.id) {
-            return interaction.reply("You must be in the same voice channel as the bot to use this command.");
-        }
-        if (queue.tracks.length === 0) {
-            return interaction.reply("Can't remove a song from the queue, because the queue is empty!");
+            return interaction.editReply("You must be in the same voice channel as the bot to use this command.");
         }
 
         const song = queue.current;
         const user = await getMember(guild, interaction.member?.user.id!);
-        const send = await user.send(`You requested to save the song **${song.title}** to your DMs. Here you go!`);
+        const send = await user.send(`You requested to save the song **${song.title}** to your DMs. Here you go!\n${song.url}`);
         if (send) {
-            await user.send(`<${song.url}>`);
+            return interaction.editReply(`I sent the song **${song.title}** to your DMs!`);
         } else {
-            return interaction.reply("I couldn't send the song to your DMs. Make sure you have them enabled!");
+            return interaction.editReply("I couldn't send the song to your DMs. Make sure you have them enabled!");
         }
-
-        return interaction.reply(`I sent the song **${song.title}** to your DMs!`);
+        
     }
 } as ISlashCommand

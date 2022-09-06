@@ -23,6 +23,7 @@ const client = new Client({
         GatewayIntentBits.GuildMembers,
         GatewayIntentBits.GuildMessages,
         GatewayIntentBits.GuildVoiceStates,
+        GatewayIntentBits.MessageContent,
     ]
 });
 
@@ -41,15 +42,19 @@ const bot: IBot = {
     player: new Player(client, {
         ytdlOptions: {
             quality: 'highestaudio',
-            highWaterMark: 1 << 25
+            highWaterMark: 1 << 25,
+            dlChunkSize: 0,
         }
     })
 };
 
 bot.player.on('trackStart', (queue, track) => {
-    // TODO: check if event called on track repeat too
     const metadata = queue.metadata as IQueueMetadata;
     metadata.skipVotes = [];
+});
+
+bot.player.on('debug', (queue, message) => {
+    // console.log(message);
 });
 
 loadEvents(bot, false);

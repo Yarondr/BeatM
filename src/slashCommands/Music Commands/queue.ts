@@ -25,20 +25,21 @@ module.exports = {
         const guild = bot.client.guilds.cache.get(interaction.guildId!)!;
         const member: GuildMember = await getMember(guild, interaction.member?.user.id!);
         const queue = bot.player.getQueue(interaction.guildId!);
+
+        await interaction.deferReply();
         
         if (!member.voice.channel) {
-            return interaction.reply("You must be in a voice channel to use this command!.");
+            return interaction.editReply("You must be in a voice channel to use this command!.");
         }
         if (!queue || !queue.connection) {
-            return interaction.reply("I'm not in a voice channel!");
+            return interaction.editReply("I'm not in a voice channel!");
         }
         if (member.voice.channel.id != queue.connection.channel.id) {
-            return interaction.reply("You must be in the same voice channel as the bot to use this command.");
+            return interaction.editReply("You must be in the same voice channel as the bot to use this command.");
         }
         if (!queue.current && queue.tracks.length == 0) {
-            return interaction.reply("The queue is empty!\nUse the /play command to add a song to the queue.");
+            return interaction.editReply("The queue is empty!\nUse the /play command to add a song to the queue.");
         }
-        await interaction.deferReply();
 
         // check for pages
         const totalPages = Math.ceil(queue.tracks.length / 10) || 1;

@@ -24,8 +24,9 @@ module.exports = {
         const { slashCommands } = bot;
         const command = options.getString('command')!;
 
+        await interaction.deferReply({ ephemeral: true });
+
         try {
-            interaction.deferReply({ephemeral: true});
             if (!slashCommands.has(command)) {
                 return interaction.editReply({content: "This command does not exist!"});
             } else {
@@ -39,7 +40,7 @@ module.exports = {
             }
         } catch (e) {
             console.error(e);
-            return interaction.reply("An error occurred while trying to unregister the command.");
+            return interaction.editReply("An error occurred while trying to unregister the command.");
         }
     }
 } as ISlashCommand;

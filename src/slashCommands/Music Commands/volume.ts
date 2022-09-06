@@ -26,30 +26,32 @@ module.exports = {
         const guild = bot.client.guilds.cache.get(interaction.guildId!)!;
         const member: GuildMember = await getMember(guild, interaction.member?.user.id!);
         let queue = bot.player.getQueue(interaction.guildId!);
+
+        await interaction.deferReply();
         
         if (!member.voice.channel) {
-            return interaction.reply("You must be in a voice channel to use this command!.");
+            return interaction.editReply("You must be in a voice channel to use this command!.");
         }
         if (!queue || !queue.connection) {
-            return interaction.reply("I'm not in a voice channel!");
+            return interaction.editReply("I'm not in a voice channel!");
         }
         if (member.voice.channel.id != queue.connection.channel.id) {
-            return interaction.reply("You must be in the same voice channel as the bot to use this command.");
+            return interaction.editReply("You must be in the same voice channel as the bot to use this command.");
         }
 
         let volume: number | string = interaction.options.getString('volume')!;
         if (!isIntNumber(volume) && volume != "reset") {
-            return interaction.reply("The volume must be a number or \"reset\"!");
+            return interaction.editReply("The volume must be a number or \"reset\"!");
         }
         if (volume == "reset") {
             volume = 100;
         }
         volume = parseInt(volume.toString());
         if (volume < 1 || volume > 200) {
-            return interaction.reply("The volume must be between 1 and 200!");
+            return interaction.editReply("The volume must be between 1 and 200!");
         }
         const success = queue.setVolume(volume);
         const reply = success ? `The volume has been set to ${volume}` : "Failed to set the volume";
-        await interaction.reply(reply);
+        await interaction.editReply(reply);
     }
 } as ISlashCommand

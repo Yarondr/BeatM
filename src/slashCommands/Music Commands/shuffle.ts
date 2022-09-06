@@ -16,15 +16,17 @@ module.exports = {
         const guild = bot.client.guilds.cache.get(interaction.guildId!)!;
         const member: GuildMember = await getMember(guild, interaction.member?.user.id!);
         const queue = bot.player.getQueue(interaction.guildId!);
+
+        await interaction.deferReply();
         
         if (!member.voice.channel) {
-            return interaction.reply("You must be in a voice channel to use this command!.");
+            return interaction.editReply("You must be in a voice channel to use this command!.");
         }
         if (!queue || !queue.connection) {
-            return interaction.reply("I'm not in a voice channel!");
+            return interaction.editReply("I'm not in a voice channel!");
         }
         if (member.voice.channel.id != queue.connection.channel.id) {
-            return interaction.reply("You must be in the same voice channel as the bot to use this command.");
+            return interaction.editReply("You must be in the same voice channel as the bot to use this command.");
         }
         if (queue.tracks.length > 0) {
             for (let i = 0; i < queue.tracks.length; i++) {
@@ -33,9 +35,9 @@ module.exports = {
                 queue.tracks[i] = queue.tracks[random];
                 queue.tracks[random] = temp;
             }
-            await interaction.reply(`The queue of ${queue.tracks.length} songs has been shuffled!`);
+            await interaction.editReply(`The queue of ${queue.tracks.length} songs has been shuffled!`);
         } else {
-            await interaction.reply(`Can't shuffle the queue because it's empty.`);
+            await interaction.editReply(`Can't shuffle the queue because it's empty.`);
         }
     }
 } as ISlashCommand

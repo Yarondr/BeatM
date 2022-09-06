@@ -18,24 +18,26 @@ module.exports = {
         const member: GuildMember = await getMember(guild, interaction.member?.user.id!);
         const queue = bot.player.getQueue(interaction.guildId!);
         
+        await interaction.deferReply();
+        
         if (!member.voice.channel) {
-            return interaction.reply("You must be in a voice channel to use this command!.");
+            return interaction.editReply("You must be in a voice channel to use this command!.");
         }
         if (!queue || !queue.connection) {
-            return interaction.reply("I'm not in a voice channel!");
+            return interaction.editReply("I'm not in a voice channel!");
         }
         if (member.voice.channel.id != queue.connection.channel.id) {
-            return interaction.reply("You must be in the same voice channel as the bot to use this command.");
+            return interaction.editReply("You must be in the same voice channel as the bot to use this command.");
         }
         if (!queue.current) {
-            return interaction.reply("Can't loop, I am not playing anything right now!");
+            return interaction.editReply("Can't loop, I am not playing anything right now!");
         }
         if (queue.repeatMode != QueueRepeatMode.TRACK) {
             queue.setRepeatMode(QueueRepeatMode.TRACK);
-            return interaction.reply("Looped!");
+            return interaction.editReply("Looped!");
         } else {
             queue.setRepeatMode(QueueRepeatMode.OFF);
-            return interaction.reply("Loop disabled!");
+            return interaction.editReply("Loop disabled!");
         }
     }
 } as ISlashCommand
