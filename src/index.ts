@@ -87,7 +87,7 @@ client.login(process.env.TOKEN);
  * V volume
  * V play next
  * V save
- * - search
+ * V search
  * V jump to track
  * - controller
  * V move track (to another position in queue)
