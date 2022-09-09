@@ -1,8 +1,7 @@
-import { ApplicationCommandOptionType, CommandInteraction, GuildMember, TextChannel } from "discord.js";
+import { CommandInteraction } from "discord.js";
 import { getMember } from "../../utils/djs";
 import { IBot } from "../../utils/interfaces/IBot";
 import { ISlashCommand } from "../../utils/interfaces/ISlashCommand";
-import { createQueue } from "../../utils/player";
 
 module.exports = {
     name: "save",
@@ -15,19 +14,12 @@ module.exports = {
         if (!interaction.isChatInputCommand()) return;
         
         const guild = bot.client.guilds.cache.get(interaction.guildId!)!;
-        const member: GuildMember = await getMember(guild, interaction.member?.user.id!);
         let queue = bot.player.getQueue(interaction.guildId!);
 
         await interaction.deferReply();
         
-        if (!member.voice.channel) {
-            return interaction.editReply("You must be in a voice channel to use this command!.");
-        }
-        if (!queue || !queue.connection) {
-            return interaction.editReply("I'm not in a voice channel!");
-        }
-        if (member.voice.channel.id != queue.connection.channel.id) {
-            return interaction.editReply("You must be in the same voice channel as the bot to use this command.");
+        if (!queue || !queue.playing) {
+            return interaction.editReply("No music is being played!");
         }
 
         const song = queue.current;

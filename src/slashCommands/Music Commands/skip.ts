@@ -20,22 +20,13 @@ module.exports = {
 
         await interaction.deferReply();
         
-        if (!member.voice.channel) {
-            return interaction.editReply("You must be in a voice channel to use this command!.");
-        }
-        if (!queue || !queue.connection) {
-            return interaction.editReply("I'm not in a voice channel!");
-        }
-        if (member.voice.channel.id != queue.connection.channel.id) {
-            return interaction.editReply("You must be in the same voice channel as the bot to use this command.");
-        }
         if (!queue.current) {
             return interaction.editReply("Can't skip, I am not playing anything right now!");
         }
 
-        const voiceMembers = Math.floor(member.voice.channel.members.filter(m => !m.user.bot).size / 2);
+        const voiceMembers = Math.floor(member.voice.channel!.members.filter(m => !m.user.bot).size / 2);
         const metadata = queue.metadata as IQueueMetadata;
-        const skipVotes = checkSkippingPlayers(metadata.skipVotes, member.voice.channel);
+        const skipVotes = checkSkippingPlayers(metadata.skipVotes, member.voice.channel!);
         if (skipVotes.includes(member.id)) {
             return interaction.editReply("You already voted to skip this song.");
         }

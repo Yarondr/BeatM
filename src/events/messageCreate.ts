@@ -1,5 +1,4 @@
-import { Client, Collection, Message, TextChannel } from "discord.js";
-import { owners } from "..";
+import { Message, TextChannel } from "discord.js";
 import { IBot } from "../utils/interfaces/IBot";
 import { IEvent } from "../utils/interfaces/IEvent";
 

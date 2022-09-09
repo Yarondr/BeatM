@@ -11,11 +11,19 @@ module.exports = {
         const { slashCommands, owners, client } = bot;
         const { guild } = interaction;
         const channel = interaction.channel as TextChannel;
-        if (!interaction.isCommand()) return;
         const member = interaction.member as GuildMember;
-        if (!interaction.inGuild()) return interaction.reply("This command can only be used in a server!");
-    
+        if (!interaction.isCommand() && !interaction.isAutocomplete()) return;
+        if (!interaction.inGuild()) return;
+            
         const slashCommand: ISlashCommand | undefined = slashCommands.get(interaction.commandName);
+
+        if (interaction.isAutocomplete()) {
+            if (slashCommand?.autocomplete) {
+                slashCommand.autocomplete(bot, interaction);
+            }
+            return;
+        }
+    
         if (!slashCommand) return interaction.reply("This command does not exist!");
 
         if (slashCommand.devOnly && !owners.includes(member.id)) {
@@ -34,6 +42,19 @@ module.exports = {
         if (slashCommand.botPermissions && !channel?.permissionsFor(client.user!)?.has(slashCommand.botPermissions)) {
             const missingPerms = channel?.permissionsFor(client.user!)?.missing(slashCommand.botPermissions)
             return interaction.reply(`I don't have the required permissions to use this command!\nMissing permissions: ${missingPerms?.join(', ')}`);
+        }
+
+        if (!slashCommand.ignoreNotSameVoiceChannels && slashCommand.category == "Music Commands") {
+            let queue = bot.player.getQueue(interaction.guildId!);
+            if (!member.voice.channel) {
+                return interaction.reply("You must be in a voice channel to use this command!.");
+            }
+            if (!queue || !queue.connection) {
+                return interaction.reply("I'm not in a voice channel!");
+            }
+            if (member.voice.channel.id != queue.connection.channel.id) {
+                return interaction.reply("You must be in the same voice channel as the bot to use this command.");
+            }
         }
         
         await slashCommand.execute(bot, interaction)

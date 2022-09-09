@@ -1,4 +1,4 @@
-import { ApplicationCommandOptionData, CommandInteraction, PermissionResolvable } from "discord.js";
+import { ApplicationCommandOptionData, AutocompleteInteraction, CommandInteraction, PermissionResolvable } from "discord.js";
 import { IBot } from "./IBot";
 
 export interface ISlashCommand {
@@ -7,8 +7,10 @@ export interface ISlashCommand {
     description: string,
     devOnly?: boolean,
     DJOnly?: boolean,
+    ignoreNotSameVoiceChannels?: boolean,
     permissions?: PermissionResolvable[],
     botPermissions?: PermissionResolvable[],
     options: ApplicationCommandOptionData[],
     execute: (bot: IBot, interaction: CommandInteraction, ...args: any) => Promise<any>;
+    autocomplete?: (bot: IBot, interaction: AutocompleteInteraction, ...args: any) => Promise<any>;
 }

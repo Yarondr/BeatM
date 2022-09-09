@@ -1,6 +1,5 @@
-import { Client } from "discord.js"
-import { IBot } from "../utils/interfaces/IBot"
-import { IEvent } from "../utils/interfaces/IEvent"
+import { IBot } from "../utils/interfaces/IBot";
+import { IEvent } from "../utils/interfaces/IEvent";
 
 module.exports = {
     name: "ready",

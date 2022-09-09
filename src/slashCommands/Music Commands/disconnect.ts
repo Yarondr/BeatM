@@ -18,16 +18,7 @@ module.exports = {
 
         await interaction.deferReply();
         
-        if (!member.voice.channel) {
-            return interaction.editReply("You must be in a voice channel to use this command!.");
-        }
-        if (!queue || !queue.connection) {
-            return interaction.editReply("I'm not in a voice channel!");
-        }
-        if (member.voice.channel.id != queue.connection.channel.id) {
-            return interaction.editReply("You must be in the same voice channel as the bot to use this command.");
-        }
         queue.destroy(true)
-        await interaction.editReply(`Disconnected from \`${member.voice.channel.name}\``);
+        await interaction.editReply(`Disconnected from \`${member.voice.channel!.name}\``);
     }
 } as ISlashCommand

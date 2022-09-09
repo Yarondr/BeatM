@@ -1,10 +1,8 @@
-import { PlayerSearchResult, Playlist, QueryType } from "discord-player";
-import { ApplicationCommandOptionType, CommandInteraction, EmbedBuilder, GuildChannel, GuildMember, PermissionFlagsBits, TextChannel } from "discord.js";
+import { ApplicationCommandOptionType, CommandInteraction, EmbedBuilder, GuildMember, TextChannel } from "discord.js";
 import { getMember } from "../../utils/djs";
 import { IBot } from "../../utils/interfaces/IBot";
-import { IQueueMetadata } from "../../utils/interfaces/IQueueMetadata";
 import { ISlashCommand } from "../../utils/interfaces/ISlashCommand";
-import { buildPlayEmbed, convertMilisecondsToTime, createQueue, isTrackLive, joinChannel, play, playlistLength, searchQuery } from "../../utils/player";
+import { convertMilisecondsToTime, createQueue, isTrackLive, joinChannel, play, searchQuery } from "../../utils/player";
 
 module.exports = {
     name: "search",
@@ -64,7 +62,7 @@ module.exports = {
         });
 
         collector.on('collect', async (query) => {
-            if (query.content.toLowerCase() == 'cancel') return await interaction.editReply({content: "Cancelled."}), collector.stop();
+            if (query.content.toLowerCase() == 'cancel') return await interaction.editReply({content: "Cancelled.", embeds: []}), collector.stop();
             if (isNaN(parseInt(query.content))) return await interaction.editReply({content: "Invalid number.", embeds: []}), collector.stop();
 
             const songNumber = parseInt(query.content);

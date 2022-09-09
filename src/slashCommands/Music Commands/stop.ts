@@ -21,22 +21,13 @@ module.exports = {
 
         await interaction.deferReply();
         
-        if (!member.voice.channel) {
-            return interaction.editReply("You must be in a voice channel to use this command!.");
-        }
-        if (!queue || !queue.connection) {
-            return interaction.editReply("I'm not in a voice channel!");
-        }
-        if (member.voice.channel.id != queue.connection.channel.id) {
-            return interaction.editReply("You must be in the same voice channel as the bot to use this command.");
-        }
         if (!queue.current) {
             return interaction.editReply("Can't stop, I am not playing anything right now!");
         }
 
         queue.stop();
         queue = createQueue(guild, bot.player, channel);
-        await queue.connect(member.voice.channel);
+        await queue.connect(member.voice.channel!);
         return interaction.editReply("Stopped!");
     }
 } as ISlashCommand

@@ -102,8 +102,12 @@ export function buildPlayEmbed(res: PlayerSearchResult, embedTitle: string, memb
 
 export async function searchQuery(connected: boolean, player: Player, member: GuildMember, interaction: CommandInteraction, channel: TextChannel) {
     if (!interaction.isChatInputCommand()) return;
-    const search = interaction.options.getString('search-query')!
+    const search = interaction.options.getString('search-query')!;
     await interaction.editReply("Searching...");
+    return await basicSearch(member, player, search);
+}
+
+export async function basicSearch(member: GuildMember, player: Player, search: any) {
     return await player.search(search, {
         requestedBy: member,
         searchEngine: QueryType.AUTO,
