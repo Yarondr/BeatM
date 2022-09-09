@@ -1,9 +1,10 @@
 import { Player, PlayerSearchResult, Playlist, QueryType, Queue, Track, TrackSource } from "discord-player";
-import { ButtonInteraction, CommandInteraction, EmbedBuilder, Guild, GuildMember, TextChannel, VoiceBasedChannel } from "discord.js";
-import { IQueueMetadata } from "./interfaces/IQueueMetadata";
+import { ButtonInteraction, CommandInteraction, EmbedBuilder, Guild, GuildChannelResolvable, GuildMember, TextChannel, VoiceBasedChannel } from "discord.js";
 import * as playdl from "play-dl";
 import { Readable } from "stream";
 import { embedContent } from "./embedContent";
+import { IBot } from "./interfaces/IBot";
+import { IQueueMetadata } from "./interfaces/IQueueMetadata";
 
 export function convertMilisecondsToTime(miliseconds: number) {
     const date = new Date(miliseconds);
@@ -56,6 +57,7 @@ export function createQueue(guild: Guild, player: Player, channel: TextChannel) 
         } as IQueueMetadata,
 
         leaveOnStop: false,
+        volumeSmoothness: 0.1,
 
         async onBeforeCreateStream(track: Track, source: TrackSource, queue: Queue): Promise<Readable> {
             if (track.url.includes("spotify.com")) source = "spotify";
@@ -128,11 +130,19 @@ export async function play(queue: Queue<IQueueMetadata>, res: PlayerSearchResult
     }
 }
 
-export async function joinChannel(connected: boolean, queue: Queue<IQueueMetadata>, member: GuildMember, interaction: CommandInteraction, player: Player, guild: Guild, channel: TextChannel) {
+export function setupOnQueueFinish(bot: IBot, queue: Queue<IQueueMetadata>, guild: Guild, player: Player, channel: TextChannel, voiceChannel: GuildChannelResolvable) {
+    queue.connection.on('finish', async () => {
+        scheduleQueueLeave(bot, queue, guild, channel, voiceChannel);
+    });
+}
+
+export async function joinChannel(bot: IBot, connected: boolean, queue: Queue<IQueueMetadata>, member: GuildMember, interaction: CommandInteraction, player: Player, guild: Guild, channel: TextChannel) {
     if (!member.voice.channel) return;
     try {
         if (!connected) {
-            await queue.connect(member.voice.channel);
+            const voiceChannel = member.voice.channel;
+            await queue.connect(voiceChannel);
+            setupOnQueueFinish(bot, queue, guild, player, channel, voiceChannel);
             await interaction.editReply(`Joined \`${member.voice.channel.name}\` and bound to <#${channel.id}>`);
         } else if (queue.connection.channel.id !== member.voice.channel.id) {
             return interaction.editReply(`Can't join to \`${member.voice.channel.name}\` because I'm already in another voice channel.`);
@@ -164,4 +174,28 @@ export async function skip(member: GuildMember, queue: Queue<IQueueMetadata>, in
     } else {
         return interaction.editReply(`${skipVotes.length}/${voiceMembers} votes to skip this song.`);
     }
+}
+
+export async function scheduleQueueLeave(bot: IBot, queue: Queue<IQueueMetadata>, guild: Guild, channel: TextChannel, voiceChannel: GuildChannelResolvable) {
+    const waitingQueues = bot.queuesWaitingToLeave.get(queue.guild.id);
+    const date = Date.now().toString();
+    if (waitingQueues) {
+        waitingQueues.push(date);
+        bot.queuesWaitingToLeave.set(queue.guild.id, waitingQueues);
+    } else {
+        bot.queuesWaitingToLeave.set(queue.guild.id, [date]);
+    }
+
+    setTimeout(async () => {
+        const waitingQueues = bot.queuesWaitingToLeave.get(queue.guild.id);
+        queue = bot.player.getQueue(queue.guild.id);
+        if (waitingQueues && waitingQueues.some(d => d === date)) {
+            if (!queue) {
+                queue = createQueue(guild, bot.player, channel);
+                await queue.connect(voiceChannel);
+            }
+            queue.destroy(true);
+        }
+        bot.queuesWaitingToLeave.delete(queue.guild.id);
+    }, 60000);
 }

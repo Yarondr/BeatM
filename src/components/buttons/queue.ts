@@ -16,6 +16,6 @@ module.exports = {
         }
 
         const embed = await designQueue(queue, guild, 0);
-        await interaction.editReply({embeds: [embed]});
+        return await interaction.editReply({embeds: [embed]});
     }
 } as IButton

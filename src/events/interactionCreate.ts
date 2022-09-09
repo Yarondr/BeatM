@@ -1,5 +1,5 @@
 import { Queue } from "discord-player";
-import { CacheType, Client, Guild, GuildMember, Interaction, InteractionType, TextChannel } from "discord.js"
+import { CacheType, Client, Guild, GuildMember, Interaction, InteractionType, Message, TextChannel } from "discord.js"
 import { getMember } from "../utils/djs";
 import { IBot } from "../utils/interfaces/IBot"
 import { IButton } from "../utils/interfaces/IButton";
@@ -92,7 +92,10 @@ module.exports = {
                             member: member,
                             channel: channel
                         }
-                        file.execute(bot, queue, interaction, args);
+                        const message: Message = await file.execute(bot, queue, interaction, args);
+                        setTimeout(async () => {
+                            await message.delete();
+                        }, 5000);
                     } catch (error) {
                         console.log(error);
                     }

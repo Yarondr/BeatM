@@ -35,7 +35,7 @@ module.exports = {
         await interaction.deferReply();
 
         const connected: boolean = queue.connection ? true : false;
-        joinChannel(connected, queue, member, interaction, player, guild, channel);
+        joinChannel(bot, connected, queue, member, interaction, player, guild, channel);
         
         const res = await searchQuery(connected, player, member, interaction, channel);
         if (!res || !res.tracks.length) return interaction.editReply({content: "No results found."});

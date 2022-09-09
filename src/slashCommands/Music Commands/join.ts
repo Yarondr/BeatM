@@ -27,6 +27,6 @@ module.exports = {
 
         const queue = createQueue(guild, player, channel);
         const connected: boolean = queue.connection ? true : false;
-        joinChannel(connected, queue, member, interaction, player, guild, channel);
+        joinChannel(bot, connected, queue, member, interaction, player, guild, channel);
     }
 } as ISlashCommand;

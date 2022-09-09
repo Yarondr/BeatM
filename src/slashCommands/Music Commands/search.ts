@@ -73,7 +73,7 @@ module.exports = {
 
             collector.stop();
             const connected: boolean = queue.connection ? true : false;
-            await joinChannel(connected, queue, member, interaction, player, guild, channel);
+            await joinChannel(bot, connected, queue, member, interaction, player, guild, channel);
             queue.addTrack(res.tracks[songNumber - 1]);
             await play(queue, res, member, interaction, songNumber - 1, true);
         });

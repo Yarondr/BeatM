@@ -9,6 +9,7 @@ import { IQueueMetadata } from "../../utils/interfaces/IQueueMetadata";
 module.exports = {
     execute: async (bot: IBot, queue: Queue<IQueueMetadata>, interaction: ButtonInteraction, args: ICommandArgs) => {
         const { member } = args;
+        
         const volume = queue.volume + 10;
         if (volume < 1 || volume > 200) {
             return interaction.editReply({ embeds: [embedContent("The volume must be between 1 and 200", member)] });

@@ -1,5 +1,5 @@
 import { Player } from "discord-player";
-import { Client, Collection } from "discord.js";
+import { Client, Collection, StageChannel, VoiceChannel } from "discord.js";
 import { ICommand } from "./ICommand";
 import { IEvent } from "./IEvent";
 import { ISlashCommand } from "./ISlashCommand";
@@ -12,5 +12,6 @@ export interface IBot {
     owners: string[],
     testServers: string[],
     prefix: string,
-    player: Player
+    player: Player,
+    queuesWaitingToLeave: Map<string, string[]>
 }

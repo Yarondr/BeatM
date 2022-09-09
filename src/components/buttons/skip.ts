@@ -15,6 +15,6 @@ module.exports = {
             return interaction.editReply({ embeds: [embedContent("Can't skip, I am not playing anything right now!", member)] });
         }
 
-        await skip(member, queue, interaction);
+        return await skip(member, queue, interaction);
     }
 } as IButton

@@ -1,5 +1,5 @@
 console.log("Starting bot...")
-import { Client, GatewayIntentBits, Collection } from 'discord.js';
+import { Client, GatewayIntentBits, Collection, VoiceChannel, StageChannel } from 'discord.js';
 import dotenv from 'dotenv';
 import { loadEvents } from './handlers/eventsHandler';
 import { loadCommands } from './handlers/commandsHandler';
@@ -8,8 +8,9 @@ import { IBot } from './utils/interfaces/IBot';
 import { ISlashCommand } from './utils/interfaces/ISlashCommand';
 import { IEvent } from './utils/interfaces/IEvent';
 import { ICommand } from './utils/interfaces/ICommand';
-import { Player } from 'discord-player';
+import { Player, Queue } from 'discord-player';
 import { IQueueMetadata } from './utils/interfaces/IQueueMetadata';
+import { createQueue } from './utils/player';
 dotenv.config();
 
 const myTestServerId = process.env.TEST_SERVER || '';
@@ -45,10 +46,12 @@ const bot: IBot = {
             highWaterMark: 1 << 25,
             dlChunkSize: 0,
         }
-    })
+    }),
+    queuesWaitingToLeave: new Map<string, string[]>()
 };
 
 bot.player.on('trackStart', (queue, track) => {
+    bot.queuesWaitingToLeave.delete(queue.guild.id);
     const metadata = queue.metadata as IQueueMetadata;
     metadata.skipVotes = [];
 });
@@ -89,7 +92,7 @@ client.login(process.env.TOKEN);
  * V save
  * V search
  * V jump to track
- * - controller
+ * V controller
  * V move track (to another position in queue)
  * - help
  */
