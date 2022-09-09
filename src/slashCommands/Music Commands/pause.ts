@@ -32,11 +32,12 @@ module.exports = {
         }
         
         if (queue.connection.paused) {
-            return interaction.editReply("The track is already paused");
+            queue.connection.resume();
+            return interaction.editReply("Resumed the track.");
+        } else {    
+            queue.connection.pause(true);
+            return interaction.editReply("Paused the track!");
         }
-        queue.connection.pause(true);
-        // queue.setPaused(true);
-        return interaction.editReply("Paused!");
     }
 
 } as ISlashCommand;
