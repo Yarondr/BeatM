@@ -9,6 +9,7 @@ module.exports = {
     category: "Music Commands",
     description: "Show the search results for a query and let you choose which one to play.",
     botPermissions: ['SendMessages', 'EmbedLinks', 'Connect', 'Speak'],
+    ignoreNotSameVoiceChannels: true,
     options: [
         {
             name: "search-query",

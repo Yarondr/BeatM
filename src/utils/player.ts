@@ -1,8 +1,9 @@
 import { Player, PlayerSearchResult, Playlist, QueryType, Queue, Track, TrackSource } from "discord-player";
-import { CommandInteraction, EmbedBuilder, Guild, GuildMember, TextChannel, VoiceBasedChannel } from "discord.js";
+import { ButtonInteraction, CommandInteraction, EmbedBuilder, Guild, GuildMember, TextChannel, VoiceBasedChannel } from "discord.js";
 import { IQueueMetadata } from "./interfaces/IQueueMetadata";
 import * as playdl from "play-dl";
 import { Readable } from "stream";
+import { embedContent } from "./embedContent";
 
 export function convertMilisecondsToTime(miliseconds: number) {
     const date = new Date(miliseconds);
@@ -139,5 +140,28 @@ export async function joinChannel(connected: boolean, queue: Queue<IQueueMetadat
     } catch {
         player.deleteQueue(guild.id);
         return interaction.editReply(`I can't join your voice channel. Please check my permissions.`);
+    }
+}
+
+export async function skip(member: GuildMember, queue: Queue<IQueueMetadata>, interaction: CommandInteraction | ButtonInteraction, embed: boolean = false) {
+    const voiceMembers = Math.floor(member.voice.channel!.members.filter(m => !m.user.bot).size / 2);
+    const metadata = queue.metadata as IQueueMetadata;
+    const skipVotes = checkSkippingPlayers(metadata.skipVotes, member.voice.channel!);
+    if (skipVotes.includes(member.id)) {
+        return interaction.editReply("You already voted to skip this song.");
+    }
+    skipVotes.push(member.id);
+    if (skipVotes.length >= voiceMembers) {
+        const success = queue.skip();
+        if (queue.connection.paused) {
+            queue.connection.resume();
+        }
+        const reply = success ? "Skipped!" : "Something went wrong...";
+        if (embed) {
+            return interaction.editReply({embeds: [embedContent(reply, member)]});
+        }
+        return interaction.editReply(reply);
+    } else {
+        return interaction.editReply(`${skipVotes.length}/${voiceMembers} votes to skip this song.`);
     }
 }

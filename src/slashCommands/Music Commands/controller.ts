@@ -15,12 +15,10 @@ module.exports = {
 
         await interaction.deferReply();
 
-        await interaction.editReply("Sending the music controller...");
-
         const controllerEmbed = new EmbedBuilder()
             .setColor('Random')
             .setTitle("Music Controller")
-            .setDescription("Click the buttons to control the music!")
+            .setDescription("Click the buttons below to control the music!")
             .setImage(guild.iconURL({ size: 4096}))
 
         const pauseButton = new ButtonBuilder()
@@ -46,7 +44,7 @@ module.exports = {
         const volumeUpButton = new ButtonBuilder()
             .setEmoji("🔊")
             .setStyle(ButtonStyle.Secondary)
-            .setCustomId("volumeUp")
+            .setCustomId("volume up")
 
         const queueButton = new ButtonBuilder()
             .setEmoji("📜")
@@ -56,7 +54,7 @@ module.exports = {
         const volumeDownButton = new ButtonBuilder()
             .setEmoji("🔉")
             .setStyle(ButtonStyle.Secondary)
-            .setCustomId("volumeDown")
+            .setCustomId("volume down")
         
         const loopButton = new ButtonBuilder()
             .setEmoji("🔂")
@@ -66,7 +64,7 @@ module.exports = {
         const queueLoopButton = new ButtonBuilder()
             .setEmoji("🔁")
             .setStyle(ButtonStyle.Secondary)
-            .setCustomId("queueLoop")
+            .setCustomId("queue loop")
 
         const row1 = new ActionRowBuilder<ButtonBuilder>().addComponents(pauseButton, resumeButton, skipButton);
         const row2 = new ActionRowBuilder<ButtonBuilder>().addComponents(volumeDownButton, stopButton, volumeUpButton);

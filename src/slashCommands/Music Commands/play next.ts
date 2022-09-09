@@ -1,6 +1,8 @@
+import { Queue } from "discord-player";
 import { ApplicationCommandOptionType, CommandInteraction, GuildMember, TextChannel } from "discord.js";
 import { getMember } from "../../utils/djs";
 import { IBot } from "../../utils/interfaces/IBot";
+import { IQueueMetadata } from "../../utils/interfaces/IQueueMetadata";
 import { ISlashCommand } from "../../utils/interfaces/ISlashCommand";
 import { createQueue, joinChannel, play, searchQuery } from "../../utils/player";
 
@@ -25,7 +27,7 @@ module.exports = {
         const member: GuildMember = await getMember(guild, interaction.member?.user.id!);
         const channel = guild?.channels.cache.get(interaction.channelId!)! as TextChannel;
         const player = bot.player;
-        const queue = createQueue(guild, player, channel);
+        const queue: Queue<IQueueMetadata> = player.getQueue(interaction.guildId!);
 
         if (!queue.current) {
             return interaction.reply("Can't add to queue, nothing is playing.");
