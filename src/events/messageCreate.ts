@@ -19,7 +19,7 @@ module.exports = {
         const member = message.member!;
         const channel = message.channel as TextChannel;
 
-        if (command.devOnly && !owners.includes(member?.id!)) {
+        if (command.ownerOnly && !owners.includes(member?.id!)) {
             return message.reply("This command is only for developers!");
         }
 

@@ -1,11 +1,11 @@
 import { EmbedBuilder, SelectMenuInteraction } from "discord.js";
-import { getMusicSubCommands } from "../../../handlers/slashCommandsHandler";
+import { getSubcategoryCommands } from "../../../handlers/slashCommandsHandler";
 import { IBot } from "../../../utils/interfaces/IBot";
 import { IDropdown } from "../../../utils/interfaces/IDropdown";
 
 module.exports = {
     execute: async (bot: IBot, interaction: SelectMenuInteraction) => {
-        const commands = getMusicSubCommands(bot, "Queue");
+        const commands = getSubcategoryCommands(bot, "Queue");
 
         const embed = new EmbedBuilder()
             .setColor("Random")

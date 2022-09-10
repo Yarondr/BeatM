@@ -6,6 +6,6 @@ export interface ICommand {
     category: string,
     permissions?: PermissionResolvable[],
     botPermissions?: PermissionResolvable[],
-    devOnly?: boolean,
+    ownerOnly?: boolean,
     execute: (bot: IBot, message: Message) => Promise<any>;
 }

@@ -5,14 +5,13 @@ import { ISlashCommand } from "../../utils/interfaces/ISlashCommand";
 module.exports = {
     name: "help",
     category: "Other Commands",
+    subcategory: "General",
     ignoreNotSameVoiceChannels: true,
     description: "Shows the help menu",
     botPermissions: ['SendMessages', 'EmbedLinks'],
     
     execute: async (bot: IBot, interaction: CommandInteraction) => {
         if (!interaction.isChatInputCommand()) return;
-        
-        let queue = bot.player.getQueue(interaction.guildId!);
 
         await interaction.deferReply();
 
@@ -48,8 +47,9 @@ module.exports = {
             .setColor("Random")
             .setTitle("Help Menu")
             .setDescription("**Select a category from the following:**\n\n" +
-                            ":notes: **Track\n**" +
-                            ":scroll: **Queue**\n\n" +
+                            "⚙️ **General**\n" +
+                            "🎶 **Track\n**" +
+                            "📃 **Queue**\n\n" +
                             "**Try these basic commands to get started:**\n" +
                             "`/play`**:** Enter a song name or link to play\n" +
                             "`/search`**:** Search for a song to play\n")

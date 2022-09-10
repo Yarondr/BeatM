@@ -35,12 +35,12 @@ function getFolderCommands(bot: IBot, folderPath: string, mainCategory: string =
     });
 }
 
-export function getMusicSubCommands(bot: IBot, subcategory: string) {
+export function getSubcategoryCommands(bot: IBot, subcategory: string) {
     let order: string[];
     subcategory == "General" ? order = generalCommandsOrder : subcategory == "Track" ? order = trackCommandsOrder : order = queueCommandsOrder;
 
     return bot.slashCommands
-        .filter((command) => command.category == "Music Commands" && order.includes(command.name))
+        .filter((command) => order.includes(command.name))
         .sort((a, b) => order.indexOf(a.name) - order.indexOf(b.name))
 }
 
@@ -53,7 +53,8 @@ const generalCommandsOrder = [
     'skip',
     'forceskip',
     'volume',
-    'controller'
+    'controller',
+    'help'
 ];
 
 const trackCommandsOrder = [

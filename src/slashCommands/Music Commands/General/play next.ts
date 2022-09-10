@@ -11,6 +11,7 @@ module.exports = {
     category: "Music Commands",
     description: "Plays a song from a url or a search query next in the queue",
     botPermissions: ['SendMessages', 'EmbedLinks', 'Connect', 'Speak'],
+    DJOnly: true,
     options: [
         {
             name: "search-query",

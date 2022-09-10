@@ -5,7 +5,7 @@ import { ISlashCommand } from "../../utils/interfaces/ISlashCommand";
 module.exports = {
     name: "unregister",
     category: "Commands Manager",
-    devOnly: true,
+    ownerOnly: true,
     description: "Unregister a command",
     permissions: ['Administrator'],
     botPermissions: ['SendMessages'],

@@ -7,7 +7,7 @@ module.exports = {
     category: "info",
     permissions: ['SendMessages'],
     botPermissions: ['SendMessages'],
-    devOnly: true,
+    ownerOnly: true,
     execute: async (bot: IBot, message: Message, ...args: any) => {
         message.reply("Pong!");
     }

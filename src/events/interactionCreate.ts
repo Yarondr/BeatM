@@ -69,7 +69,7 @@ module.exports = {
     
         if (!slashCommand) return interaction.reply("This command does not exist!");
 
-        if (slashCommand.devOnly && !owners.includes(member.id)) {
+        if (slashCommand.ownerOnly && !owners.includes(member.id)) {
             return interaction.reply("This command is only for developers!");
         }
 
