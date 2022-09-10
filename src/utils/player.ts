@@ -176,26 +176,20 @@ export async function skip(member: GuildMember, queue: Queue<IQueueMetadata>, in
     }
 }
 
-export async function scheduleQueueLeave(bot: IBot, queue: Queue<IQueueMetadata>, guild: Guild, channel: TextChannel, voiceChannel: GuildChannelResolvable) {
-    const waitingQueues = bot.queuesWaitingToLeave.get(queue.guild.id);
-    const date = Date.now().toString();
-    if (waitingQueues) {
-        waitingQueues.push(date);
-        bot.queuesWaitingToLeave.set(queue.guild.id, waitingQueues);
-    } else {
-        bot.queuesWaitingToLeave.set(queue.guild.id, [date]);
+export async function scheduleQueueLeave(bot: IBot, queue: Queue<IQueueMetadata>, guild: Guild, channel: TextChannel, voiceChannel: GuildChannelResolvable, empty: boolean = false) {
+    const map = empty ? bot.emptyChannelsWaitingToLeave : bot.queuesWaitingToLeave;
+
+    if (map.has(guild.id)) {
+        clearTimeout(map.get(guild.id));
     }
 
-    setTimeout(async () => {
-        const waitingQueues = bot.queuesWaitingToLeave.get(queue.guild.id);
+    map.set(guild.id, setTimeout(async () => {
         queue = bot.player.getQueue(queue.guild.id);
-        if (waitingQueues && waitingQueues.some(d => d === date)) {
-            if (!queue) {
-                queue = createQueue(guild, bot.player, channel);
-                await queue.connect(voiceChannel);
-            }
-            queue.destroy(true);
+        if (!queue) {
+            queue = createQueue(guild, bot.player, channel);
+            await queue.connect(voiceChannel);
         }
-        bot.queuesWaitingToLeave.delete(queue.guild.id);
-    }, 60000);
+        queue.destroy(true);
+        map.delete(queue.guild.id);
+    }, 60000));
 }

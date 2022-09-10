@@ -10,7 +10,7 @@ import { IEvent } from './utils/interfaces/IEvent';
 import { ICommand } from './utils/interfaces/ICommand';
 import { Player, Queue } from 'discord-player';
 import { IQueueMetadata } from './utils/interfaces/IQueueMetadata';
-import { createQueue } from './utils/player';
+import { createQueue, scheduleQueueLeave } from './utils/player';
 dotenv.config();
 
 const myTestServerId = process.env.TEST_SERVER || '';
@@ -47,11 +47,15 @@ const bot: IBot = {
             dlChunkSize: 0,
         }
     }),
-    queuesWaitingToLeave: new Map<string, string[]>()
+    queuesWaitingToLeave: new Map<string, NodeJS.Timeout>(),
+    emptyChannelsWaitingToLeave: new Map<string, NodeJS.Timeout>()
 };
 
 bot.player.on('trackStart', (queue, track) => {
-    bot.queuesWaitingToLeave.delete(queue.guild.id);
+    if (bot.queuesWaitingToLeave.has(queue.guild.id)) {
+        clearTimeout(bot.queuesWaitingToLeave.get(queue.guild.id));
+        bot.queuesWaitingToLeave.delete(queue.guild.id);
+    }
     const metadata = queue.metadata as IQueueMetadata;
     metadata.skipVotes = [];
 });

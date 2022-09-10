@@ -5,7 +5,7 @@ import { IEvent } from "../utils/interfaces/IEvent";
 module.exports = {
     name: 'messageCreate',
     once: false,
-    execute: async function runAll(bot: IBot, message: Message) {
+    execute: async (bot: IBot, message: Message) => {
         const { client, commands, owners} = bot;
         if (!message.guild) return;
         if (message.author.bot) return;

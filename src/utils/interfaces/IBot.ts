@@ -13,5 +13,6 @@ export interface IBot {
     testServers: string[],
     prefix: string,
     player: Player,
-    queuesWaitingToLeave: Map<string, string[]>
+    queuesWaitingToLeave: Map<string, NodeJS.Timeout>
+    emptyChannelsWaitingToLeave: Map<string, NodeJS.Timeout>
 }
