@@ -19,7 +19,7 @@ module.exports = {
         const guild = bot.client.guilds.cache.get(interaction.guildId!)!;
         const member: GuildMember = await getMember(guild, interaction.member?.user.id!);
         const channel = guild?.channels.cache.get(interaction.channelId!)! as TextChannel;
-        let queue: Queue<IQueueMetadata> = bot.player.getQueue(interaction.guildId!);
+        let queue: Queue<IQueueMetadata> = bot.player.getQueue(interaction.guildId!)!;
 
         await interaction.deferReply();
         

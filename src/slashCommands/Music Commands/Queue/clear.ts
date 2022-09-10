@@ -12,7 +12,7 @@ module.exports = {
     execute: async (bot: IBot, interaction: CommandInteraction) => {
         if (!interaction.isChatInputCommand()) return;
         
-        let queue = bot.player.getQueue(interaction.guildId!);
+        let queue = bot.player.getQueue(interaction.guildId!)!;
 
         await interaction.deferReply();
                 

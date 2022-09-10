@@ -3,9 +3,9 @@ import { IBot } from "../../../utils/interfaces/IBot";
 import { ISlashCommand } from "../../../utils/interfaces/ISlashCommand";
 
 module.exports = {
-    name: "resume",
+    name: "vaporwave",
     category: "Music Commands",
-    description: "Resume the current track",
+    description: "Add a deep voice effect to the music",
     botPermissions: ['SendMessages', 'EmbedLinks'],
 
     execute: async (bot: IBot, interaction: CommandInteraction) => {
@@ -14,17 +14,10 @@ module.exports = {
         const queue = bot.player.getQueue(interaction.guildId!)!;
 
         await interaction.deferReply();
+
+        await queue.setFilters({[module.exports.name]: true});
         
-        if (!queue.current) {
-            return interaction.editReply("Can't resume, I am not playing anything right now!");
-        }
-        
-        if (!queue.connection.paused) {
-            return interaction.editReply("The track is already playing");
-        }
-        queue.connection.resume();
-        // queue.setPaused(false);
-        return interaction.editReply("Resumed!");
+        return interaction.editReply(`Filter **${module.exports.name}** has been applied to the queue!`);
     }
 
 } as ISlashCommand;

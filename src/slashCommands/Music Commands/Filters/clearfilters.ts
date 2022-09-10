@@ -3,9 +3,9 @@ import { IBot } from "../../../utils/interfaces/IBot";
 import { ISlashCommand } from "../../../utils/interfaces/ISlashCommand";
 
 module.exports = {
-    name: "resume",
+    name: "clearfilters",
     category: "Music Commands",
-    description: "Resume the current track",
+    description: "Clear all filters from the music",
     botPermissions: ['SendMessages', 'EmbedLinks'],
 
     execute: async (bot: IBot, interaction: CommandInteraction) => {
@@ -14,17 +14,10 @@ module.exports = {
         const queue = bot.player.getQueue(interaction.guildId!)!;
 
         await interaction.deferReply();
+
+        await queue.setFilters();
         
-        if (!queue.current) {
-            return interaction.editReply("Can't resume, I am not playing anything right now!");
-        }
-        
-        if (!queue.connection.paused) {
-            return interaction.editReply("The track is already playing");
-        }
-        queue.connection.resume();
-        // queue.setPaused(false);
-        return interaction.editReply("Resumed!");
+        return interaction.editReply(`All filters have been cleared!`);
     }
 
 } as ISlashCommand;

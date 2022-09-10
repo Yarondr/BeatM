@@ -14,7 +14,7 @@ module.exports = {
         
         const guild = bot.client.guilds.cache.get(interaction.guildId!)!;
         const member: GuildMember = await getMember(guild, interaction.member?.user.id!);
-        const queue = bot.player.getQueue(interaction.guildId!);
+        const queue = bot.player.getQueue(interaction.guildId!)!;
 
         await interaction.deferReply();
         

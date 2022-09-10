@@ -105,7 +105,7 @@ module.exports = {
                 const id = interaction.customId;
                 try {
                     const file: IButton | undefined = require(`../components/buttons/${id}.ts`);
-                    let queue: Queue<IQueueMetadata> = bot.player.getQueue(interaction.guildId!);
+                    let queue: Queue<IQueueMetadata> = bot.player.getQueue(interaction.guildId!)!;
                     if (file) {
                         try {
                             await interaction.deferReply();

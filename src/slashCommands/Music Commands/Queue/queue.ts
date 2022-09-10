@@ -24,7 +24,7 @@ module.exports = {
         if (!interaction.isChatInputCommand()) return;
         
         const guild = bot.client.guilds.cache.get(interaction.guildId!)!;
-        const queue: Queue<IQueueMetadata> = bot.player.getQueue(interaction.guildId!);
+        const queue: Queue<IQueueMetadata> = bot.player.getQueue(interaction.guildId!)!;
 
         await interaction.deferReply();
         

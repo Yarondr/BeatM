@@ -17,7 +17,7 @@ module.exports = {
         const guild = bot.client.guilds.cache.get(interaction.guildId!)!;
         let queue = bot.player.getQueue(interaction.guildId!);
 
-        await interaction.deferReply();
+        await interaction.deferReply({ ephemeral: true });
         
         if (!queue || !queue.playing) {
             return interaction.editReply("No music is being played!");

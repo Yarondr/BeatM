@@ -176,7 +176,7 @@ export async function skip(member: GuildMember, queue: Queue<IQueueMetadata>, in
     }
 }
 
-export async function scheduleQueueLeave(bot: IBot, queue: Queue<IQueueMetadata>, guild: Guild, channel: TextChannel, voiceChannel: GuildChannelResolvable, empty: boolean = false) {
+export async function scheduleQueueLeave(bot: IBot, queue: Queue<IQueueMetadata> | undefined , guild: Guild, channel: TextChannel, voiceChannel: GuildChannelResolvable, empty: boolean = false) {
     const map = empty ? bot.emptyChannelsWaitingToLeave : bot.queuesWaitingToLeave;
 
     if (map.has(guild.id)) {
@@ -184,7 +184,7 @@ export async function scheduleQueueLeave(bot: IBot, queue: Queue<IQueueMetadata>
     }
 
     map.set(guild.id, setTimeout(async () => {
-        queue = bot.player.getQueue(queue.guild.id);
+        queue = bot.player.getQueue(queue!.guild.id);
         if (!queue) {
             queue = createQueue(guild, bot.player, channel);
             await queue.connect(voiceChannel);

@@ -24,7 +24,7 @@ module.exports = {
         if (!interaction.isChatInputCommand()) return;
         
         const timeToSkip: string = interaction.options.getString('time')!;
-        let queue = bot.player.getQueue(interaction.guildId!);
+        let queue = bot.player.getQueue(interaction.guildId!)!;
 
         await interaction.deferReply();
         

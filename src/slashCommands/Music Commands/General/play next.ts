@@ -28,7 +28,7 @@ module.exports = {
         const member: GuildMember = await getMember(guild, interaction.member?.user.id!);
         const channel = guild?.channels.cache.get(interaction.channelId!)! as TextChannel;
         const player = bot.player;
-        const queue: Queue<IQueueMetadata> = player.getQueue(interaction.guildId!);
+        const queue: Queue<IQueueMetadata> = player.getQueue(interaction.guildId!)!;
 
         if (!queue.current) {
             return interaction.reply("Can't add to queue, nothing is playing.");
