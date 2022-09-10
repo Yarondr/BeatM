@@ -1,8 +1,8 @@
 import { ApplicationCommandOptionType, AutocompleteInteraction, CommandInteraction, GuildMember, TextChannel } from "discord.js";
-import { getMember } from "../../utils/djs";
-import { IBot } from "../../utils/interfaces/IBot";
-import { ISlashCommand } from "../../utils/interfaces/ISlashCommand";
-import { basicSearch, createQueue, joinChannel, play, searchQuery } from "../../utils/player";
+import { getMember } from "../../../utils/djs";
+import { IBot } from "../../../utils/interfaces/IBot";
+import { ISlashCommand } from "../../../utils/interfaces/ISlashCommand";
+import { basicSearch, createQueue, joinChannel, play, searchQuery } from "../../../utils/player";
 
 module.exports = {
     name: "play",

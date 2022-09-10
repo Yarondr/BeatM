@@ -1,12 +1,13 @@
 import { CommandInteraction } from "discord.js";
-import { IBot } from "../../utils/interfaces/IBot";
-import { ISlashCommand } from "../../utils/interfaces/ISlashCommand";
+import { IBot } from "../../../utils/interfaces/IBot";
+import { ISlashCommand } from "../../../utils/interfaces/ISlashCommand";
 
 module.exports = {
-    name: "pause",
+    name: "forceskip",
     category: "Music Commands",
-    description: "Pause the current track",
+    description: "Force skip the current track",
     botPermissions: ['SendMessages', 'EmbedLinks'],
+    DJOnly: true,
 
     execute: async (bot: IBot, interaction: CommandInteraction) => {
         if (!interaction.isChatInputCommand()) return;
@@ -16,16 +17,16 @@ module.exports = {
         await interaction.deferReply();
         
         if (!queue.current) {
-            return interaction.editReply("Can't pause, I am not playing anything right now!");
+            return interaction.editReply("Can't skip, I am not playing anything right now!");
         }
-        
+
+        const success = queue.skip();
         if (queue.connection.paused) {
             queue.connection.resume();
-            return interaction.editReply("Resumed the track.");
-        } else {    
-            queue.connection.pause(true);
-            return interaction.editReply("Paused the track!");
         }
+        const reply = success ? "Skipped!" : "Something went wrong...";
+        return interaction.editReply(reply);
+        
     }
 
-} as ISlashCommand;
+} as ISlashCommand

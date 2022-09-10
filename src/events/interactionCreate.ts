@@ -4,6 +4,7 @@ import { getMember } from "../utils/djs";
 import { IBot } from "../utils/interfaces/IBot"
 import { IButton } from "../utils/interfaces/IButton";
 import { ICommandArgs } from "../utils/interfaces/ICommandArgs";
+import { IDropdown } from "../utils/interfaces/IDropdown";
 import { IEvent } from "../utils/interfaces/IEvent"
 import { IQueueMetadata } from "../utils/interfaces/IQueueMetadata";
 import { ISlashCommand } from "../utils/interfaces/ISlashCommand";
@@ -19,7 +20,7 @@ module.exports = {
         const channel = interaction.channel as TextChannel;
         const member: GuildMember = interaction.member;
 
-        if (!interaction.isCommand() && !interaction.isAutocomplete() && interaction.type != InteractionType.MessageComponent) return;
+        if (!interaction.isCommand() && !interaction.isAutocomplete() && interaction.type != InteractionType.MessageComponent && !interaction.isSelectMenu()) return;
         if (!interaction.inGuild()) return;
 
             
@@ -27,9 +28,27 @@ module.exports = {
         let customButtonId: string | undefined;
 
         if (interaction.type == InteractionType.MessageComponent) {
-            customButtonId = interaction.customId;
-            if (customButtonId.startsWith("volume")) customButtonId = "volume";
-            else customButtonId = customButtonId.replaceAll(" ", "");
+            if (interaction.isButton()) {
+                customButtonId = interaction.customId;
+                if (customButtonId.startsWith("volume")) customButtonId = "volume";
+                else customButtonId = customButtonId.replaceAll(" ", "");
+            } else if (interaction.isSelectMenu()) {
+                const selectedOption = interaction.values[0];
+                try {
+                    const file: IDropdown | undefined = require(`../components/dropdowns/help/${selectedOption}.ts`);
+                    if (file) {
+                        try {
+                            await interaction.deferReply({ ephemeral: true });
+
+                            return await file.execute(bot, interaction);
+                        } catch (error) {
+                            console.log(error);
+                        }
+                    }
+                } catch (err) {
+                    return interaction.reply("This dropdown does not exist!");
+                }
+            }
         }
 
         interaction.type == InteractionType.MessageComponent
@@ -82,32 +101,32 @@ module.exports = {
         }
 
         if (interaction.type == InteractionType.MessageComponent) {
-            if (!interaction.isButton()) return;
-            const id = interaction.customId;
-            try {
-                const file: IButton | undefined = require(`../components/buttons/${id}.ts`);
-                let queue: Queue<IQueueMetadata> = bot.player.getQueue(interaction.guildId!);
-                if (file) {
-                    try {
-                        await interaction.deferReply();
+            if (interaction.isButton()) {
+                const id = interaction.customId;
+                try {
+                    const file: IButton | undefined = require(`../components/buttons/${id}.ts`);
+                    let queue: Queue<IQueueMetadata> = bot.player.getQueue(interaction.guildId!);
+                    if (file) {
+                        try {
+                            await interaction.deferReply();
 
-                        const args: ICommandArgs = {
-                            guild: guild!,
-                            member: member,
-                            channel: channel
+                            const args: ICommandArgs = {
+                                guild: guild!,
+                                member: member,
+                                channel: channel
+                            }
+                            const message: Message = await file.execute(bot, queue, interaction, args);
+                            setTimeout(async () => {
+                                await message.delete();
+                            }, 5000);
+                        } catch (error) {
+                            console.log(error);
                         }
-                        const message: Message = await file.execute(bot, queue, interaction, args);
-                        setTimeout(async () => {
-                            await message.delete();
-                        }, 5000);
-                    } catch (error) {
-                        console.log(error);
                     }
+                } catch (err) {
+                    return interaction.reply("This button does not exist!");
                 }
-            } catch (err) {
-                return interaction.reply("This button does not exist!");
             }
-
         } else {
             try {
                 await slashCommand.execute(bot, interaction);

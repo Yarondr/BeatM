@@ -1,11 +1,11 @@
 import { ApplicationCommandOptionType, CommandInteraction } from "discord.js";
-import { IBot } from "../../utils/interfaces/IBot";
-import { ISlashCommand } from "../../utils/interfaces/ISlashCommand";
+import { IBot } from "../../../utils/interfaces/IBot";
+import { ISlashCommand } from "../../../utils/interfaces/ISlashCommand";
 
 module.exports = {
-    name: "jumpto",
+    name: "remove",
     category: "Music Commands",
-    description: "Jump to a specific song in the queue.",
+    description: "Remove a specific song from the queue.",
     botPermissions: ['SendMessages', 'EmbedLinks'],
     DJOnly: true,
     options: [
@@ -25,15 +25,15 @@ module.exports = {
         let queue = bot.player.getQueue(interaction.guildId!);
 
         await interaction.deferReply();
-
+        
         if (queue.tracks.length === 0) {
-            return interaction.editReply("Can't jump to a song when there are no songs in the queue!");
+            return interaction.editReply("Can't remove a song from the queue, because the queue is empty!");
         }
         if (songIndex >= queue.tracks.length) {
             return interaction.editReply("Invalid song number!");
         }
 
-        queue.skipTo(songIndex);
-        return interaction.editReply(`Jumped to song number ${songIndex + 1}!`);
+        queue.tracks.splice(songIndex, 1);
+        return interaction.editReply("Removed song from queue!");
     }
 } as ISlashCommand

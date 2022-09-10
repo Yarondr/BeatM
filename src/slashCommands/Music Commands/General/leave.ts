@@ -1,12 +1,12 @@
 import { CommandInteraction, GuildMember } from "discord.js";
-import { getMember } from "../../utils/djs";
-import { IBot } from "../../utils/interfaces/IBot";
-import { ISlashCommand } from "../../utils/interfaces/ISlashCommand";
+import { getMember } from "../../../utils/djs";
+import { IBot } from "../../../utils/interfaces/IBot";
+import { ISlashCommand } from "../../../utils/interfaces/ISlashCommand";
 
 module.exports = {
-    name: "disconnect",
+    name: "leave",
     category: "Music Commands",
-    description: "Disconnect from the voice channel and clears the queue",
+    description: "Leave the voice channel and clears the queue",
     botPermissions: ['SendMessages', 'EmbedLinks'],
     
     execute: async (bot: IBot, interaction: CommandInteraction) => {

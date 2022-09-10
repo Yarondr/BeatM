@@ -1,16 +1,15 @@
 import { CommandInteraction, EmbedBuilder } from "discord.js";
-import { getMember } from "../../utils/djs";
-import { IBot } from "../../utils/interfaces/IBot";
-import { ISlashCommand } from "../../utils/interfaces/ISlashCommand";
-import { formatViews } from "../../utils/numbers";
-import { convertMilisecondsToTime } from "../../utils/player";
+import { getMember } from "../../../utils/djs";
+import { IBot } from "../../../utils/interfaces/IBot";
+import { ISlashCommand } from "../../../utils/interfaces/ISlashCommand";
+import { formatViews } from "../../../utils/numbers";
+import { convertMilisecondsToTime } from "../../../utils/player";
 
 module.exports = {
     name: "save",
     category: "Music Commands",
     description: "Send the current song to your DMs.",
     botPermissions: ['SendMessages', 'EmbedLinks'],
-    DJOnly: true,
     
     execute: async (bot: IBot, interaction: CommandInteraction) => {
         if (!interaction.isChatInputCommand()) return;

@@ -1,7 +1,7 @@
 import { QueueRepeatMode } from "discord-player";
 import { CommandInteraction } from "discord.js";
-import { IBot } from "../../utils/interfaces/IBot";
-import { ISlashCommand } from "../../utils/interfaces/ISlashCommand";
+import { IBot } from "../../../utils/interfaces/IBot";
+import { ISlashCommand } from "../../../utils/interfaces/ISlashCommand";
 
 module.exports = {
     name: "queueloop",

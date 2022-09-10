@@ -1,7 +1,7 @@
 import { ApplicationCommandOptionType, CommandInteraction } from "discord.js";
-import { IBot } from "../../utils/interfaces/IBot";
-import { ISlashCommand } from "../../utils/interfaces/ISlashCommand";
-import { isIntNumber } from "../../utils/numbers";
+import { IBot } from "../../../utils/interfaces/IBot";
+import { ISlashCommand } from "../../../utils/interfaces/ISlashCommand";
+import { isIntNumber } from "../../../utils/numbers";
 
 module.exports = {
     name: "volume",

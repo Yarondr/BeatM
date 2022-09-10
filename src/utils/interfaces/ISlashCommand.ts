@@ -2,8 +2,10 @@ import { ApplicationCommandOptionData, AutocompleteInteraction, CommandInteracti
 import { IBot } from "./IBot";
 
 export interface ISlashCommand {
+    originalName?: string;
     name: string,
     category: string,
+    subcategory?: string,
     description: string,
     devOnly?: boolean,
     DJOnly?: boolean,

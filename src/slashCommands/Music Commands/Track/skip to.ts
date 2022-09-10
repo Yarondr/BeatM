@@ -1,8 +1,8 @@
 import { ApplicationCommandOptionType, CommandInteraction } from "discord.js";
-import { IBot } from "../../utils/interfaces/IBot";
-import { ISlashCommand } from "../../utils/interfaces/ISlashCommand";
-import { isValidDuration } from "../../utils/numbers";
-import { convertMilisecondsToTime, playerDurationToMiliseconds } from "../../utils/player";
+import { IBot } from "../../../utils/interfaces/IBot";
+import { ISlashCommand } from "../../../utils/interfaces/ISlashCommand";
+import { isValidDuration } from "../../../utils/numbers";
+import { convertMilisecondsToTime, playerDurationToMiliseconds } from "../../../utils/player";
 
 module.exports = {
     name: "skipto",

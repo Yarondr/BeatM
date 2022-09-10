@@ -1,8 +1,8 @@
 import { CommandInteraction, GuildMember, TextChannel } from "discord.js";
-import { getMember } from "../../utils/djs";
-import { IBot } from "../../utils/interfaces/IBot";
-import { ISlashCommand } from "../../utils/interfaces/ISlashCommand";
-import { createQueue, joinChannel } from "../../utils/player";
+import { getMember } from "../../../utils/djs";
+import { IBot } from "../../../utils/interfaces/IBot";
+import { ISlashCommand } from "../../../utils/interfaces/ISlashCommand";
+import { createQueue, joinChannel } from "../../../utils/player";
 
 module.exports = {
     name: "join",

@@ -1,7 +1,7 @@
 import { CommandInteraction, EmbedBuilder } from "discord.js";
-import { IBot } from "../../utils/interfaces/IBot";
-import { ISlashCommand } from "../../utils/interfaces/ISlashCommand";
-import { convertMilisecondsToTime } from "../../utils/player";
+import { IBot } from "../../../utils/interfaces/IBot";
+import { ISlashCommand } from "../../../utils/interfaces/ISlashCommand";
+import { convertMilisecondsToTime } from "../../../utils/player";
 
 module.exports = {
     name: "nowplaying",
