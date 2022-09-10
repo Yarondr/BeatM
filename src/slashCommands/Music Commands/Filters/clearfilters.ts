@@ -15,7 +15,9 @@ module.exports = {
 
         await interaction.deferReply();
 
-        await queue.setFilters();
+        queue.getFiltersEnabled().forEach(async (filter: any) => {
+            await queue.setFilters({[filter]: false});
+        });
         
         return interaction.editReply(`All filters have been cleared!`);
     }

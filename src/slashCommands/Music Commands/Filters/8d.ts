@@ -17,7 +17,7 @@ module.exports = {
 
         await queue.setFilters({[module.exports.name]: true});
         
-        return interaction.editReply(`Filter **${module.exports.name}** has been applied to the queue!`);
+        return interaction.editReply(`Filter **${module.exports.name}** has been applied to the music!`);
     }
 
 } as ISlashCommand;
