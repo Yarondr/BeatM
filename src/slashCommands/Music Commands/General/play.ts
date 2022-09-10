@@ -48,6 +48,7 @@ module.exports = {
         if (!interaction.isAutocomplete()) return;
         const focusedValue = interaction.options.getFocused();
         const search = focusedValue;
+        if (search.startsWith("http")) return await interaction.respond([]);
         const choices: string[] = [];
 
         const guild = bot.client.guilds.cache.get(interaction.guildId!)!;
