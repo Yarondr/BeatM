@@ -9,13 +9,6 @@ export function loadSlashCommands(bot: IBot, reload: boolean) {
     
     const commandsPath = path.join(__dirname, "../slashCommands");
     getFolderCommands(bot, commandsPath);
-    bot.slashCommands.forEach((command) => {
-        console.log({
-            name: command.name,
-            category: command.category,
-            subcategory: command.subcategory,
-        })
-    })
     console.log(`Loaded ${slashCommands.size} slash commands`)
 }
 
