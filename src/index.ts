@@ -1,20 +1,18 @@
 console.log("Starting bot...")
-import { Client, GatewayIntentBits, Collection, VoiceChannel, StageChannel } from 'discord.js';
+import { Player } from 'discord-player';
+import { Client, Collection, GatewayIntentBits } from 'discord.js';
 import dotenv from 'dotenv';
-import { loadEvents } from './handlers/eventsHandler';
 import { loadCommands } from './handlers/commandsHandler';
+import { loadEvents } from './handlers/eventsHandler';
 import { loadSlashCommands } from './handlers/slashCommandsHandler';
 import { IBot } from './utils/interfaces/IBot';
-import { ISlashCommand } from './utils/interfaces/ISlashCommand';
-import { IEvent } from './utils/interfaces/IEvent';
 import { ICommand } from './utils/interfaces/ICommand';
-import { Player, Queue } from 'discord-player';
+import { IEvent } from './utils/interfaces/IEvent';
 import { IQueueMetadata } from './utils/interfaces/IQueueMetadata';
-import { createQueue, scheduleQueueLeave } from './utils/player';
+import { ISlashCommand } from './utils/interfaces/ISlashCommand';
 dotenv.config();
 
-const myTestServerId = process.env.TEST_SERVER || '';
-const testServers = [myTestServerId];
+const testServers = process.env.TEST_SERVERS?.split(", ") || [];
 
 export const owners = [process.env.OWNER_ID || ''];
 
