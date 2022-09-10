@@ -39,7 +39,11 @@ module.exports = {
 
         if (interaction.isAutocomplete()) {
             if (slashCommand?.autocomplete) {
-                slashCommand.autocomplete(bot, interaction);
+                try {
+                    slashCommand.autocomplete(bot, interaction);
+                } catch (error) {
+                    console.log(error);
+                }
             }
             return;
         }

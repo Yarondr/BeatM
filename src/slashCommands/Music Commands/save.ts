@@ -1,7 +1,9 @@
-import { CommandInteraction } from "discord.js";
+import { CommandInteraction, EmbedBuilder } from "discord.js";
 import { getMember } from "../../utils/djs";
 import { IBot } from "../../utils/interfaces/IBot";
 import { ISlashCommand } from "../../utils/interfaces/ISlashCommand";
+import { formatViews } from "../../utils/numbers";
+import { convertMilisecondsToTime } from "../../utils/player";
 
 module.exports = {
     name: "save",
@@ -24,7 +26,18 @@ module.exports = {
 
         const song = queue.current;
         const user = await getMember(guild, interaction.member?.user.id!);
-        const send = await user.send(`You requested to save the song **${song.title}** to your DMs. Here you go!\n${song.url}`);
+        const embed = new EmbedBuilder()
+            .setColor("Random")
+            .setTitle(`Song: ${song.title}`)
+            .setURL(song.url)
+            .addFields(
+                {name: "Duration", value: convertMilisecondsToTime(song.durationMS), inline: true},
+                {name: "Views", value: formatViews(song.views), inline: true},
+                {name: "Song URL:", value: song.url},
+            )
+            .setThumbnail(song.thumbnail)
+            .setTimestamp();
+        const send = await user.send({content: `You requested to save the song **${song.title}** to your DMs. Here you go!`, embeds: [embed]});
         if (send) {
             return interaction.editReply(`I sent the song **${song.title}** to your DMs!`);
         } else {
