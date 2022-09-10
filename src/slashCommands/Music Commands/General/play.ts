@@ -3,6 +3,7 @@ import { getMember } from "../../../utils/djs";
 import { IBot } from "../../../utils/interfaces/IBot";
 import { ISlashCommand } from "../../../utils/interfaces/ISlashCommand";
 import { basicSearch, createQueue, joinChannel, play, searchQuery } from "../../../utils/player";
+import { isURL } from "../../../utils/url";
 
 module.exports = {
     name: "play",
@@ -48,7 +49,7 @@ module.exports = {
         if (!interaction.isAutocomplete()) return;
         const focusedValue = interaction.options.getFocused();
         const search = focusedValue;
-        if (search.startsWith("http")) return await interaction.respond([]);
+        if (isURL(search)) return await interaction.respond([{name: search, value: search}]);
         const choices: string[] = [];
 
         const guild = bot.client.guilds.cache.get(interaction.guildId!)!;
