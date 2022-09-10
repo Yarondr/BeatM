@@ -37,7 +37,10 @@ function getFolderCommands(bot: IBot, folderPath: string, mainCategory: string =
 
 export function getSubcategoryCommands(bot: IBot, subcategory: string) {
     let order: string[];
-    subcategory == "General" ? order = generalCommandsOrder : subcategory == "Track" ? order = trackCommandsOrder : order = queueCommandsOrder;
+    subcategory == "General" ? order = generalCommandsOrder
+        : subcategory == "Track" ? order = trackCommandsOrder
+        : subcategory == "Queue" ? order = queueCommandsOrder 
+        : order = filtersCommandsOrder;
 
     return bot.slashCommands
         .filter((command) => order.includes(command.name))
@@ -78,4 +81,18 @@ const queueCommandsOrder = [
     'move',
     'shuffle',
     'queueloop'
+]
+
+const filtersCommandsOrder = [
+    '8d',
+    'bassboost',
+    'nightcore',
+    'karaoke',
+    'treble',
+    'tremolo',
+    'vibrato',
+    'vaporwave',
+    'soft',
+    'pop',
+    'clearfilters'
 ]
