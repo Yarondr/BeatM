@@ -39,12 +39,6 @@ module.exports = {
                             description: "Controls the queue",
                             value: "queue",
                             emoji: "📃"
-                        },
-                        {
-                            label: "Filters",
-                            description: "Controls the audio filters",
-                            value: "filters",
-                            emoji: "🎼"
                         }
                     )
             );
@@ -55,8 +49,7 @@ module.exports = {
             .setDescription("**Select a category from the following:**\n\n" +
                             "⚙️ **General**\n" +
                             "🎶 **Track\n**" +
-                            "📃 **Queue**\n" +
-                            "🎼 **Filters**\n\n" +
+                            "📃 **Queue**\n\n" +
                             "**Try these basic commands to get started:**\n" +
                             "`/play`**:** Enter a song name or link to play\n" +
                             "`/search`**:** Search for a song to play\n")

@@ -21,19 +21,19 @@ module.exports = {
     execute: async (bot: IBot, interaction: CommandInteraction) => {
         if (!interaction.isChatInputCommand()) return;
         
-        const songIndex = interaction.options.getInteger('song-number')! -1;
-        let queue = bot.manager.getQueue(interaction.guildId!)!;
+        const songIndex = interaction.options.getInteger('song-number')!;
+        let player = bot.manager.get(interaction.guildId!)!;
 
         await interaction.deferReply();
 
-        if (queue.tracks.length === 0) {
+        if (player.queue.length <= 1) {
             return interaction.editReply("Can't jump to a song when there are no songs in the queue!");
         }
-        if (songIndex >= queue.tracks.length) {
+        if (songIndex - 1 >= player.queue.length - 1) {
             return interaction.editReply("Invalid song number!");
         }
 
-        queue.skipTo(songIndex);
-        return interaction.editReply(`Jumped to song number ${songIndex + 1}!`);
+        player.stop(songIndex);
+        return interaction.editReply(`Jumped to song number ${songIndex}!`);
     }
 } as ISlashCommand

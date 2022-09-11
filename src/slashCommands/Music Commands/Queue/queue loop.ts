@@ -24,7 +24,6 @@ module.exports = {
             return interaction.editReply("Queue looped!");
         } else {
             player.setQueueRepeat(false);
-            player.setTrackRepeat(false);
             return interaction.editReply("Queue loop disabled!");
         }
     }

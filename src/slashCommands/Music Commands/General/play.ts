@@ -37,7 +37,7 @@ module.exports = {
         const player = createPlayer(guild, manager, member.voice.channel, channel);
         joinChannel(bot, member, interaction, player, guild, channel);
 
-        const res = await searchQuery(player, member, interaction, channel);
+        const res = await searchQuery(bot.manager, member, interaction);
         if (!res || res.loadType === "NO_MATCHES") return interaction.editReply({content: "No results found."});
         if (res?.loadType === "LOAD_FAILED") return interaction.editReply({ content: "Failed to load"});
         

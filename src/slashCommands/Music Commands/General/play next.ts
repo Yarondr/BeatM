@@ -1,4 +1,3 @@
-import { Queue } from "discord-player";
 import { ApplicationCommandOptionType, CommandInteraction, GuildMember, TextChannel } from "discord.js";
 import { getMember } from "../../../utils/djs";
 import { IBot } from "../../../utils/interfaces/IBot";
@@ -27,22 +26,20 @@ module.exports = {
         const guild = bot.client.guilds.cache.get(interaction.guildId!)!;
         const member: GuildMember = await getMember(guild, interaction.member?.user.id!);
         const channel = guild?.channels.cache.get(interaction.channelId!)! as TextChannel;
-        const player = bot.manager;
-        const queue: Queue<IQueueMetadata> = player.getQueue(interaction.guildId!)!;
+        const player = bot.manager.get(interaction.guildId!)!;
 
-        if (!queue.current) {
+        if (!player.queue.current) {
             return interaction.reply("Can't add to queue, nothing is playing.");
         }
         await interaction.deferReply();
 
-        const connected: boolean = queue.connection ? true : false;
-        joinChannel(bot, connected, queue, member, interaction, player, guild, channel);
+        joinChannel(bot, member, interaction, player, guild, channel);
         
-        const res = await searchQuery(player, member, interaction, channel);
+        const res = await searchQuery(bot.manager, member, interaction);
         if (!res || !res.tracks.length) return interaction.editReply({content: "No results found."});
         const newTracks = res.playlist ? res.tracks : [res.tracks[0]];
-        queue.tracks.unshift(...newTracks);
+        player.queue.unshift(...newTracks);
         
-        play(queue, res, member, interaction);
+        play(player, res, member, interaction);
     }
 } as ISlashCommand;

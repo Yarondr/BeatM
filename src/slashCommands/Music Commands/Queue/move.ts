@@ -30,23 +30,23 @@ module.exports = {
         
         const songIndex = interaction.options.getInteger('song-number')! -1;
         const newSongIndex = interaction.options.getInteger('new-song-number')! -1;
-        let queue = bot.manager.getQueue(interaction.guildId!)!;
+        let player = bot.manager.get(interaction.guildId!)!;
 
         await interaction.deferReply();
 
-        if (queue.tracks.length === 0) {
+        if (player.queue.length <= 1) {
             return interaction.editReply("Can't move a song when there are no songs in the queue!");
         }
-        if (songIndex >= queue.tracks.length) {
+        if (songIndex >= player.queue.length - 1) {
             return interaction.editReply("Invalid song number!");
         }
-        if (newSongIndex >= queue.tracks.length) {
+        if (newSongIndex >= player.queue.length - 1) {
             return interaction.editReply("Invalid new song number!");
         }
 
-        const song = queue.tracks[songIndex];
-        queue.tracks.splice(songIndex, 1);
-        queue.tracks.splice(newSongIndex, 0, song);
+        const song = player.queue[songIndex + 1];
+        player.queue.splice(songIndex, 1);
+        player.queue.splice(newSongIndex, 0, song);
         return interaction.editReply(`Moved song to position ${newSongIndex + 1}!`);
     }
 } as ISlashCommand

@@ -20,12 +20,11 @@ module.exports = {
             return interaction.editReply("Can't skip, I am not playing anything right now!");
         }
 
-        const success = player.stop(1);
+        player.stop();
         if (player.paused) {
             player.pause(false);
         }
-        const reply = success ? "Skipped!" : "Something went wrong...";
-        return interaction.editReply(reply);
+        return interaction.editReply("Skipped!");
         
     }
 

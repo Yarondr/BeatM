@@ -59,18 +59,18 @@ const bot: IBot = {
     emptyChannelsWaitingToLeave: new Map<string, NodeJS.Timeout>()
 };
 
-bot.manager.on('trackStart', (queue, track) => {
-    if (bot.queuesWaitingToLeave.has(queue.guild.id)) {
-        clearTimeout(bot.queuesWaitingToLeave.get(queue.guild.id));
-        bot.queuesWaitingToLeave.delete(queue.guild.id);
-    }
-    const metadata = queue.metadata as IQueueMetadata;
-    metadata.skipVotes = [];
-});
+// bot.manager.on('trackStart', (queue, track) => {
+//     if (bot.queuesWaitingToLeave.has(queue.guild.id)) {
+//         clearTimeout(bot.queuesWaitingToLeave.get(queue.guild.id));
+//         bot.queuesWaitingToLeave.delete(queue.guild.id);
+//     }
+//     const metadata = queue.metadata as IQueueMetadata;
+//     metadata.skipVotes = [];
+// });
 
-bot.manager.on('debug', (queue, message) => {
-    // console.log(message);
-});
+// bot.manager.on('debug', (queue, message) => {
+//     // console.log(message);
+// });
 
 loadEvents(bot, false);
 loadCommands(bot, false);
@@ -97,14 +97,14 @@ client.login(process.env.TOKEN);
  * V clear queue
  * V loop
  * V queue loop
- * remove from queue
- * stop
- * volume
- * play next
- * save
- * search
- * jump to track
- * controller
- * move track (to another position in queue)
- * - help
+ * V remove from queue
+ * V stop
+ * V volume
+ * V play next
+ * V save
+ * V search
+ * V jump to track
+ * V controller
+ * V move track (to another position in queue)
+ * V help
  */

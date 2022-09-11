@@ -21,11 +21,9 @@ module.exports = {
         }
         if (!player.trackRepeat) {
             player.setTrackRepeat(true)
-            player.setQueueRepeat(false);
             return interaction.editReply("Looped!");
         } else {
             player.setTrackRepeat(false)
-            player.setQueueRepeat(false);
             return interaction.editReply("Loop disabled!");
         }
     }

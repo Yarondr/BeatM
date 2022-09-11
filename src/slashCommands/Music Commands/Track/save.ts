@@ -15,26 +15,26 @@ module.exports = {
         if (!interaction.isChatInputCommand()) return;
         
         const guild = bot.client.guilds.cache.get(interaction.guildId!)!;
-        let queue = bot.manager.getQueue(interaction.guildId!);
+        let player = bot.manager.get(interaction.guildId!)!;
 
         await interaction.deferReply({ ephemeral: true });
         
-        if (!queue || !queue.playing) {
+        const song = player.queue.current;
+        if (!song) {
             return interaction.editReply("No music is being played!");
         }
 
-        const song = queue.current;
         const user = await getMember(guild, interaction.member?.user.id!);
         const embed = new EmbedBuilder()
             .setColor("Random")
             .setTitle(`Song: ${song.title}`)
-            .setURL(song.url)
+            .setURL(song.uri!)
             .addFields(
-                {name: "Duration", value: convertSecondsToTime(song.durationMS), inline: true},
-                {name: "Views", value: formatViews(song.views), inline: true},
-                {name: "Song URL:", value: song.url},
+                {name: "Duration", value: convertSecondsToTime(song.duration!), inline: true},
+                // {name: "Views", value: formatViews(song.viws), inline: true},
+                {name: "Song URL:", value: song.uri!},
             )
-            .setThumbnail(song.thumbnail)
+            .setThumbnail(song.thumbnail!)
             .setTimestamp();
         const send = await user.send({content: `You requested to save the song **${song.title}** to your DMs. Here you go!`, embeds: [embed]});
         if (send) {

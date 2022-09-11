@@ -22,18 +22,18 @@ module.exports = {
         if (!interaction.isChatInputCommand()) return;
         
         const songIndex = interaction.options.getInteger('song-number')! -1;
-        let queue = bot.manager.getQueue(interaction.guildId!)!;
+        let player = bot.manager.get(interaction.guildId!)!;
 
         await interaction.deferReply();
         
-        if (queue.tracks.length === 0) {
+        if (player.queue.length === 1) {
             return interaction.editReply("Can't remove a song from the queue, because the queue is empty!");
         }
-        if (songIndex >= queue.tracks.length) {
+        if (songIndex >= player.queue.length - 1) {
             return interaction.editReply("Invalid song number!");
         }
 
-        queue.tracks.splice(songIndex, 1);
+        player.queue.splice(songIndex, 1);
         return interaction.editReply("Removed song from queue!");
     }
 } as ISlashCommand

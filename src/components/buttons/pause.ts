@@ -1,5 +1,5 @@
-import { Queue } from "discord-player";
-import { ButtonInteraction, GuildMember } from "discord.js";
+import { ButtonInteraction } from "discord.js";
+import { Player } from "erela.js";
 import { embedContent } from "../../utils/embedContent";
 import { IBot } from "../../utils/interfaces/IBot";
 import { IButton } from "../../utils/interfaces/IButton";
@@ -7,18 +7,18 @@ import { ICommandArgs } from "../../utils/interfaces/ICommandArgs";
 
 
 module.exports = {
-    execute: async (bot: IBot, queue: Queue, interaction: ButtonInteraction, args: ICommandArgs) => {        
+    execute: async (bot: IBot, player: Player, interaction: ButtonInteraction, args: ICommandArgs) => {        
         const { member } = args;
         
-        if (!queue.current) {
+        if (!player.queue.current) {
             return interaction.editReply({ embeds: [embedContent("Can't pause, I am not playing anything right now!", member)] });
         }
         
-        if (queue.connection.paused) {
-            queue.connection.resume();
+        if (player.paused) {
+            player.pause(false);
             return interaction.editReply({ embeds: [embedContent("Resumed the track.", member)] });
         } else {    
-            queue.connection.pause(true);
+            player.pause(true);
             return interaction.editReply({ embeds: [embedContent("Paused the track!", member)] });
         }
     }

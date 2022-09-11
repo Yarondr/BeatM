@@ -1,5 +1,5 @@
 import { ButtonInteraction, CommandInteraction, EmbedBuilder, Guild, GuildChannelResolvable, GuildMember, TextChannel, VoiceBasedChannel } from "discord.js";
-import { Manager, Player, SearchResult} from "erela.js";
+import { Manager, Player, PlaylistInfo, Queue, SearchResult, Track, UnresolvedTrack} from "erela.js";
 import { embedContent } from "./embedContent";
 import { IBot } from "./interfaces/IBot";
 import { IQueueMetadata } from "./interfaces/IQueueMetadata";
@@ -26,20 +26,16 @@ export function playerDurationToSeconds(duration: string): number {
     return (hours * 60 * 60 + minutes * 60 + seconds);
 }
 
-export function playlistLength(playlist: Playlist) {
-    let length = 0;
-    playlist.tracks.forEach(track => {
-        length += track.durationMS;
-    })
-    return convertSecondsToTime(length);
+export function playlistLength(playlist: PlaylistInfo) {
+    return convertSecondsToTime(playlist.duration);
 }
 
-export function isTrackLive(track: Track) {
-    return track.durationMS == 0;
+export function isTrackLive(track: Track | UnresolvedTrack) {
+    return track.duration === 0;
 }
 
 export function haveLiveTrack(queue: Queue) {
-    return queue.tracks.some(track => isTrackLive(track));
+    return queue.some(track => isTrackLive(track));
 }
 
 export function checkSkippingPlayers(skip_votes: string[], voice: VoiceBasedChannel) {
@@ -68,8 +64,8 @@ export function isDJ(member: GuildMember) {
 
 export function buildPlayEmbed(res: SearchResult, embedTitle: string, member: GuildMember, index:number = 0) {
     const track = res.tracks[index];
-    const url = res.playlist ? res.playlist.url : track.url;
-    let duration = res.playlist ? playlistLength(res.playlist) : convertSecondsToTime(track.durationMS);
+    const url = res.playlist ? res.playlist.selectedTrack?.uri! : track.uri;
+    let duration = res.playlist ? playlistLength(res.playlist) : convertSecondsToTime(track.duration);
     if (!res.playlist && isTrackLive(track)) duration = "LIVE";
 
     return new EmbedBuilder()
@@ -86,11 +82,11 @@ export function buildPlayEmbed(res: SearchResult, embedTitle: string, member: Gu
         // TODO: set footer with loop and queue loop status
 }
 
-export async function searchQuery(player: Player, member: GuildMember, interaction: CommandInteraction, channel: TextChannel) {
+export async function searchQuery(manager: Manager, member: GuildMember, interaction: CommandInteraction) {
     if (!interaction.isChatInputCommand()) return;
     const search = interaction.options.getString('search-query')!;
     await interaction.editReply("Searching...");
-    return await basicSearch(member, player, search);
+    return await basicSearch(member, manager, search);
 }
 
 export async function basicSearch(member: GuildMember, manager: Manager, search: any) {
@@ -111,11 +107,12 @@ export async function play(player: Player, res: SearchResult, member: GuildMembe
     }
 }
 
-export function setupOnQueueFinish(bot: IBot, queue: Queue<IQueueMetadata>, guild: Guild, player: Player, channel: TextChannel, voiceChannel: GuildChannelResolvable) {
-    queue.connection.on('finish', async () => {
-        scheduleQueueLeave(bot, queue, guild, channel, voiceChannel);
-    });
-}
+//TODO:
+// export function setupOnQueueFinish(bot: IBot, queue: Queue<IQueueMetadata>, guild: Guild, player: Player, channel: TextChannel, voiceChannel: GuildChannelResolvable) {
+//     queue.connection.on('finish', async () => {
+//         scheduleQueueLeave(bot, queue, guild, channel, voiceChannel);
+//     });
+// }
 
 export async function joinChannel(bot: IBot, member: GuildMember, interaction: CommandInteraction, player: Player, guild: Guild, channel: TextChannel) {
     if (!member.voice.channel) return;
@@ -144,7 +141,7 @@ export async function skip(member: GuildMember, player: Player, interaction: Com
     }
     skipVotes.push(member.id);
     if (skipVotes.length >= voiceMembers) {
-        player.stop(1);
+        player.stop();
         if (player.paused) {
             player.pause(false);
         }
@@ -158,20 +155,21 @@ export async function skip(member: GuildMember, player: Player, interaction: Com
     }
 }
 
-export async function scheduleQueueLeave(bot: IBot, queue: Queue<IQueueMetadata> | undefined , guild: Guild, channel: TextChannel, voiceChannel: GuildChannelResolvable, empty: boolean = false) {
-    const map = empty ? bot.emptyChannelsWaitingToLeave : bot.queuesWaitingToLeave;
+//TODO:
+// export async function scheduleQueueLeave(bot: IBot, queue: Queue<IQueueMetadata> | undefined , guild: Guild, channel: TextChannel, voiceChannel: GuildChannelResolvable, empty: boolean = false) {
+//     const map = empty ? bot.emptyChannelsWaitingToLeave : bot.queuesWaitingToLeave;
 
-    if (map.has(guild.id)) {
-        clearTimeout(map.get(guild.id));
-    }
+//     if (map.has(guild.id)) {
+//         clearTimeout(map.get(guild.id));
+//     }
 
-    map.set(guild.id, setTimeout(async () => {
-        queue = bot.manager.getQueue(queue!.guild.id);
-        if (!queue) {
-            queue = createPlayer(guild, bot.manager, channel);
-            await queue.connect(voiceChannel);
-        }
-        queue.destroy(true);
-        map.delete(queue.guild.id);
-    }, 60000));
-}
+//     map.set(guild.id, setTimeout(async () => {
+//         queue = bot.manager.getQueue(queue!.guild.id);
+//         if (!queue) {
+//             queue = createPlayer(guild, bot.manager, channel);
+//             await queue.connect(voiceChannel);
+//         }
+//         queue.destroy(true);
+//         map.delete(queue.guild.id);
+//     }, 60000));
+// }
