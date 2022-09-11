@@ -12,15 +12,15 @@ module.exports = {
     execute: async (bot: IBot, interaction: CommandInteraction) => {
         if (!interaction.isChatInputCommand()) return;
         
-        let queue = bot.player.getQueue(interaction.guildId!)!;
+        let player = bot.manager.get(interaction.guildId!)!;
 
         await interaction.deferReply();
                 
-        if (queue.tracks.length == 0) {
+        if (player.queue.length == 0) {
             return interaction.editReply("Can't clear, the queue is already empty!");
         }
 
-        queue.clear();
+        player.queue.clear();
         await interaction.editReply("Cleared!");
     }
 } as ISlashCommand

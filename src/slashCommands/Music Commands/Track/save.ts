@@ -3,7 +3,7 @@ import { getMember } from "../../../utils/djs";
 import { IBot } from "../../../utils/interfaces/IBot";
 import { ISlashCommand } from "../../../utils/interfaces/ISlashCommand";
 import { formatViews } from "../../../utils/numbers";
-import { convertMilisecondsToTime } from "../../../utils/player";
+import { convertSecondsToTime } from "../../../utils/player";
 
 module.exports = {
     name: "save",
@@ -15,7 +15,7 @@ module.exports = {
         if (!interaction.isChatInputCommand()) return;
         
         const guild = bot.client.guilds.cache.get(interaction.guildId!)!;
-        let queue = bot.player.getQueue(interaction.guildId!);
+        let queue = bot.manager.getQueue(interaction.guildId!);
 
         await interaction.deferReply({ ephemeral: true });
         
@@ -30,7 +30,7 @@ module.exports = {
             .setTitle(`Song: ${song.title}`)
             .setURL(song.url)
             .addFields(
-                {name: "Duration", value: convertMilisecondsToTime(song.durationMS), inline: true},
+                {name: "Duration", value: convertSecondsToTime(song.durationMS), inline: true},
                 {name: "Views", value: formatViews(song.views), inline: true},
                 {name: "Song URL:", value: song.url},
             )

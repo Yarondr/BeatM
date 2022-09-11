@@ -1,4 +1,3 @@
-import { QueueRepeatMode } from "discord-player";
 import { CommandInteraction } from "discord.js";
 import { IBot } from "../../../utils/interfaces/IBot";
 import { ISlashCommand } from "../../../utils/interfaces/ISlashCommand";
@@ -13,18 +12,20 @@ module.exports = {
     execute: async (bot: IBot, interaction: CommandInteraction) => {
         if (!interaction.isChatInputCommand()) return;
         
-        const queue = bot.player.getQueue(interaction.guildId!)!;
+        const player = bot.manager.get(interaction.guildId!)!;
         
         await interaction.deferReply();
         
-        if (!queue.current) {
+        if (!player.queue.current) {
             return interaction.editReply("Can't loop, I am not playing anything right now!");
         }
-        if (queue.repeatMode != QueueRepeatMode.TRACK) {
-            queue.setRepeatMode(QueueRepeatMode.TRACK);
+        if (!player.trackRepeat) {
+            player.setTrackRepeat(true)
+            player.setQueueRepeat(false);
             return interaction.editReply("Looped!");
         } else {
-            queue.setRepeatMode(QueueRepeatMode.OFF);
+            player.setTrackRepeat(false)
+            player.setQueueRepeat(false);
             return interaction.editReply("Loop disabled!");
         }
     }

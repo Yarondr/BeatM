@@ -2,7 +2,7 @@ import { ApplicationCommandOptionType, AutocompleteInteraction, CommandInteracti
 import { getMember } from "../../../utils/djs";
 import { IBot } from "../../../utils/interfaces/IBot";
 import { ISlashCommand } from "../../../utils/interfaces/ISlashCommand";
-import { basicSearch, createQueue, joinChannel, play, searchQuery } from "../../../utils/player";
+import { basicSearch, createPlayer, joinChannel, play, searchQuery } from "../../../utils/player";
 import { isURL } from "../../../utils/url";
 
 module.exports = {
@@ -27,22 +27,23 @@ module.exports = {
         const guild = bot.client.guilds.cache.get(interaction.guildId!)!;
         const member: GuildMember = await getMember(guild, interaction.member?.user.id!);
         const channel = guild?.channels.cache.get(interaction.channelId!)! as TextChannel;
-        const player = bot.player;
+        const manager = bot.manager;
 
         if (!member.voice.channel) {
             return interaction.reply("You must be in a voice channel to play music.");
         }
         await interaction.deferReply();
 
-        const queue = createQueue(guild, player, channel);
-        const connected: boolean = queue.connection ? true : false;
-        joinChannel(bot, connected, queue, member, interaction, player, guild, channel);
+        const player = createPlayer(guild, manager, member.voice.channel, channel);
+        joinChannel(bot, member, interaction, player, guild, channel);
 
-        const res = await searchQuery(connected, player, member, interaction, channel);
-        if (!res || !res.tracks.length) return interaction.editReply({content: "No results found."});
-        res.playlist ? queue.addTracks(res.tracks) : queue.addTrack(res.tracks[0]);
+        const res = await searchQuery(player, member, interaction, channel);
+        if (!res || res.loadType === "NO_MATCHES") return interaction.editReply({content: "No results found."});
+        if (res?.loadType === "LOAD_FAILED") return interaction.editReply({ content: "Failed to load"});
         
-        play(queue, res, member, interaction);
+        res.playlist ? player.queue.add(res.tracks) : player.queue.add(res.tracks[0]);
+        
+        play(player, res, member, interaction);
     },
 
     autocomplete: async (bot: IBot, interaction: AutocompleteInteraction) => {
@@ -54,7 +55,7 @@ module.exports = {
 
         const guild = bot.client.guilds.cache.get(interaction.guildId!)!;
         const member: GuildMember = await getMember(guild, interaction.member?.user.id!);
-        const res = await basicSearch(member, bot.player, search);
+        const res = await basicSearch(member, bot.manager, search);
         res.tracks.slice(0, 6).forEach(track => choices.push(track.title));
         return await interaction.respond(choices.map((choice) => ({ name: choice, value: choice })));
     }

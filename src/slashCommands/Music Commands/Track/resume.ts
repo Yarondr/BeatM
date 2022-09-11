@@ -11,19 +11,18 @@ module.exports = {
     execute: async (bot: IBot, interaction: CommandInteraction) => {
         if (!interaction.isChatInputCommand()) return;
         
-        const queue = bot.player.getQueue(interaction.guildId!)!;
+        const player = bot.manager.get(interaction.guildId!)!;
 
         await interaction.deferReply();
         
-        if (!queue.current) {
+        if (!player.queue.current) {
             return interaction.editReply("Can't resume, I am not playing anything right now!");
         }
         
-        if (!queue.connection.paused) {
+        if (!player.paused) {
             return interaction.editReply("The track is already playing");
         }
-        queue.connection.resume();
-        // queue.setPaused(false);
+        player.pause(false);
         return interaction.editReply("Resumed!");
     }
 

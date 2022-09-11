@@ -4,7 +4,7 @@ import { getMember } from "../../../utils/djs";
 import { IBot } from "../../../utils/interfaces/IBot";
 import { IQueueMetadata } from "../../../utils/interfaces/IQueueMetadata";
 import { ISlashCommand } from "../../../utils/interfaces/ISlashCommand";
-import { createQueue, joinChannel, play, searchQuery } from "../../../utils/player";
+import { createPlayer, joinChannel, play, searchQuery } from "../../../utils/player";
 
 module.exports = {
     name: "playnext",
@@ -27,7 +27,7 @@ module.exports = {
         const guild = bot.client.guilds.cache.get(interaction.guildId!)!;
         const member: GuildMember = await getMember(guild, interaction.member?.user.id!);
         const channel = guild?.channels.cache.get(interaction.channelId!)! as TextChannel;
-        const player = bot.player;
+        const player = bot.manager;
         const queue: Queue<IQueueMetadata> = player.getQueue(interaction.guildId!)!;
 
         if (!queue.current) {
@@ -38,7 +38,7 @@ module.exports = {
         const connected: boolean = queue.connection ? true : false;
         joinChannel(bot, connected, queue, member, interaction, player, guild, channel);
         
-        const res = await searchQuery(connected, player, member, interaction, channel);
+        const res = await searchQuery(player, member, interaction, channel);
         if (!res || !res.tracks.length) return interaction.editReply({content: "No results found."});
         const newTracks = res.playlist ? res.tracks : [res.tracks[0]];
         queue.tracks.unshift(...newTracks);

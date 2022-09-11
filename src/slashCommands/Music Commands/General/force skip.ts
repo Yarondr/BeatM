@@ -12,17 +12,17 @@ module.exports = {
     execute: async (bot: IBot, interaction: CommandInteraction) => {
         if (!interaction.isChatInputCommand()) return;
         
-        const queue = bot.player.getQueue(interaction.guildId!)!;
+        const player = bot.manager.get(interaction.guildId!)!;
 
         await interaction.deferReply();
         
-        if (!queue.current) {
+        if (!player.queue.current) {
             return interaction.editReply("Can't skip, I am not playing anything right now!");
         }
 
-        const success = queue.skip();
-        if (queue.connection.paused) {
-            queue.connection.resume();
+        const success = player.stop(1);
+        if (player.paused) {
+            player.pause(false);
         }
         const reply = success ? "Skipped!" : "Something went wrong...";
         return interaction.editReply(reply);

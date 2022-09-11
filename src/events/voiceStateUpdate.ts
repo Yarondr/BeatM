@@ -9,7 +9,7 @@ module.exports = {
     name: "voiceStateUpdate",
     once: false,
     execute: async (bot: IBot, oldState: VoiceState, newState: VoiceState) => {
-        const queue = bot.player.getQueue(newState.guild.id);
+        const queue = bot.manager.getQueue(newState.guild.id);
         if (!queue || !queue.connection) return;
         const voiceChannel = queue.connection.channel;
         if (voiceChannel.members.filter(m => !m.user.bot).size > 0) {

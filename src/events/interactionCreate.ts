@@ -88,7 +88,7 @@ module.exports = {
         }
 
         if (!slashCommand.ignoreNotSameVoiceChannels && slashCommand.category == "Music Commands") {
-            let queue = bot.player.getQueue(interaction.guildId!);
+            let queue = bot.manager.getQueue(interaction.guildId!);
             if (!member.voice.channel) {
                 return interaction.reply("You must be in a voice channel to use this command!.");
             }
@@ -105,7 +105,7 @@ module.exports = {
                 const id = interaction.customId;
                 try {
                     const file: IButton | undefined = require(`../components/buttons/${id}.ts`);
-                    let queue: Queue<IQueueMetadata> = bot.player.getQueue(interaction.guildId!)!;
+                    let queue: Queue<IQueueMetadata> = bot.manager.getQueue(interaction.guildId!)!;
                     if (file) {
                         try {
                             await interaction.deferReply();

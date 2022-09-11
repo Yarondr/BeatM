@@ -1,5 +1,5 @@
 console.log("Starting bot...")
-import { Player } from 'discord-player';
+import { Manager } from 'erela.js';
 import { Client, Collection, GatewayIntentBits } from 'discord.js';
 import dotenv from 'dotenv';
 import { loadCommands } from './handlers/commandsHandler';
@@ -15,6 +15,14 @@ dotenv.config();
 const testServers = process.env.TEST_SERVERS?.split(", ") || [];
 
 export const owners = [process.env.OWNER_ID || ''];
+
+const nodes = [
+    {
+        host: "localhost",
+        password: "youshallnotpass",
+        port: 2333,
+    }
+];
 
 const client = new Client({
     intents: [
@@ -38,18 +46,20 @@ const bot: IBot = {
     owners,
     testServers,
     prefix: '!',
-    player: new Player(client, {
-        ytdlOptions: {
-            quality: 'highestaudio',
-            highWaterMark: 1 << 25,
-            dlChunkSize: 0,
+    manager: new Manager(
+        {
+            nodes,
+            send: (id, payload) => {
+                const guild = client.guilds.cache.get(id);
+                if (guild) guild.shard.send(payload);
+            }
         }
-    }),
+    ),
     queuesWaitingToLeave: new Map<string, NodeJS.Timeout>(),
     emptyChannelsWaitingToLeave: new Map<string, NodeJS.Timeout>()
 };
 
-bot.player.on('trackStart', (queue, track) => {
+bot.manager.on('trackStart', (queue, track) => {
     if (bot.queuesWaitingToLeave.has(queue.guild.id)) {
         clearTimeout(bot.queuesWaitingToLeave.get(queue.guild.id));
         bot.queuesWaitingToLeave.delete(queue.guild.id);
@@ -58,7 +68,7 @@ bot.player.on('trackStart', (queue, track) => {
     metadata.skipVotes = [];
 });
 
-bot.player.on('debug', (queue, message) => {
+bot.manager.on('debug', (queue, message) => {
     // console.log(message);
 });
 
@@ -72,7 +82,7 @@ client.login(process.env.TOKEN);
  * TODO:
  * V play
  * V join
- * V disconnect
+ * V leave
  * V queue
  * V shuffle
  * V nowplaying
@@ -87,14 +97,14 @@ client.login(process.env.TOKEN);
  * V clear queue
  * V loop
  * V queue loop
- * V remove from queue
- * V stop
- * V volume
- * V play next
- * V save
- * V search
- * V jump to track
- * V controller
- * V move track (to another position in queue)
+ * remove from queue
+ * stop
+ * volume
+ * play next
+ * save
+ * search
+ * jump to track
+ * controller
+ * move track (to another position in queue)
  * - help
  */

@@ -30,7 +30,7 @@ module.exports = {
         
         const songIndex = interaction.options.getInteger('song-number')! -1;
         const newSongIndex = interaction.options.getInteger('new-song-number')! -1;
-        let queue = bot.player.getQueue(interaction.guildId!)!;
+        let queue = bot.manager.getQueue(interaction.guildId!)!;
 
         await interaction.deferReply();
 

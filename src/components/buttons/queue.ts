@@ -5,7 +5,7 @@ import { IBot } from "../../utils/interfaces/IBot";
 import { IButton } from "../../utils/interfaces/IButton";
 import { ICommandArgs } from "../../utils/interfaces/ICommandArgs";
 import { IQueueMetadata } from "../../utils/interfaces/IQueueMetadata";
-import { designQueue } from "../../utils/queue";
+import { designQueue } from "../../utils/queueDesigner";
 
 module.exports = {
     execute: async (bot: IBot, queue: Queue<IQueueMetadata>, interaction: ButtonInteraction, args: ICommandArgs) => {

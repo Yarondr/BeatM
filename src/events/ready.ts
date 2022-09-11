@@ -16,6 +16,7 @@ module.exports = {
 
             await guild.commands.set([...slashCommands.values()]);
         });
+        bot.manager.init(bot.client.user?.id)
         console.log(`Loaded ${count} servers`);
         console.log("BeatM is now active!");
     }

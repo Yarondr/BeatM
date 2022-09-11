@@ -1,7 +1,7 @@
 import { ApplicationCommandOptionType, CommandInteraction } from "discord.js";
 import { IBot } from "../../../utils/interfaces/IBot";
 import { ISlashCommand } from "../../../utils/interfaces/ISlashCommand";
-import { convertMilisecondsToTime, playerDurationToMiliseconds } from "../../../utils/player";
+import { convertSecondsToTime, playerDurationToSeconds } from "../../../utils/player";
 
 module.exports = {
     name: "backward",
@@ -23,22 +23,20 @@ module.exports = {
         if (!interaction.isChatInputCommand()) return;
         
         const secondToSkip = interaction.options.getInteger('seconds')!;
-        let queue = bot.player.getQueue(interaction.guildId!)!;
+        let player = bot.manager.get(interaction.guildId!)!;
 
         await interaction.deferReply();
 
-        if (!queue.current) {
+        if (!player.queue.current) {
             return interaction.editReply("Can't skip backward, I am not playing anything right now!");
         }
 
-        const timestamp = queue.getPlayerTimestamp();   
-        const currentTime = playerDurationToMiliseconds(timestamp.current);
-        const timeToSkip = secondToSkip * 1000;
-        const newTime = currentTime - timeToSkip
-        if (newTime > playerDurationToMiliseconds(timestamp.end)) {
+        const currentTime = player.position;
+        const newTime = currentTime - secondToSkip
+        if (newTime > player.queue.current.duration! && newTime < 0) {
             return interaction.editReply("Can't skip out of the song!")
         }
-        await queue.seek(newTime);
-        return interaction.editReply(`Skipped backward to: ${convertMilisecondsToTime(newTime)}.`);
+        player.seek(newTime);
+        return interaction.editReply(`Skipped backward to: ${convertSecondsToTime(newTime)}.`);
     }
 } as ISlashCommand

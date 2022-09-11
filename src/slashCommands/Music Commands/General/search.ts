@@ -2,7 +2,7 @@ import { ApplicationCommandOptionType, CommandInteraction, EmbedBuilder, GuildMe
 import { getMember } from "../../../utils/djs";
 import { IBot } from "../../../utils/interfaces/IBot";
 import { ISlashCommand } from "../../../utils/interfaces/ISlashCommand";
-import { convertMilisecondsToTime, createQueue, isTrackLive, joinChannel, play, searchQuery } from "../../../utils/player";
+import { convertSecondsToTime, createPlayer, isTrackLive, joinChannel, play, searchQuery } from "../../../utils/player";
 
 module.exports = {
     name: "search",
@@ -26,7 +26,7 @@ module.exports = {
         const member: GuildMember = await getMember(guild, interaction.member?.user.id!);
         const channel = guild?.channels.cache.get(interaction.channelId!)! as TextChannel;
         const search = interaction.options.getString('search-query')!;
-        const player = bot.player;
+        const player = bot.manager;
 
 
         if (!member.voice.channel) {
@@ -34,10 +34,10 @@ module.exports = {
         }
         await interaction.deferReply();
 
-        const queue = createQueue(guild, player, channel);
+        const queue = createPlayer(guild, player, channel);
         const connected: boolean = queue.connection ? true : false;
         
-        const res = await searchQuery(connected, player, member, interaction, channel);
+        const res = await searchQuery(player, member, interaction, channel);
         if (!res || !res.tracks.length) return interaction.editReply({content: "No results found."});
         const maxTracks = res.tracks.slice(0, 10);
 
@@ -47,7 +47,7 @@ module.exports = {
             .setTimestamp();
 
         maxTracks.map((track, index) => {
-                const duration = isTrackLive(track) ? "LIVE" : convertMilisecondsToTime(track.durationMS);
+                const duration = isTrackLive(track) ? "LIVE" : convertSecondsToTime(track.durationMS);
                 const value = `\`${index + 1}.\` [${track.title}](${track.url}) | \`${duration}\``
                 embed.addFields({name: "\u200b", value: value, inline: false});
         }); //.join('\n');
