@@ -2,7 +2,7 @@ import { ApplicationCommandOptionType, CommandInteraction, EmbedBuilder, GuildMe
 import { getMember } from "../../../utils/djs";
 import { IBot } from "../../../utils/interfaces/IBot";
 import { ISlashCommand } from "../../../utils/interfaces/ISlashCommand";
-import { convertSecondsToTime, createPlayer, isTrackLive, joinChannel, play, searchQuery } from "../../../utils/player";
+import { convertMilisecondsToTime, createPlayer, isTrackLive, joinChannel, play, searchQuery } from "../../../utils/player";
 
 module.exports = {
     name: "search",
@@ -45,7 +45,7 @@ module.exports = {
             .setTimestamp();
 
         maxTracks.map((track, index) => {
-                const duration = isTrackLive(track) ? "LIVE" : convertSecondsToTime(track.duration);
+                const duration = isTrackLive(track) ? "LIVE" : convertMilisecondsToTime(track.duration);
                 const value = `\`${index + 1}.\` [${track.title}](${track.uri}) | \`${duration}\``
                 embed.addFields({name: "\u200b", value: value, inline: false});
         }); //.join('\n');

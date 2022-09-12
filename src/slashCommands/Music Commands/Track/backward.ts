@@ -1,7 +1,7 @@
 import { ApplicationCommandOptionType, CommandInteraction } from "discord.js";
 import { IBot } from "../../../utils/interfaces/IBot";
 import { ISlashCommand } from "../../../utils/interfaces/ISlashCommand";
-import { convertSecondsToTime, playerDurationToSeconds } from "../../../utils/player";
+import { convertMilisecondsToTime, playerDurationToMiliseconds } from "../../../utils/player";
 
 module.exports = {
     name: "backward",
@@ -32,11 +32,11 @@ module.exports = {
         }
 
         const currentTime = player.position;
-        const newTime = currentTime - secondToSkip
+        const newTime = currentTime - secondToSkip * 1000;
         if (newTime > player.queue.current.duration! && newTime < 0) {
             return interaction.editReply("Can't skip out of the song!")
         }
         player.seek(newTime);
-        return interaction.editReply(`Skipped backward to: ${convertSecondsToTime(newTime)}.`);
+        return interaction.editReply(`Skipped backward to: ${convertMilisecondsToTime(newTime)}.`);
     }
 } as ISlashCommand

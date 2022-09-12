@@ -38,7 +38,9 @@ module.exports = {
                         try {
                             await interaction.deferReply({ ephemeral: true });
 
-                            return await file.execute(bot, interaction);
+                            return await file.execute(bot, interaction).catch((err) => {
+                                console.log(err);
+                            });
                         } catch (error) {
                             console.log(error);
                         }
@@ -113,7 +115,10 @@ module.exports = {
                                 member: member,
                                 channel: channel
                             }
-                            const message: Message = await file.execute(bot, player, interaction, args);
+                            const message: Message = await file.execute(bot, player, interaction, args).catch(async (err) => {
+                                console.log(err);
+                                return await interaction.fetchReply();
+                            });
                             setTimeout(async () => {
                                 await message.delete();
                             }, 5000);
@@ -127,7 +132,10 @@ module.exports = {
             }
         } else {
             try {
-                await slashCommand.execute(bot, interaction);
+                await slashCommand.execute(bot, interaction).catch((err) => {
+                    console.log(err);
+                });
+
             } catch (e) {
                 console.error(e);
             }

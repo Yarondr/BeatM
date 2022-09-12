@@ -2,7 +2,7 @@ import { ApplicationCommandOptionType, CommandInteraction } from "discord.js";
 import { IBot } from "../../../utils/interfaces/IBot";
 import { ISlashCommand } from "../../../utils/interfaces/ISlashCommand";
 import { isValidDuration } from "../../../utils/numbers";
-import { convertSecondsToTime, playerDurationToSeconds } from "../../../utils/player";
+import { convertMilisecondsToTime, playerDurationToMiliseconds } from "../../../utils/player";
 
 module.exports = {
     name: "skipto",
@@ -35,11 +35,11 @@ module.exports = {
             return interaction.editReply("Invalid duration!");
         }
    
-        const newTime = playerDurationToSeconds(timeToSkip)
+        const newTime = playerDurationToMiliseconds(timeToSkip)
         if (newTime > player.queue.current.duration! || newTime < 0) {
             return interaction.editReply("Can't skip out of the song!")
         }
         player.seek(newTime);
-        return interaction.editReply(`Skipped to: ${convertSecondsToTime(newTime)}.`);
+        return interaction.editReply(`Skipped to: ${convertMilisecondsToTime(newTime)}.`);
     }
 } as ISlashCommand

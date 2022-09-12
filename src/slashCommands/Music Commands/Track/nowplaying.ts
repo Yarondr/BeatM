@@ -1,8 +1,8 @@
 import { CommandInteraction, EmbedBuilder, GuildMember } from "discord.js";
 import { IBot } from "../../../utils/interfaces/IBot";
 import { ISlashCommand } from "../../../utils/interfaces/ISlashCommand";
-import { convertSecondsToTime } from "../../../utils/player";
-import { createProgressBar } from "../../../utils/queueDesigner";
+import { convertMilisecondsToTime } from "../../../utils/player";
+import { createProgressBar } from "../../../utils/playingBar";
 
 module.exports = {
     name: "nowplaying",
@@ -25,7 +25,7 @@ module.exports = {
         const loopMethods = ['Off', 'Track', 'Queue'];
         const loopMethod = player.trackRepeat ? loopMethods[1] : player.queueRepeat ? loopMethods[2] : loopMethods[0];
         const track = queue.current;
-        const duration = convertSecondsToTime(queue.current?.duration!)
+        const duration = convertMilisecondsToTime(queue.current?.duration!)
         let progressBar = createProgressBar(player);
         if (duration == "LIVE") progressBar = progressBar.slice(0, -4) + "LIVE";
 

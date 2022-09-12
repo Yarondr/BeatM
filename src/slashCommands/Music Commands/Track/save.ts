@@ -3,7 +3,7 @@ import { getMember } from "../../../utils/djs";
 import { IBot } from "../../../utils/interfaces/IBot";
 import { ISlashCommand } from "../../../utils/interfaces/ISlashCommand";
 import { formatViews } from "../../../utils/numbers";
-import { convertSecondsToTime } from "../../../utils/player";
+import { convertMilisecondsToTime } from "../../../utils/player";
 
 module.exports = {
     name: "save",
@@ -30,7 +30,7 @@ module.exports = {
             .setTitle(`Song: ${song.title}`)
             .setURL(song.uri!)
             .addFields(
-                {name: "Duration", value: convertSecondsToTime(song.duration!), inline: true},
+                {name: "Duration", value: convertMilisecondsToTime(song.duration!), inline: true},
                 // {name: "Views", value: formatViews(song.viws), inline: true},
                 {name: "Song URL:", value: song.uri!},
             )

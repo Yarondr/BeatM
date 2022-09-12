@@ -4,15 +4,15 @@ import { embedContent } from "./embedContent";
 import { IBot } from "./interfaces/IBot";
 import { IQueueMetadata } from "./interfaces/IQueueMetadata";
 
-export function convertSecondsToTime(time: number) {
-    const date = new Date(time * 1000);
+export function convertMilisecondsToTime(time: number) {
+    const date = new Date(time);
     const hours = date.getUTCHours();
     const minutes = date.getUTCMinutes() === 0  && hours > 0 ? "00" : date.getUTCMinutes();
     const seconds: string = date.getUTCSeconds() < 10 ? "0" + date.getUTCSeconds() : date.getUTCSeconds().toString();
     return hours > 0 ? `${hours}:${minutes}:${seconds}` : `${minutes}:${seconds}`;
 }
 
-export function playerDurationToSeconds(duration: string): number {
+export function playerDurationToMiliseconds(duration: string): number {
     const regex = /^(\d+):?(\d{1,2})?:(\d{1,2})$/;
     const matches = duration.match(regex)?.filter((match) => match !== undefined);
     if (!matches) return 0;
@@ -23,11 +23,11 @@ export function playerDurationToSeconds(duration: string): number {
         hours = 0;
     }
 
-    return (hours * 60 * 60 + minutes * 60 + seconds);
+    return (hours * 60 * 60 + minutes * 60 + seconds) * 1000;
 }
 
 export function playlistLength(playlist: PlaylistInfo) {
-    return convertSecondsToTime(playlist.duration);
+    return convertMilisecondsToTime(playlist.duration);
 }
 
 export function isTrackLive(track: Track | UnresolvedTrack) {
@@ -55,6 +55,7 @@ export function createPlayer(guild: Guild, manager: Manager, voiceChannel: Voice
     });
     player.set("voiceChannel", voiceChannel);
     player.set("textChannel", textChannel);
+    player.set("skip_votes", []);
     return player;
 }
 
@@ -65,7 +66,7 @@ export function isDJ(member: GuildMember) {
 export function buildPlayEmbed(res: SearchResult, embedTitle: string, member: GuildMember, index:number = 0) {
     const track = res.tracks[index];
     const url = res.playlist ? res.playlist.selectedTrack?.uri! : track.uri;
-    let duration = res.playlist ? playlistLength(res.playlist) : convertSecondsToTime(track.duration);
+    let duration = res.playlist ? playlistLength(res.playlist) : convertMilisecondsToTime(track.duration);
     if (!res.playlist && isTrackLive(track)) duration = "LIVE";
 
     return new EmbedBuilder()
