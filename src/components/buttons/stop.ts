@@ -12,6 +12,7 @@ module.exports = {
             return interaction.editReply("Can't stop, I am not playing anything right now!");
         }
 
+        player.queue.clear();
         player.stop();
         //TODO:
         // player = createPlayer(guild, bot.manager, member.voice.channel!, channel);

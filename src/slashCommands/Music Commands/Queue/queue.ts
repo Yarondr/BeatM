@@ -28,8 +28,6 @@ module.exports = {
 
         await interaction.deferReply();
 
-        console.log(queue.length);
-        
         if (!queue.current && queue.length == 0) {
             return interaction.editReply("The queue is empty!\nUse the /play command to add a song to the queue.");
         }

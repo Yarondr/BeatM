@@ -58,9 +58,6 @@ const bot: IBot = {
                 new Spotify({
                     clientID: process.env.SPOTIFY_CLIENT_ID || '',
                     clientSecret: process.env.SPOTIFY_CLIENT_SECRET || '',
-                    albumLimit: 5,
-                    playlistLimit: 5,
-                    
                 })
             ]
         }
@@ -81,7 +78,7 @@ const bot: IBot = {
 // bot.manager.on('debug', (queue, message) => {
 //     // console.log(message);
 // });
-
+bot.manager.on
 loadEvents(bot, false);
 loadCommands(bot, false);
 loadSlashCommands(bot, false);

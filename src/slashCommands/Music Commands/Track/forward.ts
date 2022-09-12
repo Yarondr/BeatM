@@ -32,7 +32,6 @@ module.exports = {
         }
 
         const currentTime = player.position;
-        console.log(currentTime, player.queue.current.duration);
         const newTime = currentTime + secondToSkip * 1000;
         if (newTime > player.queue.current.duration! && newTime < 0) {
             return interaction.editReply("Can't skip out of the song!")
