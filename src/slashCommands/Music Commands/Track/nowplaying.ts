@@ -22,7 +22,7 @@ module.exports = {
             return interaction.editReply("I am not playing anything right now!");
         }
 
-        const loopMethods = ['Off', 'Track', 'Queue'];
+        const loopMethods = ['disabled', 'Track', 'Queue'];
         const loopMethod = player.trackRepeat ? loopMethods[1] : player.queueRepeat ? loopMethods[2] : loopMethods[0];
         const track = queue.current;
         const duration = convertMilisecondsToTime(queue.current?.duration!)
@@ -40,7 +40,7 @@ module.exports = {
                 { name : "\u200b", value: "\u200b", inline: false },
                 { name: "Requested by:", value: requester.user.tag, inline: true },
                 { name: "Volume:", value: `${player.volume}%`, inline: true },
-                { name: "Loop:", value: loopMethods[loopMethod] + "\n\u200b", inline: true },
+                { name: "Loop:", value: loopMethod + "\n\u200b", inline: true },
             )
             .setTimestamp();
         
