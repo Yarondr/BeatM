@@ -34,13 +34,13 @@ module.exports = {
 
         await interaction.deferReply();
 
-        if (player.queue.length <= 1) {
+        if (player.queue.length == 0) {
             return interaction.editReply("Can't move a song when there are no songs in the queue!");
         }
-        if (songIndex >= player.queue.length - 1) {
+        if (songIndex >= player.queue.length) {
             return interaction.editReply("Invalid song number!");
         }
-        if (newSongIndex >= player.queue.length - 1) {
+        if (newSongIndex >= player.queue.length) {
             return interaction.editReply("Invalid new song number!");
         }
 

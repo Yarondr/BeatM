@@ -17,19 +17,15 @@ module.exports = {
 
         await interaction.deferReply();
         
-        if (queue.length == 1) {
+        if (queue.length == 0) {
             return interaction.editReply("Can't shuffle, queue is empty!");
         }
-        if (queue.length > 1) {
-            for (let i = 1; i < queue.length; i++) {
-                const random = Math.floor(Math.random() * queue.length);
-                const temp = queue[i];
-                queue[i] = queue[random];
-                queue[random] = temp;
-            }
-            await interaction.editReply(`The queue of ${queue.length} songs has been shuffled!`);
-        } else {
-            await interaction.editReply(`Can't shuffle the queue because it's empty.`);
+        for (let i = 0; i < queue.length; i++) {
+            const random = Math.floor(Math.random() * queue.length);
+            const temp = queue[i];
+            queue[i] = queue[random];
+            queue[random] = temp;
         }
+        await interaction.editReply(`The queue of ${queue.length} songs has been shuffled!`);
     }
 } as ISlashCommand

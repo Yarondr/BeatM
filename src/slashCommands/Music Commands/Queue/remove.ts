@@ -26,10 +26,10 @@ module.exports = {
 
         await interaction.deferReply();
         
-        if (player.queue.length === 1) {
+        if (player.queue.length === 0) {
             return interaction.editReply("Can't remove a song from the queue, because the queue is empty!");
         }
-        if (songIndex >= player.queue.length - 1) {
+        if (songIndex >= player.queue.length) {
             return interaction.editReply("Invalid song number!");
         }
 

@@ -27,13 +27,15 @@ module.exports = {
         const queue = player.queue;
 
         await interaction.deferReply();
+
+        console.log(queue.length);
         
-        if (!queue.current && queue.length == 1) {
+        if (!queue.current && queue.length == 0) {
             return interaction.editReply("The queue is empty!\nUse the /play command to add a song to the queue.");
         }
 
         const totalPages = Math.ceil(queue.length / 10) || 1;
-        const page = (interaction.options.getInteger('page') || 1) - 1;
+        const page = (interaction.options.getNumber('page') || 1) - 1;
         if (page + 1 > totalPages) {
             return await interaction.editReply(`Invalid Page. There are only a total of ${totalPages} pages.`);
         }

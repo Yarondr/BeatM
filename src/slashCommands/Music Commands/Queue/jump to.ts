@@ -26,10 +26,10 @@ module.exports = {
 
         await interaction.deferReply();
 
-        if (player.queue.length <= 1) {
+        if (player.queue.length == 0) {
             return interaction.editReply("Can't jump to a song when there are no songs in the queue!");
         }
-        if (songIndex - 1 >= player.queue.length - 1) {
+        if (songIndex - 1 >= player.queue.length) {
             return interaction.editReply("Invalid song number!");
         }
 

@@ -10,6 +10,7 @@ import { ICommand } from './utils/interfaces/ICommand';
 import { IEvent } from './utils/interfaces/IEvent';
 import { IQueueMetadata } from './utils/interfaces/IQueueMetadata';
 import { ISlashCommand } from './utils/interfaces/ISlashCommand';
+import Spotify from 'erela.js-spotify';
 dotenv.config();
 
 const testServers = process.env.TEST_SERVERS?.split(", ") || [];
@@ -52,7 +53,16 @@ const bot: IBot = {
             send: (id, payload) => {
                 const guild = client.guilds.cache.get(id);
                 if (guild) guild.shard.send(payload);
-            }
+            },
+            plugins: [
+                new Spotify({
+                    clientID: process.env.SPOTIFY_CLIENT_ID || '',
+                    clientSecret: process.env.SPOTIFY_CLIENT_SECRET || '',
+                    albumLimit: 5,
+                    playlistLimit: 5,
+                    
+                })
+            ]
         }
     ),
     queuesWaitingToLeave: new Map<string, NodeJS.Timeout>(),
