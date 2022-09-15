@@ -11,6 +11,7 @@ import { IEvent } from './utils/interfaces/IEvent';
 import { IQueueMetadata } from './utils/interfaces/IQueueMetadata';
 import { ISlashCommand } from './utils/interfaces/ISlashCommand';
 import Spotify from 'erela.js-spotify';
+import Filter from 'erela.js-filters'
 dotenv.config();
 
 const testServers = process.env.TEST_SERVERS?.split(", ") || [];
@@ -58,7 +59,8 @@ const bot: IBot = {
                 new Spotify({
                     clientID: process.env.SPOTIFY_CLIENT_ID || '',
                     clientSecret: process.env.SPOTIFY_CLIENT_SECRET || '',
-                })
+                }),
+                new Filter()
             ]
         }
     ),
