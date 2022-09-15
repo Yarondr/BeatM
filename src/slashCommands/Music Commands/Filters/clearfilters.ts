@@ -16,7 +16,7 @@ module.exports = {
                 
         player.reset();
         
-        return interaction.editReply(`Filter **${module.exports.name}** has been applied to the music!`);
+        return interaction.editReply(`All filters have been cleared from the music!`);
     }
 
 } as ISlashCommand;
