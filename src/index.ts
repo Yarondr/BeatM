@@ -1,6 +1,6 @@
 console.log("Starting bot...")
-import { Manager } from 'erela.js';
-import { Client, Collection, GatewayIntentBits } from 'discord.js';
+import { Manager } from 'erela.js/src';
+import { Client, Collection, EmbedBuilder, GatewayIntentBits, GuildMember, TextChannel } from 'discord.js';
 import dotenv from 'dotenv';
 import { loadCommands } from './handlers/commandsHandler';
 import { loadEvents } from './handlers/eventsHandler';
@@ -10,8 +10,9 @@ import { ICommand } from './utils/interfaces/ICommand';
 import { IEvent } from './utils/interfaces/IEvent';
 import { IQueueMetadata } from './utils/interfaces/IQueueMetadata';
 import { ISlashCommand } from './utils/interfaces/ISlashCommand';
-import Spotify from 'erela.js-spotify';
-import Filter from 'erela.js-filters'
+import Spotify from 'erela.js-spotify/src';
+import Filter from 'erela.js-filters/src';
+import { scheduleQueueLeave } from './utils/player';
 dotenv.config();
 
 const testServers = process.env.TEST_SERVERS?.split(", ") || [];
@@ -68,6 +69,32 @@ const bot: IBot = {
     emptyChannelsWaitingToLeave: new Map<string, NodeJS.Timeout>()
 };
 
+bot.manager.on('trackStuck', (player, track, payload) => {
+    player.stop();
+});
+
+bot.manager.on('trackStart', async (player, track) => {
+    const textChannel = player.get('textChannel') as TextChannel;
+    if (!textChannel.permissionsFor(client.user!)?.has('SendMessages')) return;
+
+    const requester = track.requester as GuildMember;
+    const embed = new EmbedBuilder()
+        .setColor("Random")
+        .setTitle("Now Playing")
+        .setThumbnail(track.thumbnail)
+        .addFields(
+            { name: track.title, value: `Requested by ${requester.user.tag}`, inline: true },
+        )
+        .setTimestamp();
+    await textChannel.send({ embeds: [embed] }).catch( async () => { 
+        await textChannel.send("Now playing: " + track.title +
+        "\n\nPlease give me the permission to send embeds in this channel.");
+    });
+});
+
+bot.manager.on('queueEnd', async (player) => {
+    
+});
 // bot.manager.on('trackStart', (queue, track) => {
 //     if (bot.queuesWaitingToLeave.has(queue.guild.id)) {
 //         clearTimeout(bot.queuesWaitingToLeave.get(queue.guild.id));
@@ -80,7 +107,7 @@ const bot: IBot = {
 // bot.manager.on('debug', (queue, message) => {
 //     // console.log(message);
 // });
-bot.manager.on
+
 loadEvents(bot, false);
 loadCommands(bot, false);
 loadSlashCommands(bot, false);

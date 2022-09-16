@@ -33,7 +33,7 @@ module.exports = {
         const embed = new EmbedBuilder()
             .setColor("Random")
             .setThumbnail(track.thumbnail!)
-            .setURL(track.uri!)
+            .setURL(track.originalUri!)
             .setTitle(`Now Playing: "${track.title}"`)
             .addFields(
                 { name: "\u200b\nProgress:", value: progressBar, inline: false },

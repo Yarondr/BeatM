@@ -24,8 +24,9 @@ module.exports = {
             return interaction.editReply("Can't stop, I am not playing anything right now!");
         }
 
-        player.queue.clear();
-        player.destroy();
+        player.queue.clear()
+        player.stop();
+        // player.destroy();
         // TODO: 
         // const voiceChannel = player.get("voiceChannel") as VoiceBasedChannel;
         // await scheduleQueueLeave(bot, player, guild, channel, voiceChannel);

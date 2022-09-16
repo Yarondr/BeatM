@@ -1,5 +1,5 @@
 import { EmbedBuilder, Guild, GuildMember } from "discord.js";
-import { Player } from "erela.js";
+import { Player } from 'erela.js/src';
 import { convertMilisecondsToTime, haveLiveTrack, isTrackLive } from "./player";
 
 export async function designQueue(player: Player, guild: Guild, page: number) {
@@ -9,7 +9,7 @@ export async function designQueue(player: Player, guild: Guild, page: number) {
     const space = queue.length > 0 ? "\n\u200b" : "";
     const duration = isTrackLive(current) ? "LIVE" : convertMilisecondsToTime(current.duration!);
     const nowPlaying = current ?
-        ` [${current.title}](${current.uri!}) | \`${duration} Requested by: ${requester.user.tag}\`` :
+        ` [${current.title}](${current.originalUri!}) | \`${duration} Requested by: ${requester.user.tag}\`` :
         `Nothing`
     const loopMethods = ['disabled', 'track', 'queue'];
     const loopMethod = player.trackRepeat ? loopMethods[1] : player.queueRepeat ? loopMethods[2] : loopMethods[0];
@@ -26,7 +26,7 @@ export async function designQueue(player: Player, guild: Guild, page: number) {
         .map((track, index) => {
             const requester = track.requester! as GuildMember;
             const duration = isTrackLive(track) ? "LIVE" : convertMilisecondsToTime(track.duration!);
-            const value = `\`${index + 1}.\` [${track.title}](${track.uri}!) | \`${duration} Requested by: ${requester.user.tag}\``
+            const value = `\`${index + 1}.\` [${track.title}](${track.originalUri}!) | \`${duration} Requested by: ${requester.user.tag}\``
             const title = index == 0 ? "Up Next:" : "\u200b";
             embed.addFields({name: title, value: value, inline: false});
         }).join('\n');

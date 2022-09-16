@@ -1,5 +1,5 @@
 import { CacheType, GuildMember, Interaction, InteractionType, Message, TextChannel } from "discord.js";
-import { Player } from "erela.js";
+import { Player } from 'erela.js/src';
 import { IBot } from "../utils/interfaces/IBot";
 import { IButton } from "../utils/interfaces/IButton";
 import { ICommandArgs } from "../utils/interfaces/ICommandArgs";

@@ -46,7 +46,7 @@ module.exports = {
 
         maxTracks.map((track, index) => {
                 const duration = isTrackLive(track) ? "LIVE" : convertMilisecondsToTime(track.duration);
-                const value = `\`${index + 1}.\` [${track.title}](${track.uri}) | \`${duration}\``
+                const value = `\`${index + 1}.\` [${track.originalTitle}](${track.originalUri}) | \`${duration}\``
                 embed.addFields({name: "\u200b", value: value, inline: false});
         }); //.join('\n');
 

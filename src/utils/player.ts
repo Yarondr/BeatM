@@ -1,5 +1,5 @@
 import { ButtonInteraction, CommandInteraction, EmbedBuilder, Guild, GuildChannelResolvable, GuildMember, TextChannel, VoiceBasedChannel } from "discord.js";
-import { Manager, Player, PlaylistInfo, Queue, SearchResult, Track, UnresolvedTrack} from "erela.js";
+import { Manager, Player, PlaylistInfo, Queue, SearchResult, Track, UnresolvedTrack} from 'erela.js/src';
 import { embedContent } from "./embedContent";
 import { IBot } from "./interfaces/IBot";
 import { IQueueMetadata } from "./interfaces/IQueueMetadata";
@@ -65,7 +65,7 @@ export function isDJ(member: GuildMember) {
 
 export function buildPlayEmbed(res: SearchResult, embedTitle: string, member: GuildMember, index:number = 0) {
     const track = res.tracks[index];
-    const url = res.playlist ? res.playlist.selectedTrack?.uri! : track.uri;
+    const url = res.playlist ? res.playlist.selectedTrack?.originalUri! : track.originalUri!;
     let duration = res.playlist ? playlistLength(res.playlist) : convertMilisecondsToTime(track.duration);
     if (!res.playlist && isTrackLive(track)) duration = "LIVE";
 
@@ -91,7 +91,6 @@ export async function searchQuery(manager: Manager, member: GuildMember, interac
 }
 
 export async function basicSearch(member: GuildMember, manager: Manager, search: any) {
-    //TODO: support spotify search
     return await manager.search(search, member);
 }
 
@@ -157,20 +156,22 @@ export async function skip(member: GuildMember, player: Player, interaction: Com
 }
 
 //TODO:
-// export async function scheduleQueueLeave(bot: IBot, queue: Queue<IQueueMetadata> | undefined , guild: Guild, channel: TextChannel, voiceChannel: GuildChannelResolvable, empty: boolean = false) {
-//     const map = empty ? bot.emptyChannelsWaitingToLeave : bot.queuesWaitingToLeave;
+export async function scheduleQueueLeave(bot: IBot, player: Player | undefined , guildId: string, empty: boolean = false) {
+    const map = empty ? bot.emptyChannelsWaitingToLeave : bot.queuesWaitingToLeave;
 
-//     if (map.has(guild.id)) {
-//         clearTimeout(map.get(guild.id));
-//     }
+    if (map.has(guildId)) {
+        clearTimeout(map.get(guildId));
+    }
 
-//     map.set(guild.id, setTimeout(async () => {
-//         queue = bot.manager.getQueue(queue!.guild.id);
-//         if (!queue) {
-//             queue = createPlayer(guild, bot.manager, channel);
-//             await queue.connect(voiceChannel);
-//         }
-//         queue.destroy(true);
-//         map.delete(queue.guild.id);
-//     }, 60000));
-// }
+    map.set(guildId, setTimeout(async () => {
+        player = bot.manager.get(player!.guild);
+        // TODO: remove ?
+        // if (!player) {
+        //     player = createPlayer(guild, bot.manager, voiceChannel, channel);
+        //     await player.connect();
+        // }
+        map.delete(player!.guild);
+        player!.destroy();
+        bot.manager.players.delete(player!.guild);
+    }, 60000));
+}

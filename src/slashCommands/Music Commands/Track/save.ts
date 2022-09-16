@@ -28,7 +28,7 @@ module.exports = {
         const embed = new EmbedBuilder()
             .setColor("Random")
             .setTitle(`Song: ${song.title}`)
-            .setURL(song.uri!)
+            .setURL(song.originalUri!)
             .addFields(
                 {name: "Duration", value: convertMilisecondsToTime(song.duration!), inline: true},
                 // {name: "Views", value: formatViews(song.viws), inline: true},
