@@ -27,18 +27,18 @@ module.exports = {
         const user = await getMember(guild, interaction.member?.user.id!);
         const embed = new EmbedBuilder()
             .setColor("Random")
-            .setTitle(`Song: ${song.title}`)
+            .setTitle(`Song: ${song.originalTitle}`)
             .setURL(song.originalUri!)
             .addFields(
                 {name: "Duration", value: convertMilisecondsToTime(song.duration!), inline: true},
-                // {name: "Views", value: formatViews(song.viws), inline: true},
-                {name: "Song URL:", value: song.uri!},
+                // {name: "Views", value: formatViews(song.views), inline: true},
+                {name: "Song URL:", value: song.originalUri!},
             )
             .setThumbnail(song.thumbnail!)
             .setTimestamp();
-        const send = await user.send({content: `You requested to save the song **${song.title}** to your DMs. Here you go!`, embeds: [embed]});
+        const send = await user.send({content: `You requested to save the song **${song.originalTitle}** to your DMs. Here you go!`, embeds: [embed]});
         if (send) {
-            return interaction.editReply(`I sent the song **${song.title}** to your DMs!`);
+            return interaction.editReply(`I sent the song **${song.originalTitle}** to your DMs!`);
         } else {
             return interaction.editReply("I couldn't send the song to your DMs. Make sure you have them enabled!");
         }

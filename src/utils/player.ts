@@ -69,9 +69,20 @@ export function buildPlayEmbed(res: SearchResult, embedTitle: string, member: Gu
     let duration = res.playlist ? playlistLength(res.playlist) : convertMilisecondsToTime(track.duration);
     if (!res.playlist && isTrackLive(track)) duration = "LIVE";
 
+    return playEmbed(embedTitle, track, url, duration, member);
+}
+
+export function buildPlayingNowEmbed(track: Track, requester: GuildMember) {
+    const title = `Now playing: "${track.originalTitle}"`;
+    const url = track.originalUri!;
+    const duration = isTrackLive(track) ? "LIVE" : convertMilisecondsToTime(track.duration);
+    return playEmbed(title, track, url, duration, requester);
+}
+
+function playEmbed(title: string, track: Track, url: string, duration: string, member: GuildMember) {
     return new EmbedBuilder()
         .setColor("Random")
-        .setTitle(embedTitle)
+        .setTitle(title)
         // TODO: support spotify thumbnail
         .setThumbnail(track.thumbnail)
         .setURL(url)
@@ -97,11 +108,11 @@ export async function basicSearch(member: GuildMember, manager: Manager, search:
 export async function play(player: Player, res: SearchResult, member: GuildMember, interaction: CommandInteraction, index:number = 0, searchCmd: boolean = false) {
     if (!player.playing && !player.paused) {
         await player.play();
-        const embed = buildPlayEmbed(res, `Playing "${res.tracks[index].title}"`, member);
+        const embed = buildPlayEmbed(res, `Playing "${res.tracks[index].originalTitle}"`, member);
         if (searchCmd) await interaction.editReply({ embeds: [embed] });
         else await (player.get("textChannel") as TextChannel).send({embeds: [embed]});
     } else {
-        const title = res.playlist ? res.playlist.name : res.tracks[index].title
+        const title = res.playlist ? res.playlist.name : res.tracks[index].originalTitle
         const embed = buildPlayEmbed(res, `Added "${title}" to queue`, member);
         await interaction.editReply({embeds: [embed]});
     }

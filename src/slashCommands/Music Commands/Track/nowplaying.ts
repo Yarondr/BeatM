@@ -34,7 +34,7 @@ module.exports = {
             .setColor("Random")
             .setThumbnail(track.thumbnail!)
             .setURL(track.originalUri!)
-            .setTitle(`Now Playing: "${track.title}"`)
+            .setTitle(`Now Playing: "${track.originalTitle}"`)
             .addFields(
                 { name: "\u200b\nProgress:", value: progressBar, inline: false },
                 { name : "\u200b", value: "\u200b", inline: false },

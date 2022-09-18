@@ -11,6 +11,7 @@ import { IBot } from './utils/interfaces/IBot';
 import { ICommand } from './utils/interfaces/ICommand';
 import { IEvent } from './utils/interfaces/IEvent';
 import { ISlashCommand } from './utils/interfaces/ISlashCommand';
+import { buildPlayEmbed, buildPlayingNowEmbed } from './utils/player';
 dotenv.config();
 
 const testServers = process.env.TEST_SERVERS?.split(", ") || [];
@@ -76,16 +77,9 @@ bot.manager.on('trackStart', async (player, track) => {
     if (!textChannel.permissionsFor(client.user!)?.has('SendMessages')) return;
 
     const requester = track.requester as GuildMember;
-    const embed = new EmbedBuilder()
-        .setColor("Random")
-        .setTitle("Now Playing")
-        .setThumbnail(track.thumbnail)
-        .addFields(
-            { name: track.title, value: `Requested by ${requester.user.tag}`, inline: true },
-        )
-        .setTimestamp();
+    const embed = buildPlayingNowEmbed(track, requester);
     await textChannel.send({ embeds: [embed] }).catch( async () => { 
-        await textChannel.send("Now playing: " + track.title +
+        await textChannel.send("Now playing: " + track.originalTitle +
         "\n\nPlease give me the permission to send embeds in this channel.");
     });
 });
