@@ -105,6 +105,8 @@ export async function searchQuery(manager: Manager, member: GuildMember, interac
 }
 
 export async function basicSearch(member: GuildMember, manager: Manager, search: any) {
+    //TODO: in erela.js-spotify, change the search spotify method to search on youtube songs to get
+    // the specific track without the original clip (like made in the original BeatM)
     return await manager.search(search, member);
 }
 
