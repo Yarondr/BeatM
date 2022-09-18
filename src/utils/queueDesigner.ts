@@ -24,6 +24,7 @@ export async function designQueue(player: Player, guild: Guild, page: number) {
     // add tracks to embed
     queue.slice(page * 10, page * 10 + 10)
         .map((track, index) => {
+            index += page * 10;
             const requester = track.requester! as GuildMember;
             const duration = isTrackLive(track) ? "LIVE" : convertMilisecondsToTime(track.duration!);
             const value = `\`${index + 1}.\` [${track.originalTitle}](${track.originalUri}) | \`${duration} Requested by: ${requester.user.tag}\``
@@ -34,7 +35,10 @@ export async function designQueue(player: Player, guild: Guild, page: number) {
     const totalTime = queue.length > 0
         ? haveLiveTrack(queue) ? "Infinite" : convertMilisecondsToTime(queue.duration)
         : "0:00";
-    embed.addFields({name: "\u200b", value: `**${queue.length} ${songsText} waiting in queue | ${totalTime} total length**`, inline: false});
+    embed.addFields(
+        {name: "\u200b", value: `**${queue.length} ${songsText} waiting in queue | ${totalTime} total length**`, inline: false}
+        {name: "\u200b", value: `Queue page: ${page + 1} of ${Math.ceil(queue.length / 10)}`, inline: false}
+    );
     embed.setFooter({text: `Loop: ${loopMethod}`});
     embed.setTimestamp();
 
