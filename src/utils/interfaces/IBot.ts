@@ -1,5 +1,5 @@
 import { Client, Collection } from "discord.js";
-import { Manager } from 'erela.js/src';
+import { Manager } from '@yarond/erela.js';
 import { ICommand } from "./ICommand";
 import { IEvent } from "./IEvent";
 import { ISlashCommand } from "./ISlashCommand";

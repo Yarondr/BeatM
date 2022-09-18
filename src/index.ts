@@ -1,5 +1,7 @@
 console.log("Starting bot...")
-import { Manager } from 'erela.js/src';
+import { Manager } from '@yarond/erela.js';
+import Filter from '@yarond/erela.js-filters';
+import Spotify from '@yarond/erela.js-spotify';
 import { Client, Collection, EmbedBuilder, GatewayIntentBits, GuildMember, TextChannel } from 'discord.js';
 import dotenv from 'dotenv';
 import { loadCommands } from './handlers/commandsHandler';
@@ -8,11 +10,7 @@ import { loadSlashCommands } from './handlers/slashCommandsHandler';
 import { IBot } from './utils/interfaces/IBot';
 import { ICommand } from './utils/interfaces/ICommand';
 import { IEvent } from './utils/interfaces/IEvent';
-import { IQueueMetadata } from './utils/interfaces/IQueueMetadata';
 import { ISlashCommand } from './utils/interfaces/ISlashCommand';
-import Spotify from 'erela.js-spotify/src';
-import Filter from 'erela.js-filters/src';
-import { scheduleQueueLeave } from './utils/player';
 dotenv.config();
 
 const testServers = process.env.TEST_SERVERS?.split(", ") || [];
@@ -59,7 +57,7 @@ const bot: IBot = {
             plugins: [
                 new Spotify({
                     clientID: process.env.SPOTIFY_CLIENT_ID || '',
-                    clientSecret: process.env.SPOTIFY_CLIENT_SECRET || '',
+                    clientSecret: process.env.SPOTIFY_CLIENT_SECRET || ''
                 }),
                 new Filter()
             ]

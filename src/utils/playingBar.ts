@@ -1,4 +1,4 @@
-import { Player } from 'erela.js/src';
+import { Player } from '@yarond/erela.js';
 import { convertMilisecondsToTime } from "./player";
 
 export function createProgressBar(player: Player) {

@@ -1,5 +1,5 @@
 import { EmbedBuilder, Guild, GuildMember } from "discord.js";
-import { Player } from 'erela.js/src';
+import { Player } from '@yarond/erela.js';
 import { convertMilisecondsToTime, haveLiveTrack, isTrackLive } from "./player";
 
 export async function designQueue(player: Player, guild: Guild, page: number) {

@@ -1,5 +1,5 @@
 import { ButtonInteraction } from "discord.js";
-import { Player } from 'erela.js/src';
+import { Player } from '@yarond/erela.js';
 import { embedContent } from "../../utils/embedContent";
 import { IBot } from "../../utils/interfaces/IBot";
 import { IButton } from "../../utils/interfaces/IButton";

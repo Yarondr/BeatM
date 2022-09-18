@@ -1,5 +1,5 @@
 import { ButtonInteraction, CommandInteraction, EmbedBuilder, Guild, GuildChannelResolvable, GuildMember, TextChannel, VoiceBasedChannel } from "discord.js";
-import { Manager, Player, PlaylistInfo, Queue, SearchResult, Track, UnresolvedTrack} from 'erela.js/src';
+import { Manager, Player, PlaylistInfo, Queue, SearchResult, Track, UnresolvedTrack} from '@yarond/erela.js';
 import { embedContent } from "./embedContent";
 import { IBot } from "./interfaces/IBot";
 import { IQueueMetadata } from "./interfaces/IQueueMetadata";
