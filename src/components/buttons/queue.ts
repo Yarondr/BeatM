@@ -10,7 +10,7 @@ module.exports = {
     execute: async (bot: IBot, player: Player, interaction: ButtonInteraction, args: ICommandArgs) => {
         const { member, guild } = args;
 
-        if (!player.queue.length && player.queue.length == 0) {
+        if (!player.queue.current && player.queue.length == 0) {
             return interaction.editReply({ embeds: [embedContent("The queue is empty!\nUse the /play command to add a song to the queue.", member)] });
         }
 
