@@ -69,7 +69,7 @@ export function buildPlayEmbed(res: SearchResult, embedTitle: string, member: Gu
     let duration = res.playlist ? playlistLength(res.playlist) : convertMilisecondsToTime(track.duration);
     if (!res.playlist && isTrackLive(track)) duration = "LIVE";
 
-    return playEmbed(embedTitle, track, url, duration, member);
+    return playEmbed(embedTitle, track, url, undefined, member);
 }
 
 export function buildPlayingNowEmbed(track: Track, requester: GuildMember) {
@@ -79,8 +79,8 @@ export function buildPlayingNowEmbed(track: Track, requester: GuildMember) {
     return playEmbed(title, track, url, duration, requester);
 }
 
-function playEmbed(title: string, track: Track, url: string, duration: string, member: GuildMember) {
-    return new EmbedBuilder()
+function playEmbed(title: string, track: Track, url: string, duration: string | undefined, member: GuildMember) {
+    const embed = new EmbedBuilder()
         .setColor("Random")
         .setTitle(title)
         // TODO: support spotify thumbnail
@@ -88,10 +88,13 @@ function playEmbed(title: string, track: Track, url: string, duration: string, m
         .setURL(url)
         .addFields(
             {name: 'Requested By:', value: member.user.tag},
-            {name: 'Duration:', value: duration}
         )
         .setTimestamp();
         // TODO: set footer with loop and queue loop status
+    if (duration) {
+        embed.addFields({name: 'Duration:', value: duration!});
+    }
+    return embed;
 }
 
 export async function searchQuery(manager: Manager, member: GuildMember, interaction: CommandInteraction) {
@@ -106,15 +109,12 @@ export async function basicSearch(member: GuildMember, manager: Manager, search:
 }
 
 export async function play(player: Player, res: SearchResult, member: GuildMember, interaction: CommandInteraction, index:number = 0, searchCmd: boolean = false) {
+    const title = res.playlist ? res.playlist.name : res.tracks[index].originalTitle
+    const embed = buildPlayEmbed(res, `Added "${title}" to queue`, member);
+    await interaction.editReply({embeds: [embed]});
+
     if (!player.playing && !player.paused) {
         await player.play();
-        const embed = buildPlayEmbed(res, `Playing "${res.tracks[index].originalTitle}"`, member);
-        if (searchCmd) await interaction.editReply({ embeds: [embed] });
-        else await (player.get("textChannel") as TextChannel).send({embeds: [embed]});
-    } else {
-        const title = res.playlist ? res.playlist.name : res.tracks[index].originalTitle
-        const embed = buildPlayEmbed(res, `Added "${title}" to queue`, member);
-        await interaction.editReply({embeds: [embed]});
     }
 }
 
