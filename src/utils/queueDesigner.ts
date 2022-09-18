@@ -36,7 +36,7 @@ export async function designQueue(player: Player, guild: Guild, page: number) {
         ? haveLiveTrack(queue) ? "Infinite" : convertMilisecondsToTime(queue.duration)
         : "0:00";
     embed.addFields(
-        {name: "\u200b", value: `**${queue.length} ${songsText} waiting in queue | ${totalTime} total length**`, inline: false}
+        {name: "\u200b", value: `**${queue.length} ${songsText} waiting in queue | ${totalTime} total length**`, inline: false},
         {name: "\u200b", value: `Queue page: ${page + 1} of ${Math.ceil(queue.length / 10)}`, inline: false}
     );
     embed.setFooter({text: `Loop: ${loopMethod}`});
