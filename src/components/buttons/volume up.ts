@@ -1,10 +1,9 @@
-import { ButtonInteraction, GuildMember } from "discord.js";
 import { Player } from '@yarond/erela.js';
+import { ButtonInteraction } from "discord.js";
 import { embedContent } from "../../utils/embedContent";
 import { IBot } from "../../utils/interfaces/IBot";
 import { IButton } from "../../utils/interfaces/IButton";
 import { ICommandArgs } from "../../utils/interfaces/ICommandArgs";
-import { IQueueMetadata } from "../../utils/interfaces/IQueueMetadata";
 
 module.exports = {
     execute: async (bot: IBot, player: Player, interaction: ButtonInteraction, args: ICommandArgs) => {

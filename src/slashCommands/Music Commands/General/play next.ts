@@ -1,9 +1,8 @@
 import { ApplicationCommandOptionType, CommandInteraction, GuildMember, TextChannel } from "discord.js";
 import { getMember } from "../../../utils/djs";
 import { IBot } from "../../../utils/interfaces/IBot";
-import { IQueueMetadata } from "../../../utils/interfaces/IQueueMetadata";
 import { ISlashCommand } from "../../../utils/interfaces/ISlashCommand";
-import { createPlayer, joinChannel, play, searchQuery } from "../../../utils/player";
+import { joinChannel, play, searchQuery } from "../../../utils/player";
 
 module.exports = {
     name: "playnext",
