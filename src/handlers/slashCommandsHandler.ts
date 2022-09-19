@@ -67,6 +67,7 @@ const trackCommandsOrder = [
     'skipto',
     'forward',
     'backward',
+    'replay',
     'loop',
     'save'
 ]
