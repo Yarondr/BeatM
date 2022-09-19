@@ -11,7 +11,6 @@ module.exports = {
     execute: async (bot: IBot, interaction: CommandInteraction) => {
         if (!interaction.isChatInputCommand()) return;
 
-        const guild = bot.client.guilds.cache.get(interaction.guildId!)!;
         const player = bot.manager.get(interaction.guildId!)!;
 
         if (!player.queue.current) {
@@ -19,7 +18,7 @@ module.exports = {
         }
         await interaction.deferReply();
 
-        player.queue.unshift(player.queue.current);
-        return interaction.editReply(`Replayed: ${player.queue.current.title}`);
+        player.seek(0);
+        return interaction.editReply(`Replayed: \`${player.queue.current.title}\``);
     }
 } as ISlashCommand;

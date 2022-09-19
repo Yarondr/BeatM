@@ -84,6 +84,10 @@ bot.manager.on('trackStart', async (player, track) => {
     });
 });
 
+bot.manager.on('trackEnd', async (player, track) => {
+    // https://www.youtube.com/watch?v=${identifier}&list=RD${identifier};
+});
+
 bot.manager.on('queueEnd', async (player) => {
     
 });
