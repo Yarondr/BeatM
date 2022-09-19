@@ -116,7 +116,9 @@ export async function play(player: Player, res: SearchResult, member: GuildMembe
     await interaction.editReply({embeds: [embed]});
 
     if (!player.playing && !player.paused) {
-        await player.play();
+        await player.play().catch((err) => {
+            console.log(err);
+        });
     }
 }
 

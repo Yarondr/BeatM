@@ -1,4 +1,4 @@
-import { ApplicationCommandOptionType, AutocompleteInteraction, CommandInteraction, GuildMember, TextChannel } from "discord.js";
+import { ApplicationCommandOptionType, AutocompleteInteraction, CommandInteraction, GuildMember, Message, TextChannel } from "discord.js";
 import { getMember } from "../../../utils/djs";
 import { IBot } from "../../../utils/interfaces/IBot";
 import { ISlashCommand } from "../../../utils/interfaces/ISlashCommand";
@@ -35,7 +35,8 @@ module.exports = {
         await interaction.deferReply();
 
         const player = createPlayer(guild, manager, member.voice.channel, channel);
-        joinChannel(bot, member, interaction, player, guild, channel);
+        const message: Message | undefined = await joinChannel(bot, member, interaction, player, guild, channel);
+        if (message) return;
 
         const res = await searchQuery(bot.manager, member, interaction);
         if (!res || res.loadType === "NO_MATCHES") return interaction.editReply({content: "No results found."});
