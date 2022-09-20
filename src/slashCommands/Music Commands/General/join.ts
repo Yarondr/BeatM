@@ -25,7 +25,7 @@ module.exports = {
         }
         await interaction.deferReply();
 
-        const player = createPlayer(guild, manager, member.voice.channel, channel);
+        const player = await createPlayer(guild, manager, member.voice.channel, channel);
         await joinChannel(bot, member, interaction, player, guild, channel);
     }
 } as ISlashCommand;

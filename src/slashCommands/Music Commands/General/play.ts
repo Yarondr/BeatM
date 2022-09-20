@@ -34,7 +34,7 @@ module.exports = {
         }
         await interaction.deferReply();
 
-        const player = createPlayer(guild, manager, member.voice.channel, channel);
+        const player = await createPlayer(guild, manager, member.voice.channel, channel);
         const message: Message | undefined = await joinChannel(bot, member, interaction, player, guild, channel);
         if (message) return;
 

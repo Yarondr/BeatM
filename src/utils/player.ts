@@ -42,7 +42,7 @@ export function checkSkippingPlayers(skip_votes: string[], voice: VoiceBasedChan
     return skip_votes.filter(id => memberIds.includes(id));
 }
 
-export function createPlayer(guild: Guild, manager: Manager, voiceChannel: VoiceBasedChannel, textChannel: TextChannel) {
+export async function createPlayer(guild: Guild, manager: Manager, voiceChannel: VoiceBasedChannel, textChannel: TextChannel) {
     let player = manager.get(guild.id);
     if (player) return player;
 
