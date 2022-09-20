@@ -11,7 +11,7 @@ import { IBot } from './utils/interfaces/IBot';
 import { ICommand } from './utils/interfaces/ICommand';
 import { IEvent } from './utils/interfaces/IEvent';
 import { ISlashCommand } from './utils/interfaces/ISlashCommand';
-import { buildPlayEmbed, buildPlayingNowEmbed, scheduleQueueLeave } from './utils/player';
+import { buildPlayEmbed, buildPlayingNowEmbed, scheduleQueueLeave, basicSearch } from './utils/player';
 dotenv.config();
 
 const testServers = process.env.TEST_SERVERS?.split(", ") || [];
@@ -90,7 +90,13 @@ bot.manager.on('trackStart', async (player, track) => {
 });
 
 bot.manager.on('trackEnd', async (player, track) => {
-    // https://www.youtube.com/watch?v=${identifier}&list=RD${identifier};
+    const identifier = track.identifier;
+    const url = `https://www.youtube.com/watch?v=${identifier}&list=RD${identifier}`;
+    const requester = track.requester as GuildMember;
+    const res = await basicSearch(requester, bot.manager, url);
+    if (res) {
+        player.queue.unshift(res.tracks[1]);
+    }
 });
 
 bot.manager.on('queueEnd', async (player) => {

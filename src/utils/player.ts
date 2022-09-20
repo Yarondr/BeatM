@@ -52,9 +52,10 @@ export function createPlayer(guild: Guild, manager: Manager, voiceChannel: Voice
         textChannel: textChannel.id,
         selfDeafen: true,
     });
-    player.set("voiceChannel", voiceChannel);
-    player.set("textChannel", textChannel);
-    player.set("skip_votes", []);
+    await player.set("voiceChannel", voiceChannel);
+    await player.set("textChannel", textChannel);
+    await player.set("skip_votes", []);
+    await player.set("autoplay", false);
     return player;
 }
 
