@@ -11,7 +11,7 @@ import { IBot } from './utils/interfaces/IBot';
 import { ICommand } from './utils/interfaces/ICommand';
 import { IEvent } from './utils/interfaces/IEvent';
 import { ISlashCommand } from './utils/interfaces/ISlashCommand';
-import { buildPlayEmbed, buildPlayingNowEmbed } from './utils/player';
+import { buildPlayEmbed, buildPlayingNowEmbed, scheduleQueueLeave } from './utils/player';
 dotenv.config();
 
 const testServers = process.env.TEST_SERVERS?.split(", ") || [];
@@ -73,7 +73,12 @@ bot.manager.on('trackStuck', (player, track, payload) => {
 });
 
 bot.manager.on('trackStart', async (player, track) => {
-    const textChannel = player.get('textChannel') as TextChannel;
+    if (bot.queuesWaitingToLeave.has(player.guild)) {
+        clearTimeout(bot.queuesWaitingToLeave.get(player.guild));
+        bot.queuesWaitingToLeave.delete(player.guild);
+    }
+
+    const textChannel = await player.get('textChannel') as TextChannel;
     if (!textChannel.permissionsFor(client.user!)?.has('SendMessages')) return;
 
     const requester = track.requester as GuildMember;
@@ -89,16 +94,8 @@ bot.manager.on('trackEnd', async (player, track) => {
 });
 
 bot.manager.on('queueEnd', async (player) => {
-    
+    await scheduleQueueLeave(bot, player);
 });
-// bot.manager.on('trackStart', (queue, track) => {
-//     if (bot.queuesWaitingToLeave.has(queue.guild.id)) {
-//         clearTimeout(bot.queuesWaitingToLeave.get(queue.guild.id));
-//         bot.queuesWaitingToLeave.delete(queue.guild.id);
-//     }
-//     const metadata = queue.metadata as IQueueMetadata;
-//     metadata.skipVotes = [];
-// });
 
 // bot.manager.on('debug', (queue, message) => {
 //     // console.log(message);

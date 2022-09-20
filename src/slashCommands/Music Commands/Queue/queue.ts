@@ -1,6 +1,5 @@
 import { ApplicationCommandOptionType, CommandInteraction } from "discord.js";
 import { IBot } from "../../../utils/interfaces/IBot";
-import { IQueueMetadata } from "../../../utils/interfaces/IQueueMetadata";
 import { ISlashCommand } from "../../../utils/interfaces/ISlashCommand";
 import { designQueue } from "../../../utils/queueDesigner";
 
