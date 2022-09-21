@@ -94,7 +94,9 @@ bot.manager.on('queueEnd', async (player) => {
     const autoplay = await player.get('autoplay') as boolean;
     if (!autoplay) return await scheduleQueueLeave(bot, player);
     
-    const track = await player.get('previoustrack') as Track;
+    const track = await player.get('previoustrack') as Track | undefined;
+    if (!track) return await scheduleQueueLeave(bot, player);
+    
     const identifier = track.identifier;
     const url = `https://www.youtube.com/watch?v=${identifier}&list=RD${identifier}`;
     const res = await basicSearch(`Autoplay (enabled by ${track.requester})`, bot.manager, url);

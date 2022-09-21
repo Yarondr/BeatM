@@ -33,7 +33,7 @@ module.exports = {
         }
         await interaction.deferReply();
 
-        const player = await createPlayer(guild, bot.manager, member.voice.channel, channel);
+        const player = createPlayer(guild, bot.manager, member.voice.channel, channel);
         
         const res = await searchQuery(bot.manager, member, interaction);
         if (!res || !res.tracks.length) return interaction.editReply({content: "No results found."});

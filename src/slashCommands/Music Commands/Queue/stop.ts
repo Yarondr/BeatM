@@ -30,7 +30,7 @@ module.exports = {
         // TODO: 
         // const voiceChannel = player.get("voiceChannel") as VoiceBasedChannel;
         // await scheduleQueueLeave(bot, player, guild, channel, voiceChannel);
-        // player = await createPlayer(guild, bot.manager, voiceChannel, channel);
+        // player = createPlayer(guild, bot.manager, voiceChannel, channel);
         // player.connect();
         // setupOnQueueFinish(bot, player, guild, bot.manager, channel, voiceChannel);
         return interaction.editReply("Stopped!");

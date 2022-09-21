@@ -42,7 +42,7 @@ export function checkSkippingPlayers(skip_votes: string[], voice: VoiceBasedChan
     return skip_votes.filter(id => memberIds.includes(id));
 }
 
-export async function createPlayer(guild: Guild, manager: Manager, voiceChannel: VoiceBasedChannel, textChannel: TextChannel) {
+export function createPlayer(guild: Guild, manager: Manager, voiceChannel: VoiceBasedChannel, textChannel: TextChannel) {
     let player = manager.get(guild.id);
     if (player) return player;
 
@@ -52,10 +52,11 @@ export async function createPlayer(guild: Guild, manager: Manager, voiceChannel:
         textChannel: textChannel.id,
         selfDeafen: true,
     });
-    await player.set("voiceChannel", voiceChannel);
-    await player.set("textChannel", textChannel);
-    await player.set("skip_votes", []);
-    await player.set("autoplay", false);
+    player.set("voiceChannel", voiceChannel);
+    player.set("textChannel", textChannel);
+    player.set("skip_votes", []);
+    player.set("autoplay", false);
+    player.set(`previoustrack`, undefined);
     return player;
 }
 
