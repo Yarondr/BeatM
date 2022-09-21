@@ -26,13 +26,6 @@ module.exports = {
 
         player.queue.clear()
         player.stop();
-        // player.destroy();
-        // TODO: 
-        // const voiceChannel = player.get("voiceChannel") as VoiceBasedChannel;
-        // await scheduleQueueLeave(bot, player, guild, channel, voiceChannel);
-        // player = createPlayer(guild, bot.manager, voiceChannel, channel);
-        // player.connect();
-        // setupOnQueueFinish(bot, player, guild, bot.manager, channel, voiceChannel);
         return interaction.editReply("Stopped!");
     }
 } as ISlashCommand

@@ -14,9 +14,6 @@ module.exports = {
 
         player.queue.clear();
         player.stop();
-        //TODO:
-        // player = createPlayer(guild, bot.manager, member.voice.channel!, channel);
-        // player.connect();
         return interaction.editReply("Stopped!");
     }
 } as IButton

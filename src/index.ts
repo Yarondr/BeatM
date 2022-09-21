@@ -72,34 +72,3 @@ loadCommands(bot, false);
 loadSlashCommands(bot, false);
 
 client.login(process.env.TOKEN);
-
-/**
- * TODO:
- * V play
- * V join
- * V leave
- * V queue
- * V shuffle
- * V nowplaying
- * V skip
- * V pause
- * V resume
- * V force skip
- * V forward
- * V backward
- * V skip to
- * V back
- * V clear queue
- * V loop
- * V queue loop
- * V remove from queue
- * V stop
- * V volume
- * V play next
- * V save
- * V search
- * V jump to track
- * V controller
- * V move track (to another position in queue)
- * V help
- */
