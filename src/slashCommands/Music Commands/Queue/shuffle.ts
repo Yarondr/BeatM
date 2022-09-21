@@ -26,6 +26,7 @@ module.exports = {
             queue[i] = queue[random];
             queue[random] = temp;
         }
+        player.set("previousQueue", queue.map(track => track));
         await interaction.editReply(`The queue of ${queue.length} songs has been shuffled!`);
     }
 } as ISlashCommand

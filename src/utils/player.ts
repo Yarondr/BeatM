@@ -56,7 +56,8 @@ export function createPlayer(guild: Guild, manager: Manager, voiceChannel: Voice
     player.set("textChannel", textChannel);
     player.set("skip_votes", []);
     player.set("autoplay", false);
-    player.set(`previoustrack`, undefined);
+    player.set("previoustrack", undefined);
+    player.set("previousqueue", undefined);
     return player;
 }
 
