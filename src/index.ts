@@ -101,7 +101,7 @@ bot.manager.on('queueEnd', async (player) => {
     const url = `https://www.youtube.com/watch?v=${identifier}&list=RD${identifier}`;
     const res = await basicSearch(`Autoplay (enabled by ${track.requester})`, bot.manager, url);
     if (res) {
-        player.queue.unshift(res.tracks[1]);
+        player.queue.add(res.tracks[1]);
         await player.play().catch((err) => console.log(err));
     }
 });
