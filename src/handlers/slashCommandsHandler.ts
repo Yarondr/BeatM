@@ -81,7 +81,8 @@ const queueCommandsOrder = [
     'stop',
     'move',
     'shuffle',
-    'queueloop'
+    'queueloop',
+    'autoplay'
 ]
 
 const filtersCommandsOrder = [
