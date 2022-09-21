@@ -1,5 +1,6 @@
-import { ApplicationCommandOptionType, CommandInteraction, GuildMember, TextChannel } from "discord.js";
+import { ApplicationCommandOptionType, AutocompleteInteraction, CommandInteraction, GuildMember, TextChannel } from "discord.js";
 import { getMember } from "../../../utils/djs";
+import { playSearchAutocomplete } from "../../../utils/interfaces/autocomplete";
 import { IBot } from "../../../utils/interfaces/IBot";
 import { ISlashCommand } from "../../../utils/interfaces/ISlashCommand";
 import { joinChannel, play, searchQuery } from "../../../utils/player";
@@ -28,7 +29,7 @@ module.exports = {
         const player = bot.manager.get(interaction.guildId!)!;
 
         if (!player.queue.current) {
-            return interaction.reply("Can't add to queue, nothing is playing.");
+            return interaction.reply("Can't play next when there is no song playing.");
         }
         await interaction.deferReply();
 
@@ -40,5 +41,9 @@ module.exports = {
         player.queue.unshift(...newTracks);
         
         play(player, res, member, interaction);
+    },
+
+    autocomplete: async (bot: IBot, interaction: AutocompleteInteraction) => {
+        return await playSearchAutocomplete(bot, interaction);
     }
 } as ISlashCommand;
