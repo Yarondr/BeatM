@@ -3,7 +3,7 @@ import { IBot } from "../../../utils/interfaces/IBot";
 import { ISlashCommand } from "../../../utils/interfaces/ISlashCommand";
 
 module.exports = {
-    name: "autplay",
+    name: "autoplay",
     category: "Music Commands",
     description: "Toggles autoplay",
     botPermissions: ['SendMessages', 'EmbedLinks'],
