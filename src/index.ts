@@ -1,8 +1,8 @@
 console.log("Starting bot...")
-import { Manager } from '@yarond/erela.js';
+import { Manager, Track } from '@yarond/erela.js';
 import Filter from '@yarond/erela.js-filters';
 import Spotify from '@yarond/erela.js-spotify';
-import { Client, Collection, EmbedBuilder, GatewayIntentBits, GuildMember, TextChannel } from 'discord.js';
+import { Client, Collection, GatewayIntentBits, TextChannel } from 'discord.js';
 import dotenv from 'dotenv';
 import { loadCommands } from './handlers/commandsHandler';
 import { loadEvents } from './handlers/eventsHandler';
@@ -11,7 +11,7 @@ import { IBot } from './utils/interfaces/IBot';
 import { ICommand } from './utils/interfaces/ICommand';
 import { IEvent } from './utils/interfaces/IEvent';
 import { ISlashCommand } from './utils/interfaces/ISlashCommand';
-import { buildPlayEmbed, buildPlayingNowEmbed, scheduleQueueLeave, basicSearch } from './utils/player';
+import { basicSearch, buildPlayingNowEmbed, scheduleQueueLeave } from './utils/player';
 dotenv.config();
 
 const testServers = process.env.TEST_SERVERS?.split(", ") || [];
@@ -73,6 +73,8 @@ bot.manager.on('trackStuck', (player, track, payload) => {
 });
 
 bot.manager.on('trackStart', async (player, track) => {
+    player.set(`previoustrack`, track);
+
     if (bot.queuesWaitingToLeave.has(player.guild)) {
         clearTimeout(bot.queuesWaitingToLeave.get(player.guild));
         bot.queuesWaitingToLeave.delete(player.guild);
@@ -92,7 +94,7 @@ bot.manager.on('queueEnd', async (player) => {
     const autoplay = await player.get('autoplay') as boolean;
     if (!autoplay) return await scheduleQueueLeave(bot, player);
     
-    const track = player.queue.previous!;
+    const track = await player.get('previoustrack') as Track;
     const identifier = track.identifier;
     const url = `https://www.youtube.com/watch?v=${identifier}&list=RD${identifier}`;
     const res = await basicSearch(`Autoplay (enabled by ${track.requester})`, bot.manager, url);
