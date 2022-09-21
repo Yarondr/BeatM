@@ -5,11 +5,11 @@ import { convertMilisecondsToTime, haveLiveTrack, isTrackLive } from "./player";
 export async function designQueue(player: Player, guild: Guild, page: number) {
     const queue = player.queue;
     const current = queue.current!;
-    const requester = current.requester! as GuildMember;
+    const requester = current.requester! as string;
     const space = queue.length > 0 ? "\n\u200b" : "";
     const duration = isTrackLive(current) ? "LIVE" : convertMilisecondsToTime(current.duration!);
     const nowPlaying = current ?
-        ` [${current.originalTitle!}](${current.originalUri!}) | \`${duration} Requested by: ${requester.user.tag}\`` :
+        ` [${current.originalTitle!}](${current.originalUri!}) | \`${duration} Requested by: ${requester}\`` :
         `Nothing`
     const loopMethods = ['disabled', 'track', 'queue'];
     const loopMethod = player.trackRepeat ? loopMethods[1] : player.queueRepeat ? loopMethods[2] : loopMethods[0];
@@ -25,9 +25,9 @@ export async function designQueue(player: Player, guild: Guild, page: number) {
     queue.slice(page * 10, page * 10 + 10)
         .map((track, index) => {
             index += page * 10;
-            const requester = track.requester! as GuildMember;
+            const requester = track.requester! as string;
             const duration = isTrackLive(track) ? "LIVE" : convertMilisecondsToTime(track.duration!);
-            const value = `\`${index + 1}.\` [${track.originalTitle}](${track.originalUri}) | \`${duration} Requested by: ${requester.user.tag}\``
+            const value = `\`${index + 1}.\` [${track.originalTitle}](${track.originalUri}) | \`${duration} Requested by: ${requester}\``
             const title = index == 0 ? "Up Next:" : "\u200b";
             embed.addFields({name: title, value: value, inline: false});
         }).join('\n');

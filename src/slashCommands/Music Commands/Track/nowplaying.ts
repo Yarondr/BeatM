@@ -29,7 +29,6 @@ module.exports = {
         let progressBar = createProgressBar(player);
         if (duration == "LIVE") progressBar = progressBar.slice(0, -4) + "LIVE";
 
-        const requester = track.requester! as GuildMember;
         const embed = new EmbedBuilder()
             .setColor("Random")
             .setThumbnail(track.thumbnail!)
@@ -38,7 +37,7 @@ module.exports = {
             .addFields(
                 { name: "\u200b\nProgress:", value: progressBar, inline: false },
                 { name : "\u200b", value: "\u200b", inline: false },
-                { name: "Requested by:", value: requester.user.tag, inline: true },
+                { name: "Requested by:", value: track.requester! as string, inline: true },
                 { name: "Volume:", value: `${player.volume}%`, inline: true },
                 { name: "Loop:", value: loopMethod + "\n\u200b", inline: true },
             )

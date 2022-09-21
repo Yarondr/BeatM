@@ -81,26 +81,24 @@ bot.manager.on('trackStart', async (player, track) => {
     const textChannel = await player.get('textChannel') as TextChannel;
     if (!textChannel.permissionsFor(client.user!)?.has('SendMessages')) return;
 
-    const requester = track.requester as GuildMember;
-    const embed = buildPlayingNowEmbed(track, requester);
+    const embed = buildPlayingNowEmbed(track, track.requester! as string);
     await textChannel.send({ embeds: [embed] }).catch( async () => { 
         await textChannel.send("Now playing: " + track.originalTitle +
         "\n\nPlease give me the permission to send embeds in this channel.");
     });
 });
 
-bot.manager.on('trackEnd', async (player, track) => {
+bot.manager.on('queueEnd', async (player) => {
+    const autoplay = await player.get('autoplay') as boolean;
+    if (!autoplay) return await scheduleQueueLeave(bot, player);
+    
+    const track = player.queue.previous!;
     const identifier = track.identifier;
     const url = `https://www.youtube.com/watch?v=${identifier}&list=RD${identifier}`;
-    const requester = track.requester as GuildMember;
-    const res = await basicSearch(requester, bot.manager, url);
+    const res = await basicSearch(`Autoplay (enabled by ${track.requester})`, bot.manager, url);
     if (res) {
         player.queue.unshift(res.tracks[1]);
     }
-});
-
-bot.manager.on('queueEnd', async (player) => {
-    await scheduleQueueLeave(bot, player);
 });
 
 // bot.manager.on('debug', (queue, message) => {

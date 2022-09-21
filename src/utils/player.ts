@@ -63,23 +63,23 @@ export function isDJ(member: GuildMember) {
     return member.permissions.has("ManageGuild") || member.roles.cache.some(r => r.name === "DJ")
 }
 
-export function buildPlayEmbed(res: SearchResult, embedTitle: string, member: GuildMember, index:number = 0) {
+export function buildPlayEmbed(res: SearchResult, embedTitle: string, requester: string, index:number = 0) {
     const track = res.tracks[index];
     const url = res.playlist ? res.playlist.selectedTrack?.originalUri! : track.originalUri!;
     let duration = res.playlist ? playlistLength(res.playlist) : convertMilisecondsToTime(track.duration);
     if (!res.playlist && isTrackLive(track)) duration = "LIVE";
 
-    return playEmbed(embedTitle, track, url, undefined, member);
+    return playEmbed(embedTitle, track, url, undefined, requester);
 }
 
-export function buildPlayingNowEmbed(track: Track, requester: GuildMember) {
+export function buildPlayingNowEmbed(track: Track, requester: string) {
     const title = `Now playing: "${track.originalTitle}"`;
     const url = track.originalUri!;
     const duration = isTrackLive(track) ? "LIVE" : convertMilisecondsToTime(track.duration);
     return playEmbed(title, track, url, duration, requester);
 }
 
-function playEmbed(title: string, track: Track, url: string, duration: string | undefined, member: GuildMember) {
+function playEmbed(title: string, track: Track, url: string, duration: string | undefined, requester: string) {
     const embed = new EmbedBuilder()
         .setColor("Random")
         .setTitle(title)
@@ -87,7 +87,7 @@ function playEmbed(title: string, track: Track, url: string, duration: string | 
         .setThumbnail(track.thumbnail)
         .setURL(url)
         .addFields(
-            {name: 'Requested By:', value: member.user.tag},
+            {name: 'Requested By:', value: requester},
         )
         .setTimestamp();
         // TODO: set footer with loop and queue loop status
@@ -101,16 +101,16 @@ export async function searchQuery(manager: Manager, member: GuildMember, interac
     if (!interaction.isChatInputCommand()) return;
     const search = interaction.options.getString('search-query')!;
     await interaction.editReply("Searching...");
-    return await basicSearch(member, manager, search);
+    return await basicSearch(member.user.tag, manager, search);
 }
 
-export async function basicSearch(member: GuildMember, manager: Manager, search: any) {
-    return await manager.search(search, member);
+export async function basicSearch(requester: string, manager: Manager, search: any) {
+    return await manager.search(search, requester);
 }
 
 export async function play(player: Player, res: SearchResult, member: GuildMember, interaction: CommandInteraction, index:number = 0, searchCmd: boolean = false) {
     const title = res.playlist ? res.playlist.name : res.tracks[index].originalTitle
-    const embed = buildPlayEmbed(res, `Added "${title}" to queue`, member);
+    const embed = buildPlayEmbed(res, `Added "${title}" to queue`, member.user.tag);
     await interaction.editReply({embeds: [embed]});
 
     if (!player.playing && !player.paused) {
