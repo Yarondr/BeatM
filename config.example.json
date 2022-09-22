@@ -1,0 +1,22 @@
+{
+    "token": "bot token",
+    "ownersIDs": [
+        "306449257831989248"
+    ],
+    "testServers": [
+        "server id"
+    ],
+    "lavalink": {
+        "nodes": [
+            {
+                "host": "localhost",
+                "port": 2333,
+                "password": "youshallnotpass"
+            }
+        ]
+    },
+    "spotify": {
+        "clientID": "client id",
+        "clientSecret": "client secret"
+    }
+}
