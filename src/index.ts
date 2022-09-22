@@ -4,11 +4,9 @@ import Filter from '@yarond/erela.js-filters';
 import Spotify from '@yarond/erela.js-spotify';
 import { Client, Collection, GatewayIntentBits } from 'discord.js';
 import dotenv from 'dotenv';
-import { loadCommands } from './handlers/commandsHandler';
 import { loadEvents } from './handlers/eventsHandler';
 import { loadSlashCommands } from './handlers/slashCommandsHandler';
 import { IBot } from './utils/interfaces/IBot';
-import { ICommand } from './utils/interfaces/ICommand';
 import { IEvent } from './utils/interfaces/IEvent';
 import { ISlashCommand } from './utils/interfaces/ISlashCommand';
 dotenv.config();
@@ -35,13 +33,11 @@ const client = new Client({
     ]
 });
 
-const commands = new Collection<string, ICommand>();
 const events = new Collection<string, IEvent>();
 const slashCommands = new Collection<string, ISlashCommand>();
 
 const bot: IBot = {
     client,
-    commands,
     events,
     slashCommands,
     owners,
@@ -68,7 +64,6 @@ const bot: IBot = {
 };
 
 loadEvents(bot, false);
-loadCommands(bot, false);
 loadSlashCommands(bot, false);
 
 client.login(process.env.TOKEN);

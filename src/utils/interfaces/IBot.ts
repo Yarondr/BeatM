@@ -1,12 +1,10 @@
-import { Client, Collection } from "discord.js";
 import { Manager } from '@yarond/erela.js';
-import { ICommand } from "./ICommand";
+import { Client, Collection } from "discord.js";
 import { IEvent } from "./IEvent";
 import { ISlashCommand } from "./ISlashCommand";
 
 export interface IBot {
     client: Client,
-    commands: Collection<string, ICommand>,
     events: Collection<string, IEvent>,
     slashCommands: Collection<string, ISlashCommand>,
     owners: string[],
