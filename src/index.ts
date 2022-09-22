@@ -11,8 +11,7 @@ import { IEvent } from './utils/interfaces/IEvent';
 import { ISlashCommand } from './utils/interfaces/ISlashCommand';
 
 // load config
-const loaded = loadConfig();
-if (!loaded) {
+if (!loadConfig()) {
     throw new Error("Config file created, please fill it out and restart the bot.");
 }
 
