@@ -9,7 +9,6 @@ export interface IBot {
     slashCommands: Collection<string, ISlashCommand>,
     owners: string[],
     testServers: string[],
-    prefix: string,
     manager: Manager,
     queuesWaitingToLeave: Map<string, NodeJS.Timeout>
     emptyChannelsWaitingToLeave: Map<string, NodeJS.Timeout>

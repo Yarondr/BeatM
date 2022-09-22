@@ -17,7 +17,6 @@
     "@yarond/erela.js-spotify": "^1.2.3",
     "discord-api-types": "^0.33.0",
     "discord.js": "^14.1.2",
-    "dotenv": "^16.0.1",
     "dotnet": "^1.1.4",
     "node-abort-controller": "^3.0.1",
     "opusscript": "^0.0.8",
