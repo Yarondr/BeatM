@@ -10,12 +10,11 @@ module.exports = {
 
     execute: async (bot: IBot, interaction: CommandInteraction) => {
         if (!interaction.isChatInputCommand()) return;
+        const player = bot.manager.get(interaction.guildId!)! as any;
         
-        const queue = bot.player.getQueue(interaction.guildId!)!;
-
         await interaction.deferReply();
-
-        await queue.setFilters({[module.exports.name]: true});
+                
+        player.karaoke = true;
         
         return interaction.editReply(`Filter **${module.exports.name}** has been applied to the music!`);
     }

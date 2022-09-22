@@ -6,9 +6,9 @@ import { ISlashCommand } from "../../../utils/interfaces/ISlashCommand";
 import { joinChannel, play, searchQuery } from "../../../utils/player";
 
 module.exports = {
-    name: "playnext",
+    name: "playskip",
     category: "Music Commands",
-    description: "Plays a song from a url or a search query next in the queue",
+    description: "Skips the current song and plays a song from a url or a search query",
     botPermissions: ['SendMessages', 'EmbedLinks', 'Connect', 'Speak'],
     DJOnly: true,
     options: [
@@ -40,7 +40,11 @@ module.exports = {
         const newTracks = res.playlist ? res.tracks : [res.tracks[0]];
         player.queue.unshift(...newTracks);
         
-        play(player, res, member, interaction);
+        await play(player, res, member, interaction);
+        player.stop();
+        if (player.paused) {
+            player.pause(false);
+        }
     },
 
     autocomplete: async (bot: IBot, interaction: AutocompleteInteraction) => {

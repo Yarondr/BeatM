@@ -12,18 +12,19 @@ module.exports = {
     execute: async (bot: IBot, interaction: CommandInteraction) => {
         if (!interaction.isChatInputCommand()) return;
         
-        let queue = bot.player.getQueue(interaction.guildId!)!;
+        let player = bot.manager.get(interaction.guildId!)!;
 
         await interaction.deferReply();
         
-        if (!queue.current) {
+        if (!player.queue.current) {
             return interaction.editReply("Can't go back, I am not playing anything right now!");
         }
-        if (!queue.previousTracks[1]) {
+        if (!player.queue.previous) {
             return interaction.editReply("Can't go back, There is no previous track!");
         }
 
-        await queue.back();
+        player.queue.unshift(player.queue.previous);
+        player.stop(1);
         return interaction.editReply("Going back to previous track!");
     }
 } as ISlashCommand

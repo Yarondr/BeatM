@@ -1,12 +1,10 @@
-import { Queue } from "discord-player";
-import { CacheType, Client, Guild, GuildMember, Interaction, InteractionType, Message, TextChannel } from "discord.js"
-import { getMember } from "../utils/djs";
-import { IBot } from "../utils/interfaces/IBot"
+import { CacheType, GuildMember, Interaction, InteractionType, Message, TextChannel } from "discord.js";
+import { Player } from '@yarond/erela.js';
+import { IBot } from "../utils/interfaces/IBot";
 import { IButton } from "../utils/interfaces/IButton";
 import { ICommandArgs } from "../utils/interfaces/ICommandArgs";
 import { IDropdown } from "../utils/interfaces/IDropdown";
-import { IEvent } from "../utils/interfaces/IEvent"
-import { IQueueMetadata } from "../utils/interfaces/IQueueMetadata";
+import { IEvent } from "../utils/interfaces/IEvent";
 import { ISlashCommand } from "../utils/interfaces/ISlashCommand";
 import { isDJ } from "../utils/player";
 
@@ -40,7 +38,9 @@ module.exports = {
                         try {
                             await interaction.deferReply({ ephemeral: true });
 
-                            return await file.execute(bot, interaction);
+                            return await file.execute(bot, interaction).catch((err) => {
+                                console.log(err);
+                            });
                         } catch (error) {
                             console.log(error);
                         }
@@ -88,14 +88,14 @@ module.exports = {
         }
 
         if (!slashCommand.ignoreNotSameVoiceChannels && slashCommand.category == "Music Commands") {
-            let queue = bot.player.getQueue(interaction.guildId!);
+            let player = bot.manager.get(interaction.guildId!);
             if (!member.voice.channel) {
                 return interaction.reply("You must be in a voice channel to use this command!.");
             }
-            if (!queue || !queue.connection) {
+            if (!player || player.state != "CONNECTED") {
                 return interaction.reply("I'm not in a voice channel!");
             }
-            if (member.voice.channel.id != queue.connection.channel.id) {
+            if (member.voice.channel.id != player.voiceChannel) {
                 return interaction.reply("You must be in the same voice channel as the bot to use this command.");
             }
         }
@@ -105,7 +105,7 @@ module.exports = {
                 const id = interaction.customId;
                 try {
                     const file: IButton | undefined = require(`../components/buttons/${id}.ts`);
-                    let queue: Queue<IQueueMetadata> = bot.player.getQueue(interaction.guildId!)!;
+                    let player: Player = bot.manager.get(interaction.guildId!)!;
                     if (file) {
                         try {
                             await interaction.deferReply();
@@ -115,7 +115,10 @@ module.exports = {
                                 member: member,
                                 channel: channel
                             }
-                            const message: Message = await file.execute(bot, queue, interaction, args);
+                            const message: Message = await file.execute(bot, player, interaction, args).catch(async (err) => {
+                                console.log(err);
+                                return await interaction.fetchReply();
+                            });
                             setTimeout(async () => {
                                 await message.delete();
                             }, 5000);
@@ -129,7 +132,10 @@ module.exports = {
             }
         } else {
             try {
-                await slashCommand.execute(bot, interaction);
+                await slashCommand.execute(bot, interaction).catch((err) => {
+                    console.log(err);
+                });
+
             } catch (e) {
                 console.error(e);
             }

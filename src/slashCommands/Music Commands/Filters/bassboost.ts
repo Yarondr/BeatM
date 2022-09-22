@@ -3,9 +3,9 @@ import { IBot } from "../../../utils/interfaces/IBot";
 import { ISlashCommand } from "../../../utils/interfaces/ISlashCommand";
 
 module.exports = {
-    name: "nightcore",
+    name: "bassboost",
     category: "Music Commands",
-    description: "Speed up and increase the pitch of the music",
+    description: "Apply bass to the music",
     botPermissions: ['SendMessages', 'EmbedLinks'],
 
     execute: async (bot: IBot, interaction: CommandInteraction) => {
@@ -14,7 +14,7 @@ module.exports = {
         
         await interaction.deferReply();
                 
-        player.nightcore = true;
+        player.bassboost = true;
         
         return interaction.editReply(`Filter **${module.exports.name}** has been applied to the music!`);
     }

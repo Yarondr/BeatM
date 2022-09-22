@@ -1,9 +1,8 @@
-import { Queue } from "discord-player";
 import { ButtonInteraction, Message } from "discord.js";
+import { Player } from '@yarond/erela.js';
 import { IBot } from "./IBot";
 import { ICommandArgs } from "./ICommandArgs";
-import { IQueueMetadata } from "./IQueueMetadata";
 
 export interface IButton {
-    execute: (bot: IBot, queue: Queue<IQueueMetadata>, interaction: ButtonInteraction, args: ICommandArgs) => Promise<Message>;
+    execute: (bot: IBot, player: Player, interaction: ButtonInteraction, args: ICommandArgs) => Promise<Message>;
 }

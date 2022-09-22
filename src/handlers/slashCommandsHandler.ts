@@ -57,7 +57,8 @@ const generalCommandsOrder = [
     'forceskip',
     'volume',
     'controller',
-    'help'
+    'help',
+    'ping'
 ];
 
 const trackCommandsOrder = [
@@ -67,6 +68,7 @@ const trackCommandsOrder = [
     'skipto',
     'forward',
     'backward',
+    'replay',
     'loop',
     'save'
 ]
@@ -80,7 +82,8 @@ const queueCommandsOrder = [
     'stop',
     'move',
     'shuffle',
-    'queueloop'
+    'queueloop',
+    'autoplay'
 ]
 
 const filtersCommandsOrder = [

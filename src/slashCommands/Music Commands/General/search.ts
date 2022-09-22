@@ -2,7 +2,7 @@ import { ApplicationCommandOptionType, CommandInteraction, EmbedBuilder, GuildMe
 import { getMember } from "../../../utils/djs";
 import { IBot } from "../../../utils/interfaces/IBot";
 import { ISlashCommand } from "../../../utils/interfaces/ISlashCommand";
-import { convertMilisecondsToTime, createQueue, isTrackLive, joinChannel, play, searchQuery } from "../../../utils/player";
+import { convertMilisecondsToTime, createPlayer, isTrackLive, joinChannel, play, searchQuery } from "../../../utils/player";
 
 module.exports = {
     name: "search",
@@ -26,7 +26,6 @@ module.exports = {
         const member: GuildMember = await getMember(guild, interaction.member?.user.id!);
         const channel = guild?.channels.cache.get(interaction.channelId!)! as TextChannel;
         const search = interaction.options.getString('search-query')!;
-        const player = bot.player;
 
 
         if (!member.voice.channel) {
@@ -34,10 +33,9 @@ module.exports = {
         }
         await interaction.deferReply();
 
-        const queue = createQueue(guild, player, channel);
-        const connected: boolean = queue.connection ? true : false;
+        const player = createPlayer(guild, bot.manager, member.voice.channel, channel);
         
-        const res = await searchQuery(connected, player, member, interaction, channel);
+        const res = await searchQuery(bot.manager, member, interaction);
         if (!res || !res.tracks.length) return interaction.editReply({content: "No results found."});
         const maxTracks = res.tracks.slice(0, 10);
 
@@ -47,8 +45,8 @@ module.exports = {
             .setTimestamp();
 
         maxTracks.map((track, index) => {
-                const duration = isTrackLive(track) ? "LIVE" : convertMilisecondsToTime(track.durationMS);
-                const value = `\`${index + 1}.\` [${track.title}](${track.url}) | \`${duration}\``
+                const duration = isTrackLive(track) ? "LIVE" : convertMilisecondsToTime(track.duration);
+                const value = `\`${index + 1}.\` [${track.originalTitle}](${track.originalUri}) | \`${duration}\``
                 embed.addFields({name: "\u200b", value: value, inline: false});
         }); //.join('\n');
 
@@ -72,10 +70,9 @@ module.exports = {
             }
 
             collector.stop();
-            const connected: boolean = queue.connection ? true : false;
-            await joinChannel(bot, connected, queue, member, interaction, player, guild, channel);
-            queue.addTrack(res.tracks[songNumber - 1]);
-            await play(queue, res, member, interaction, songNumber - 1, true);
+            await joinChannel(bot, member, interaction, player, guild, channel);
+            player.queue.add(res.tracks[songNumber - 1]);
+            await play(player, res, member, interaction, songNumber - 1, true);
         });
 
         collector.on('end', async (collected, reason) => {

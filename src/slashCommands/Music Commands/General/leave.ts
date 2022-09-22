@@ -14,11 +14,11 @@ module.exports = {
         
         const guild = bot.client.guilds.cache.get(interaction.guildId!)!;
         const member: GuildMember = await getMember(guild, interaction.member?.user.id!);
-        const queue = bot.player.getQueue(interaction.guildId!)!;
+        const player = bot.manager.get(interaction.guildId!)!;
 
         await interaction.deferReply();
         
-        queue.destroy(true)
+        player.disconnect();
         await interaction.editReply(`Disconnected from \`${member.voice.channel!.name}\``);
     }
 } as ISlashCommand

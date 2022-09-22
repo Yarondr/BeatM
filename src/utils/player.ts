@@ -1,13 +1,10 @@
-import { Player, PlayerSearchResult, Playlist, QueryType, Queue, Track, TrackSource } from "discord-player";
-import { ButtonInteraction, CommandInteraction, EmbedBuilder, Guild, GuildChannelResolvable, GuildMember, TextChannel, VoiceBasedChannel } from "discord.js";
-import * as playdl from "play-dl";
-import { Readable } from "stream";
+import { Manager, Player, PlaylistInfo, Queue, SearchResult, Track, UnresolvedTrack } from '@yarond/erela.js';
+import { ButtonInteraction, CommandInteraction, EmbedBuilder, Guild, GuildMember, TextChannel, VoiceBasedChannel } from "discord.js";
 import { embedContent } from "./embedContent";
 import { IBot } from "./interfaces/IBot";
-import { IQueueMetadata } from "./interfaces/IQueueMetadata";
 
-export function convertMilisecondsToTime(miliseconds: number) {
-    const date = new Date(miliseconds);
+export function convertMilisecondsToTime(time: number) {
+    const date = new Date(time);
     const hours = date.getUTCHours();
     const minutes = date.getUTCMinutes() === 0  && hours > 0 ? "00" : date.getUTCMinutes();
     const seconds: string = date.getUTCSeconds() < 10 ? "0" + date.getUTCSeconds() : date.getUTCSeconds().toString();
@@ -28,20 +25,16 @@ export function playerDurationToMiliseconds(duration: string): number {
     return (hours * 60 * 60 + minutes * 60 + seconds) * 1000;
 }
 
-export function playlistLength(playlist: Playlist) {
-    let length = 0;
-    playlist.tracks.forEach(track => {
-        length += track.durationMS;
-    })
-    return convertMilisecondsToTime(length);
+export function playlistLength(playlist: PlaylistInfo) {
+    return convertMilisecondsToTime(playlist.duration);
 }
 
-export function isTrackLive(track: Track) {
-    return track.durationMS == 0;
+export function isTrackLive(track: Track | UnresolvedTrack) {
+    return track.duration === 0;
 }
 
 export function haveLiveTrack(queue: Queue) {
-    return queue.tracks.some(track => isTrackLive(track));
+    return queue.some(track => isTrackLive(track));
 }
 
 export function checkSkippingPlayers(skip_votes: string[], voice: VoiceBasedChannel) {
@@ -49,124 +42,115 @@ export function checkSkippingPlayers(skip_votes: string[], voice: VoiceBasedChan
     return skip_votes.filter(id => memberIds.includes(id));
 }
 
-export function createQueue(guild: Guild, player: Player, channel: TextChannel) {
-    return player.createQueue(guild, {
-        metadata: {
-            channel,
-            skipVotes: [],
-        } as IQueueMetadata,
+export function createPlayer(guild: Guild, manager: Manager, voiceChannel: VoiceBasedChannel, textChannel: TextChannel) {
+    let player = manager.get(guild.id);
+    if (player) return player;
 
-        leaveOnStop: false,
-        volumeSmoothness: 0.1,
-
-        async onBeforeCreateStream(track: Track, source: TrackSource, queue: Queue): Promise<Readable> {
-            if (track.url.includes("spotify.com")) source = "spotify";
-            if (source == "youtube") {
-                console.log("Creating stream for youtube track");
-                const stream = await playdl.stream(track.url, { discordPlayerCompatibility: true });
-                return stream.stream;
-            } else if (source == "spotify") {
-                console.log("Creating stream for spotify track");
-                const search = await playdl.search(`${track.author} ${track.title} lyrics`,
-                    { limit: 1, source: { youtube: "video"}}).then(res => res[0].url);
-                const stream = await playdl.stream(search, { discordPlayerCompatibility: true });
-                return stream.stream;
-            } else {
-                const stream = await playdl.stream(track.url, { discordPlayerCompatibility: true });
-                return stream.stream;
-            }
-        },
+    player = manager.create({
+        guild: guild.id,
+        voiceChannel: voiceChannel.id,
+        textChannel: textChannel.id,
+        selfDeafen: true,
     });
+    player.set("voiceChannel", voiceChannel);
+    player.set("textChannel", textChannel);
+    player.set("skip_votes", []);
+    player.set("autoplay", false);
+    player.set("previoustrack", undefined);
+    player.set("previousqueue", undefined);
+    return player;
 }
 
 export function isDJ(member: GuildMember) {
     return member.permissions.has("ManageGuild") || member.roles.cache.some(r => r.name === "DJ")
 }
 
-export function buildPlayEmbed(res: PlayerSearchResult, embedTitle: string, member: GuildMember, index:number = 0) {
+export function buildPlayEmbed(res: SearchResult, embedTitle: string, requester: string, index:number = 0) {
     const track = res.tracks[index];
-    const url = res.playlist ? res.playlist.url : track.url;
-    let duration = res.playlist ? playlistLength(res.playlist) : convertMilisecondsToTime(track.durationMS);
+    const url = res.playlist ? res.playlist.selectedTrack?.originalUri! : track.originalUri!;
+    let duration = res.playlist ? playlistLength(res.playlist) : convertMilisecondsToTime(track.duration);
     if (!res.playlist && isTrackLive(track)) duration = "LIVE";
 
-    return new EmbedBuilder()
+    return playEmbed(embedTitle, track, url, undefined, requester);
+}
+
+export function buildPlayingNowEmbed(track: Track, requester: string) {
+    const title = `Now playing: "${track.originalTitle}"`;
+    const url = track.originalUri!;
+    const duration = isTrackLive(track) ? "LIVE" : convertMilisecondsToTime(track.duration);
+    return playEmbed(title, track, url, duration, requester);
+}
+
+function playEmbed(title: string, track: Track, url: string, duration: string | undefined, requester: string) {
+    const embed = new EmbedBuilder()
         .setColor("Random")
-        .setTitle(embedTitle)
+        .setTitle(title)
         // TODO: support spotify thumbnail
         .setThumbnail(track.thumbnail)
         .setURL(url)
         .addFields(
-            {name: 'Requested By:', value: member.user.tag},
-            {name: 'Duration:', value: duration}
+            {name: 'Requested By:', value: requester},
         )
         .setTimestamp();
         // TODO: set footer with loop and queue loop status
+    if (duration) {
+        embed.addFields({name: 'Duration:', value: duration!});
+    }
+    return embed;
 }
 
-export async function searchQuery(connected: boolean, player: Player, member: GuildMember, interaction: CommandInteraction, channel: TextChannel) {
+export async function searchQuery(manager: Manager, member: GuildMember, interaction: CommandInteraction) {
     if (!interaction.isChatInputCommand()) return;
     const search = interaction.options.getString('search-query')!;
     await interaction.editReply("Searching...");
-    return await basicSearch(member, player, search);
+    return await basicSearch(member.user.tag, manager, search);
 }
 
-export async function basicSearch(member: GuildMember, player: Player, search: any) {
-    return await player.search(search, {
-        requestedBy: member,
-        searchEngine: QueryType.AUTO,
-    });
+export async function basicSearch(requester: string, manager: Manager, search: any) {
+    return await manager.search(search, requester);
 }
 
-export async function play(queue: Queue<IQueueMetadata>, res: PlayerSearchResult, member: GuildMember, interaction: CommandInteraction, index:number = 0, searchCmd: boolean = false) {
-    if (!queue.playing) {
-        await queue.play();
-        const embed = buildPlayEmbed(res, `Playing "${res.tracks[index].title}"`, member);
-        if (searchCmd) await interaction.editReply({ embeds: [embed] });
-        else await queue.metadata!.channel.send({embeds: [embed]});
-    } else {
-        const title = res.playlist ? res.playlist.title : res.tracks[index].title;
-        const embed = buildPlayEmbed(res, `Added "${title}" to queue`, member);
-        await interaction.editReply({embeds: [embed]});
+export async function play(player: Player, res: SearchResult, member: GuildMember, interaction: CommandInteraction, index:number = 0, searchCmd: boolean = false) {
+    const title = res.playlist ? res.playlist.name : res.tracks[index].originalTitle
+    const embed = buildPlayEmbed(res, `Added "${title}" to queue`, member.user.tag);
+    await interaction.editReply({embeds: [embed]});
+
+    if (!player.playing && !player.paused) {
+        await player.play().catch((err) => {
+            console.log(err);
+        });
     }
 }
 
-export function setupOnQueueFinish(bot: IBot, queue: Queue<IQueueMetadata>, guild: Guild, player: Player, channel: TextChannel, voiceChannel: GuildChannelResolvable) {
-    queue.connection.on('finish', async () => {
-        scheduleQueueLeave(bot, queue, guild, channel, voiceChannel);
-    });
-}
-
-export async function joinChannel(bot: IBot, connected: boolean, queue: Queue<IQueueMetadata>, member: GuildMember, interaction: CommandInteraction, player: Player, guild: Guild, channel: TextChannel) {
+export async function joinChannel(bot: IBot, member: GuildMember, interaction: CommandInteraction, player: Player, guild: Guild, channel: TextChannel) {
     if (!member.voice.channel) return;
     try {
-        if (!connected) {
-            const voiceChannel = member.voice.channel;
-            await queue.connect(voiceChannel);
-            setupOnQueueFinish(bot, queue, guild, player, channel, voiceChannel);
+        if (player.state != "CONNECTED" && player.state != "CONNECTING") {
+            player.connect();
             await interaction.editReply(`Joined \`${member.voice.channel.name}\` and bound to <#${channel.id}>`);
-        } else if (queue.connection.channel.id !== member.voice.channel.id) {
+        } else if (player.voiceChannel !== member.voice.channel.id) {
             return interaction.editReply(`Can't join to \`${member.voice.channel.name}\` because I'm already in another voice channel.`);
         }
     } catch {
-        player.deleteQueue(guild.id);
+        player.destroy();
         return interaction.editReply(`I can't join your voice channel. Please check my permissions.`);
     }
 }
 
-export async function skip(member: GuildMember, queue: Queue<IQueueMetadata>, interaction: CommandInteraction | ButtonInteraction, embed: boolean = false) {
+export async function skip(member: GuildMember, player: Player, interaction: CommandInteraction | ButtonInteraction, embed: boolean = false) {
     const voiceMembers = Math.floor(member.voice.channel!.members.filter(m => !m.user.bot).size / 2);
-    const metadata = queue.metadata as IQueueMetadata;
-    const skipVotes = checkSkippingPlayers(metadata.skipVotes, member.voice.channel!);
+    let skipVotes = await player.get("skip_votes") as string[];
+    skipVotes = checkSkippingPlayers(skipVotes, member.voice.channel!);
     if (skipVotes.includes(member.id)) {
         return interaction.editReply("You already voted to skip this song.");
     }
     skipVotes.push(member.id);
     if (skipVotes.length >= voiceMembers) {
-        const success = queue.skip();
-        if (queue.connection.paused) {
-            queue.connection.resume();
+        player.stop();
+        if (player.paused) {
+            player.pause(false);
         }
-        const reply = success ? "Skipped!" : "Something went wrong...";
+        const reply = "Skipped!"
         if (embed) {
             return interaction.editReply({embeds: [embedContent(reply, member)]});
         }
@@ -176,20 +160,20 @@ export async function skip(member: GuildMember, queue: Queue<IQueueMetadata>, in
     }
 }
 
-export async function scheduleQueueLeave(bot: IBot, queue: Queue<IQueueMetadata> | undefined , guild: Guild, channel: TextChannel, voiceChannel: GuildChannelResolvable, empty: boolean = false) {
+export async function scheduleQueueLeave(bot: IBot, player: Player | undefined, empty: boolean = false) {
+    const guildId = player?.guild!;
     const map = empty ? bot.emptyChannelsWaitingToLeave : bot.queuesWaitingToLeave;
 
-    if (map.has(guild.id)) {
-        clearTimeout(map.get(guild.id));
+    if (map.has(guildId)) {
+        clearTimeout(map.get(guildId));
     }
 
-    map.set(guild.id, setTimeout(async () => {
-        queue = bot.player.getQueue(queue!.guild.id);
-        if (!queue) {
-            queue = createQueue(guild, bot.player, channel);
-            await queue.connect(voiceChannel);
-        }
-        queue.destroy(true);
-        map.delete(queue.guild.id);
+    map.set(guildId, setTimeout(async () => {
+        player = bot.manager.get(player!.guild);
+        if (!player) return;
+        map.delete(player!.guild);
+        player.disconnect();
+        player.destroy();
+        bot.manager.players.delete(player.guild);
     }, 60000));
 }

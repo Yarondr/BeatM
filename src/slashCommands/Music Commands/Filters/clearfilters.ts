@@ -10,16 +10,13 @@ module.exports = {
 
     execute: async (bot: IBot, interaction: CommandInteraction) => {
         if (!interaction.isChatInputCommand()) return;
+        const player = bot.manager.get(interaction.guildId!)! as any;
         
-        const queue = bot.player.getQueue(interaction.guildId!)!;
-
         await interaction.deferReply();
-
-        queue.getFiltersEnabled().forEach(async (filter: any) => {
-            await queue.setFilters({[filter]: false});
-        });
+                
+        player.reset();
         
-        return interaction.editReply(`All filters have been cleared!`);
+        return interaction.editReply(`All filters have been cleared from the music!`);
     }
 
 } as ISlashCommand;

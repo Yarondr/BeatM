@@ -26,5 +26,11 @@ export function loadEvents(bot: IBot, reload: boolean) {
         }
     })
 
-    console.log(`Loaded ${eventsFiles.length} events`)
+    try {
+        require('../events/erelaManager')(bot);
+    } catch (error) {
+        console.log(error);
+    }
+
+    console.log(`Loaded ${eventsFiles.length} discord events`)
 }

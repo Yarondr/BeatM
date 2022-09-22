@@ -3,19 +3,18 @@ import { IBot } from "../../../utils/interfaces/IBot";
 import { ISlashCommand } from "../../../utils/interfaces/ISlashCommand";
 
 module.exports = {
-    name: "treble",
+    name: "treblebass",
     category: "Music Commands",
     description: "Add some treblebass to the music",
     botPermissions: ['SendMessages', 'EmbedLinks'],
 
     execute: async (bot: IBot, interaction: CommandInteraction) => {
         if (!interaction.isChatInputCommand()) return;
+        const player = bot.manager.get(interaction.guildId!)! as any;
         
-        const queue = bot.player.getQueue(interaction.guildId!)!;
-
         await interaction.deferReply();
-
-        await queue.setFilters({[module.exports.name]: true});
+                
+        player.treblebass = true;
         
         return interaction.editReply(`Filter **${module.exports.name}** has been applied to the music!`);
     }

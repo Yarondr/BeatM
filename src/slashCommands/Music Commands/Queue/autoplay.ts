@@ -3,21 +3,21 @@ import { IBot } from "../../../utils/interfaces/IBot";
 import { ISlashCommand } from "../../../utils/interfaces/ISlashCommand";
 
 module.exports = {
-    name: "bassboost",
+    name: "autoplay",
     category: "Music Commands",
-    description: "Apply bass to the music",
+    description: "Toggles autoplay",
     botPermissions: ['SendMessages', 'EmbedLinks'],
-
+    DJOnly: true,
+    
     execute: async (bot: IBot, interaction: CommandInteraction) => {
         if (!interaction.isChatInputCommand()) return;
         
-        const queue = bot.player.getQueue(interaction.guildId!)!;
+        let player = bot.manager.get(interaction.guildId!)!;
 
         await interaction.deferReply();
 
-        await queue.setFilters({[module.exports.name]: true});
-        
-        return interaction.editReply(`Filter **${module.exports.name}** has been applied to the music!`);
+        const autoplay = !await player.get("autoplay");
+        await player.set("autoplay", autoplay);
+        await interaction.editReply(`Autoplay is now ${autoplay ? "enabled" : "disabled"}`);
     }
-
-} as ISlashCommand;
+} as ISlashCommand

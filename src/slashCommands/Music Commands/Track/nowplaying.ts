@@ -1,7 +1,8 @@
-import { CommandInteraction, EmbedBuilder } from "discord.js";
+import { CommandInteraction, EmbedBuilder, GuildMember } from "discord.js";
 import { IBot } from "../../../utils/interfaces/IBot";
 import { ISlashCommand } from "../../../utils/interfaces/ISlashCommand";
 import { convertMilisecondsToTime } from "../../../utils/player";
+import { createProgressBar } from "../../../utils/playingBar";
 
 module.exports = {
     name: "nowplaying",
@@ -12,31 +13,33 @@ module.exports = {
     execute: async (bot: IBot, interaction: CommandInteraction) => {
         if (!interaction.isChatInputCommand()) return;
         
-        const queue = bot.player.getQueue(interaction.guildId!)!;
+        const player = bot.manager.get(interaction.guildId!)!;
+        const queue = player.queue;
 
         await interaction.deferReply();
 
-        if (!queue.playing) {
+        if (!queue.current) {
             return interaction.editReply("I am not playing anything right now!");
         }
 
-        const loopMethods = ['Off', 'Track', 'Queue'];
+        const loopMethods = ['disabled', 'Track', 'Queue'];
+        const loopMethod = player.trackRepeat ? loopMethods[1] : player.queueRepeat ? loopMethods[2] : loopMethods[0];
         const track = queue.current;
-        const duration = convertMilisecondsToTime(queue.current.durationMS);
-        let progressBar = queue.createProgressBar();
+        const duration = convertMilisecondsToTime(queue.current?.duration!)
+        let progressBar = createProgressBar(player);
         if (duration == "LIVE") progressBar = progressBar.slice(0, -4) + "LIVE";
 
         const embed = new EmbedBuilder()
             .setColor("Random")
-            .setThumbnail(track.thumbnail)
-            .setURL(track.url)
-            .setTitle(`Now Playing: "${track.title}"`)
+            .setThumbnail(track.thumbnail!)
+            .setURL(track.originalUri!)
+            .setTitle(`Now Playing: "${track.originalTitle}"`)
             .addFields(
                 { name: "\u200b\nProgress:", value: progressBar, inline: false },
                 { name : "\u200b", value: "\u200b", inline: false },
-                { name: "Requested by:", value: track.requestedBy.tag, inline: true },
-                { name: "Volume:", value: `${queue.volume}%`, inline: true },
-                { name: "Loop:", value: loopMethods[queue.repeatMode] + "\n\u200b", inline: true },
+                { name: "Requested by:", value: track.requester! as string, inline: true },
+                { name: "Volume:", value: `${player.volume}%`, inline: true },
+                { name: "Loop:", value: loopMethod + "\n\u200b", inline: true },
             )
             .setTimestamp();
         

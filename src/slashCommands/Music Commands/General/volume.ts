@@ -22,7 +22,7 @@ module.exports = {
     execute: async (bot: IBot, interaction: CommandInteraction) => {
         if (!interaction.isChatInputCommand()) return;
         
-        let queue = bot.player.getQueue(interaction.guildId!)!;
+        let player = bot.manager.get(interaction.guildId!)!;
 
         await interaction.deferReply();
         
@@ -37,7 +37,7 @@ module.exports = {
         if (volume < 1 || volume > 200) {
             return interaction.editReply("The volume must be between 1 and 200!");
         }
-        const success = queue.setVolume(volume);
+        const success = player.setVolume(volume);
         const reply = success ? `The volume has been set to ${volume}` : "Failed to set the volume";
         await interaction.editReply(reply);
     }
