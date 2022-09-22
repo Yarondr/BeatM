@@ -57,7 +57,8 @@ const generalCommandsOrder = [
     'forceskip',
     'volume',
     'controller',
-    'help'
+    'help',
+    'ping'
 ];
 
 const trackCommandsOrder = [
