@@ -8,11 +8,10 @@ module.exports = {
         .setName("volume")
         .setDescription("Sets the volume of the bot")
         .setDMPermission(false)
-        .addNumberOption(option => option
+        .addStringOption(option => option
             .setName("volume")
             .setDescription("The volume to set the bot to")
-            .setRequired(true)
-            .setMinValue(1)),
+            .setRequired(true)),
     category: "Music Commands",
     botPermissions: ['SendMessages', 'EmbedLinks'],
     DJOnly: true,
