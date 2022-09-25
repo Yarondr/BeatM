@@ -24,8 +24,8 @@ module.exports = {
     execute: async (bot: IBot, interaction: CommandInteraction) => {
         if (!interaction.isChatInputCommand()) return;
         
-        const songIndex = interaction.options.getInteger('song-number')! -1;
-        const newSongIndex = interaction.options.getInteger('new-song-number')! -1;
+        const songIndex = interaction.options.getNumber('song-number')! -1;
+        const newSongIndex = interaction.options.getNumber('new-song-number')! -1;
         let player = bot.manager.get(interaction.guildId!)!;
 
         await interaction.deferReply();

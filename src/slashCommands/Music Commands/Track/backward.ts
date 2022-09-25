@@ -20,7 +20,7 @@ module.exports = {
     execute: async (bot: IBot, interaction: CommandInteraction) => {
         if (!interaction.isChatInputCommand()) return;
         
-        const secondToSkip = interaction.options.getInteger('seconds')!;
+        const secondToSkip = interaction.options.getNumber('seconds')!;
         let player = bot.manager.get(interaction.guildId!)!;
 
         await interaction.deferReply();
