@@ -1,7 +1,7 @@
 import { ApplicationCommandOptionType, CommandInteraction, SlashCommandBuilder } from "discord.js";
 import { IBot } from "../../../utils/interfaces/IBot";
 import { ISlashCommand } from "../../../utils/interfaces/ISlashCommand";
-import { convertMilisecondsToTime, playerDurationToMiliseconds } from "../../../utils/player";
+import { convertMilisecondsToTime, isTrackLive, playerDurationToMiliseconds } from "../../../utils/player";
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -27,6 +27,9 @@ module.exports = {
 
         if (!player.queue.current) {
             return interaction.editReply("Can't skip backward, I am not playing anything right now!");
+        }
+        if (isTrackLive(player.queue.current)) {
+            return interaction.editReply("Can't skip backward, because the current song is live!");
         }
 
         const currentTime = player.position;
