@@ -145,6 +145,7 @@ export async function skip(member: GuildMember, player: Player, interaction: Com
         return interaction.editReply("You already voted to skip this song.");
     }
     skipVotes.push(member.id);
+    player.set("skip_votes", skipVotes);
     if (skipVotes.length >= voiceMembers) {
         player.stop();
         if (player.paused) {
