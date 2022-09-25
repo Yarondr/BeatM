@@ -1,22 +1,20 @@
-import { ApplicationCommandOptionType, CommandInteraction } from "discord.js";
+import { ApplicationCommandOptionType, CommandInteraction, SlashCommandBuilder } from "discord.js";
 import { IBot } from "../../../utils/interfaces/IBot";
 import { ISlashCommand } from "../../../utils/interfaces/ISlashCommand";
 
 module.exports = {
-    name: "remove",
+    data: new SlashCommandBuilder()
+        .setName("remove")
+        .setDescription("Remove a specific song from the queue")
+        .setDMPermission(false)
+        .addNumberOption(option => option
+            .setName("song-number")
+            .setDescription("The number of the song to remove")
+            .setRequired(true)
+            .setMinValue(1)),
     category: "Music Commands",
-    description: "Remove a specific song from the queue.",
     botPermissions: ['SendMessages', 'EmbedLinks'],
     DJOnly: true,
-    options: [
-        {
-            name: "song-number",
-            description: "The number of the song to remove",
-            type: ApplicationCommandOptionType.Integer,
-            minValue: 1,
-            required: true,
-        }
-    ],
     
     execute: async (bot: IBot, interaction: CommandInteraction) => {
         if (!interaction.isChatInputCommand()) return;

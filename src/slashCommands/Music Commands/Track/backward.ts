@@ -1,23 +1,21 @@
-import { ApplicationCommandOptionType, CommandInteraction } from "discord.js";
+import { ApplicationCommandOptionType, CommandInteraction, SlashCommandBuilder } from "discord.js";
 import { IBot } from "../../../utils/interfaces/IBot";
 import { ISlashCommand } from "../../../utils/interfaces/ISlashCommand";
 import { convertMilisecondsToTime, playerDurationToMiliseconds } from "../../../utils/player";
 
 module.exports = {
-    name: "backward",
+    data: new SlashCommandBuilder()
+        .setName("backward")
+        .setDescription("Go backward a specific amount of seconds")
+        .setDMPermission(false)
+        .addNumberOption(option => option
+            .setName("seconds")
+            .setDescription("The amount of seconds to skip backward.")
+            .setRequired(true)
+            .setMinValue(1)),
     category: "Music Commands",
-    description: "Go backward a specific amount of seconds",
     botPermissions: ['SendMessages', 'EmbedLinks'],
     DJOnly: true,
-    options: [
-        {
-            name: "seconds",
-            description: "The amount of seconds to skip backward.",
-            type: ApplicationCommandOptionType.Integer,
-            minValue: 1,
-            required: true,
-        }
-    ],
     
     execute: async (bot: IBot, interaction: CommandInteraction) => {
         if (!interaction.isChatInputCommand()) return;

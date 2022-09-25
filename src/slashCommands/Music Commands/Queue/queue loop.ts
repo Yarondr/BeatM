@@ -1,11 +1,13 @@
-import { CommandInteraction } from "discord.js";
+import { CommandInteraction, SlashCommandBuilder } from "discord.js";
 import { IBot } from "../../../utils/interfaces/IBot";
 import { ISlashCommand } from "../../../utils/interfaces/ISlashCommand";
 
 module.exports = {
-    name: "queueloop",
+    data: new SlashCommandBuilder()
+        .setName("queueloop")
+        .setDescription("Loop the current queue")
+        .setDMPermission(false),
     category: "Music Commands",
-    description: "Loop the current queue",
     botPermissions: ['SendMessages', 'EmbedLinks'],
     DJOnly: true,
     

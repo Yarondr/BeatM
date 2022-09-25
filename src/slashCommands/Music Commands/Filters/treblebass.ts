@@ -1,11 +1,13 @@
-import { CommandInteraction } from "discord.js";
+import { CommandInteraction, SlashCommandBuilder } from "discord.js";
 import { IBot } from "../../../utils/interfaces/IBot";
 import { ISlashCommand } from "../../../utils/interfaces/ISlashCommand";
 
 module.exports = {
-    name: "treblebass",
+    data: new SlashCommandBuilder()
+        .setName("treblebass")
+        .setDescription("Add some treblebas to the music")
+        .setDMPermission(false),
     category: "Music Commands",
-    description: "Add some treblebass to the music",
     botPermissions: ['SendMessages', 'EmbedLinks'],
 
     execute: async (bot: IBot, interaction: CommandInteraction) => {

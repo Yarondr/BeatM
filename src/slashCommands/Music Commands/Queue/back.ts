@@ -1,11 +1,13 @@
-import { CommandInteraction } from "discord.js";
+import { CommandInteraction, SlashCommandBuilder } from "discord.js";
 import { IBot } from "../../../utils/interfaces/IBot";
 import { ISlashCommand } from "../../../utils/interfaces/ISlashCommand";
 
 module.exports = {
-    name: "back",
+    data: new SlashCommandBuilder()
+        .setName("back")
+        .setDescription("Go back to the previous track")
+        .setDMPermission(false),
     category: "Music Commands",
-    description: "Go back to the previous track",
     botPermissions: ['SendMessages', 'EmbedLinks'],
     DJOnly: true,
     

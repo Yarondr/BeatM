@@ -1,11 +1,13 @@
-import { CommandInteraction } from "discord.js";
+import { CommandInteraction, SlashCommandBuilder } from "discord.js";
 import { IBot } from "../../../utils/interfaces/IBot";
 import { ISlashCommand } from "../../../utils/interfaces/ISlashCommand";
 
 module.exports = {
-    name: "vaporwave",
+    data: new SlashCommandBuilder()
+        .setName("vaporwave")
+        .setDescription("Add a deep voice effect to the music")
+        .setDMPermission(false),
     category: "Music Commands",
-    description: "Add a deep voice effect to the music",
     botPermissions: ['SendMessages', 'EmbedLinks'],
 
     execute: async (bot: IBot, interaction: CommandInteraction) => {

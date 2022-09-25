@@ -1,11 +1,13 @@
-import { CommandInteraction } from "discord.js";
+import { CommandInteraction, SlashCommandBuilder } from "discord.js";
 import { IBot } from "../../../utils/interfaces/IBot";
 import { ISlashCommand } from "../../../utils/interfaces/ISlashCommand";
 
 module.exports = {
-    name: "forceskip",
+    data: new SlashCommandBuilder()
+        .setName("forceskip")
+        .setDescription("Force skip the current track")
+        .setDMPermission(false),
     category: "Music Commands",
-    description: "Force skip the current track",
     botPermissions: ['SendMessages', 'EmbedLinks'],
     DJOnly: true,
 

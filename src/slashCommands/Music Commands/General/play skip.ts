@@ -1,4 +1,4 @@
-import { ApplicationCommandOptionType, AutocompleteInteraction, CommandInteraction, GuildMember, TextChannel } from "discord.js";
+import { ApplicationCommandOptionType, AutocompleteInteraction, CommandInteraction, GuildMember, SlashCommandBuilder, TextChannel } from "discord.js";
 import { getMember } from "../../../utils/djs";
 import { playSearchAutocomplete } from "../../../utils/interfaces/autocomplete";
 import { IBot } from "../../../utils/interfaces/IBot";
@@ -6,19 +6,17 @@ import { ISlashCommand } from "../../../utils/interfaces/ISlashCommand";
 import { joinChannel, play, searchQuery } from "../../../utils/player";
 
 module.exports = {
-    name: "playskip",
+    data: new SlashCommandBuilder()
+        .setName("playskip")
+        .setDescription("Skips the current song and plays a song from a url or a search query")
+        .setDMPermission(false)
+        .addStringOption(option => option
+            .setName("search-query")
+            .setDescription("The url or search query to play")
+            .setRequired(true)),
     category: "Music Commands",
-    description: "Skips the current song and plays a song from a url or a search query",
     botPermissions: ['SendMessages', 'EmbedLinks', 'Connect', 'Speak'],
     DJOnly: true,
-    options: [
-        {
-            name: "search-query",
-            description: "The url or search query to play.",
-            type: ApplicationCommandOptionType.String,
-            required: true,
-        }
-    ],
 
     execute: async (bot: IBot, interaction: CommandInteraction) => {
         if (!interaction.isChatInputCommand()) return;

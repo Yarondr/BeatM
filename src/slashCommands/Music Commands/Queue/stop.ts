@@ -1,12 +1,14 @@
-import { CommandInteraction, GuildMember, TextChannel } from "discord.js";
+import { CommandInteraction, GuildMember, SlashCommandBuilder, TextChannel } from "discord.js";
 import { getMember } from "../../../utils/djs";
 import { IBot } from "../../../utils/interfaces/IBot";
 import { ISlashCommand } from "../../../utils/interfaces/ISlashCommand";
 
 module.exports = {
-    name: "stop",
+    data: new SlashCommandBuilder()
+        .setName("stop")
+        .setDescription("Stops the player")
+        .setDMPermission(false),
     category: "Music Commands",
-    description: "Stops the player",
     botPermissions: ['SendMessages', 'EmbedLinks'],
     DJOnly: true,
     

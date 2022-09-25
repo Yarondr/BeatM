@@ -1,23 +1,21 @@
-import { ApplicationCommandOptionType, CommandInteraction, EmbedBuilder, GuildMember, TextChannel } from "discord.js";
+import { ApplicationCommandOptionType, CommandInteraction, EmbedBuilder, GuildMember, SlashCommandBuilder, TextChannel } from "discord.js";
 import { getMember } from "../../../utils/djs";
 import { IBot } from "../../../utils/interfaces/IBot";
 import { ISlashCommand } from "../../../utils/interfaces/ISlashCommand";
 import { convertMilisecondsToTime, createPlayer, isTrackLive, joinChannel, play, searchQuery } from "../../../utils/player";
 
 module.exports = {
-    name: "search",
+    data: new SlashCommandBuilder()
+        .setName("search")
+        .setDescription("Show the search results for a query and let you choose which one to play")
+        .setDMPermission(false)
+        .addStringOption(option => option
+            .setName("search-query")
+            .setDescription("The url or search query to play")
+            .setRequired(true)),
     category: "Music Commands",
-    description: "Show the search results for a query and let you choose which one to play.",
     botPermissions: ['SendMessages', 'EmbedLinks', 'Connect', 'Speak'],
     ignoreNotSameVoiceChannels: true,
-    options: [
-        {
-            name: "search-query",
-            description: "The url or search query to play.",
-            type: ApplicationCommandOptionType.String,
-            required: true,
-        }
-    ],
 
     execute: async (bot: IBot, interaction: CommandInteraction) => {
         if (!interaction.isChatInputCommand()) return;

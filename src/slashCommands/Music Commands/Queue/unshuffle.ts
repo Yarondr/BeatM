@@ -1,12 +1,14 @@
 import { Track } from "@yarond/erela.js";
-import { CommandInteraction } from "discord.js";
+import { CommandInteraction, SlashCommandBuilder } from "discord.js";
 import { IBot } from "../../../utils/interfaces/IBot";
 import { ISlashCommand } from "../../../utils/interfaces/ISlashCommand";
 
 module.exports = {
-    name: "unshuffle",
+    data: new SlashCommandBuilder()
+        .setName("unshuffle")
+        .setDescription("Unshuffle the queue to the original order")
+        .setDMPermission(false),
     category: "Music Commands",
-    description: "Unshuffle the queue to the original order",
     botPermissions: ['SendMessages', 'EmbedLinks'],
     DJOnly: true,
     

@@ -1,23 +1,21 @@
-import { ApplicationCommandOptionType, CommandInteraction } from "discord.js";
+import { ApplicationCommandOptionType, CommandInteraction, SlashCommandBuilder } from "discord.js";
 import { IBot } from "../../../utils/interfaces/IBot";
 import { ISlashCommand } from "../../../utils/interfaces/ISlashCommand";
 import { convertMilisecondsToTime, playerDurationToMiliseconds } from "../../../utils/player";
 
 module.exports = {
-    name: "forward",
+    data: new SlashCommandBuilder()
+        .setName("forward")
+        .setDescription("Forwards the current song by a specified amount of time")
+        .setDMPermission(false)
+        .addNumberOption(option => option
+            .setName("seconds")
+            .setDescription("The amount of seconds to skip forward.")
+            .setRequired(true)
+            .setMinValue(1)),
     category: "Music Commands",
-    description: "Forwards the current song by a specified amount of time",
     botPermissions: ['SendMessages', 'EmbedLinks'],
     DJOnly: true,
-    options: [
-        {
-            name: "seconds",
-            description: "The amount of seconds to skip forward.",
-            type: ApplicationCommandOptionType.Integer,
-            minValue: 1,
-            required: true,
-        }
-    ],
     
     execute: async (bot: IBot, interaction: CommandInteraction) => {
         if (!interaction.isChatInputCommand()) return;
