@@ -30,7 +30,7 @@ export function playlistLength(playlist: PlaylistInfo) {
 }
 
 export function isTrackLive(track: Track | UnresolvedTrack) {
-    return track.duration === 0;
+    return track.duration === 0 || track.duration == NaN;
 }
 
 export function haveLiveTrack(queue: Queue) {
