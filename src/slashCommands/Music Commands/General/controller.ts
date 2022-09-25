@@ -21,7 +21,6 @@ module.exports = {
             .setColor('Random')
             .setTitle("Music Controller")
             .setDescription("Click the buttons below to control the music!")
-            .setImage(guild.iconURL({ size: 4096}))
 
         const pauseButton = new ButtonBuilder()
             .setEmoji("⏸️")
