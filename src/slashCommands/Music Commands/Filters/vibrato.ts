@@ -18,7 +18,7 @@ module.exports = {
                 
         player.vibrato = true;
         
-        return interaction.editReply(`Filter **${module.exports.name}** has been applied to the music!`);
+        return interaction.editReply(`Filter **${module.exports.data.name}** has been applied to the music!`);
     }
 
 } as ISlashCommand;

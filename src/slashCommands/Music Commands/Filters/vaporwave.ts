@@ -18,7 +18,7 @@ module.exports = {
                 
         player.vaporwave = true;
         
-        return interaction.editReply(`Filter **${module.exports.name}** has been applied to the music!`);
+        return interaction.editReply(`Filter **${module.exports.data.name}** has been applied to the music!`);
     }
 
 } as ISlashCommand;
