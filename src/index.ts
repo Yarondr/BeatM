@@ -62,7 +62,7 @@ const rest = new REST({ version: '10' }).setToken(getBotToken());
 
 (async () => {
 	try {
-		console.log(`Started refreshing ${bot.slashCommands.size} application (/) commands.`);
+		console.log(`Started refreshing ${bot.slashCommands.size} slash commands.`);
 
         const commands: RESTPostAPIApplicationCommandsJSONBody[] = [];
         bot.slashCommands.mapValues((command) => {
@@ -72,9 +72,8 @@ const rest = new REST({ version: '10' }).setToken(getBotToken());
 		const data = await rest.put(
 			Routes.applicationCommands('887024111275114528'),
 			{ body: commands },
-		);
-
-		// console.log(`Successfully reloaded ${data} application (/) commands.`);
+		) as RESTPostAPIApplicationCommandsJSONBody[];
+        console.log(`Successfully reloaded ${data.length} slash commands.`);
 	} catch (error) {
 		console.error(error);
 	}
