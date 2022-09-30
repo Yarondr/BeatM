@@ -1,8 +1,8 @@
 import { AutocompleteInteraction, GuildMember } from "discord.js";
-import { getMember } from "../djs";
-import { basicSearch } from "../player";
-import { isURL } from "../url";
-import { IBot } from "./IBot";
+import { getMember } from "./djs";
+import { basicSearch } from "./player";
+import { isURL } from "./url";
+import { IBot } from "./interfaces/IBot";
 
 export async function playSearchAutocomplete(bot: IBot, interaction: AutocompleteInteraction) {
     if (!interaction.isAutocomplete()) return;

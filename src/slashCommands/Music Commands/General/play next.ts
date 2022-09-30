@@ -1,6 +1,6 @@
 import { ApplicationCommandOptionType, AutocompleteInteraction, CommandInteraction, GuildMember, TextChannel } from "discord.js";
 import { getMember } from "../../../utils/djs";
-import { playSearchAutocomplete } from "../../../utils/interfaces/autocomplete";
+import { playSearchAutocomplete } from "../../../utils/autocomplete";
 import { IBot } from "../../../utils/interfaces/IBot";
 import { ISlashCommand } from "../../../utils/interfaces/ISlashCommand";
 import { joinChannel, play, searchQuery } from "../../../utils/player";
