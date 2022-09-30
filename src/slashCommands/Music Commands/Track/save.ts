@@ -1,4 +1,4 @@
-import { CommandInteraction, EmbedBuilder } from "discord.js";
+import { CommandInteraction, EmbedBuilder, SlashCommandBuilder } from "discord.js";
 import { getMember } from "../../../utils/djs";
 import { IBot } from "../../../utils/interfaces/IBot";
 import { ISlashCommand } from "../../../utils/interfaces/ISlashCommand";
@@ -6,9 +6,11 @@ import { formatViews } from "../../../utils/numbers";
 import { convertMilisecondsToTime } from "../../../utils/player";
 
 module.exports = {
-    name: "save",
+    data: new SlashCommandBuilder()
+        .setName("save")
+        .setDescription("Send the current song to your DMs.")
+        .setDMPermission(false),
     category: "Music Commands",
-    description: "Send the current song to your DMs.",
     botPermissions: ['SendMessages', 'EmbedLinks'],
     
     execute: async (bot: IBot, interaction: CommandInteraction) => {

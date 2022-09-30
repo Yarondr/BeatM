@@ -1,13 +1,15 @@
-import { CommandInteraction, EmbedBuilder, GuildMember } from "discord.js";
+import { CommandInteraction, EmbedBuilder, GuildMember, SlashCommandBuilder } from "discord.js";
 import { IBot } from "../../../utils/interfaces/IBot";
 import { ISlashCommand } from "../../../utils/interfaces/ISlashCommand";
 import { convertMilisecondsToTime } from "../../../utils/player";
 import { createProgressBar } from "../../../utils/playingBar";
 
 module.exports = {
-    name: "nowplaying",
+    data: new SlashCommandBuilder()
+        .setName("nowplaying")
+        .setDescription("Displays the currently playing song")
+        .setDMPermission(false),
     category: "Music Commands",
-    description: "Displays the current playing song",
     botPermissions: ['SendMessages', 'EmbedLinks'],
 
     execute: async (bot: IBot, interaction: CommandInteraction) => {

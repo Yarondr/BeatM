@@ -1,12 +1,14 @@
-import { CommandInteraction, GuildMember } from "discord.js";
+import { CommandInteraction, GuildMember, SlashCommandBuilder } from "discord.js";
 import { getMember } from "../../../utils/djs";
 import { IBot } from "../../../utils/interfaces/IBot";
 import { ISlashCommand } from "../../../utils/interfaces/ISlashCommand";
 
 module.exports = {
-    name: "leave",
+    data: new SlashCommandBuilder()
+        .setName("leave")
+        .setDescription("Leave the voice channel and clears the queue")
+        .setDMPermission(false),
     category: "Music Commands",
-    description: "Leave the voice channel and clears the queue",
     botPermissions: ['SendMessages', 'EmbedLinks'],
     
     execute: async (bot: IBot, interaction: CommandInteraction) => {

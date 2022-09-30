@@ -1,11 +1,13 @@
-import { ActionRowBuilder, ButtonBuilder, ButtonStyle, CommandInteraction, EmbedBuilder } from "discord.js";
+import { ActionRowBuilder, ButtonBuilder, ButtonStyle, CommandInteraction, EmbedBuilder, SlashCommandBuilder } from "discord.js";
 import { IBot } from "../../../utils/interfaces/IBot";
 import { ISlashCommand } from "../../../utils/interfaces/ISlashCommand";
 
 module.exports = {
-    name: "controller",
+    data: new SlashCommandBuilder()
+        .setName("controller")
+        .setDescription("Send the music controller")
+        .setDMPermission(false),
     category: "Music Commands",
-    description: "Send the music controller",
     botPermissions: ['SendMessages', 'EmbedLinks'],
     
     execute: async (bot: IBot, interaction: CommandInteraction) => {
@@ -19,7 +21,6 @@ module.exports = {
             .setColor('Random')
             .setTitle("Music Controller")
             .setDescription("Click the buttons below to control the music!")
-            .setImage(guild.iconURL({ size: 4096}))
 
         const pauseButton = new ButtonBuilder()
             .setEmoji("⏸️")

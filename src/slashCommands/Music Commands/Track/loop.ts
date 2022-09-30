@@ -1,11 +1,13 @@
-import { CommandInteraction } from "discord.js";
+import { CommandInteraction, SlashCommandBuilder } from "discord.js";
 import { IBot } from "../../../utils/interfaces/IBot";
 import { ISlashCommand } from "../../../utils/interfaces/ISlashCommand";
 
 module.exports = {
-    name: "loop",
+    data: new SlashCommandBuilder()
+        .setName("loop")
+        .setDescription("The amount of seconds to skip backward")
+        .setDMPermission(false),
     category: "Music Commands",
-    description: "Loop the current track",
     botPermissions: ['SendMessages', 'EmbedLinks'],
     DJOnly: true,
     

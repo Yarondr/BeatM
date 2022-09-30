@@ -1,13 +1,15 @@
-import { ActionRowBuilder, CommandInteraction, EmbedBuilder, SelectMenuBuilder } from "discord.js";
+import { ActionRowBuilder, CommandInteraction, EmbedBuilder, SelectMenuBuilder, SlashCommandBuilder } from "discord.js";
 import { IBot } from "../../utils/interfaces/IBot";
 import { ISlashCommand } from "../../utils/interfaces/ISlashCommand";
 
 module.exports = {
-    name: "help",
+    data: new SlashCommandBuilder()
+        .setName("help")
+        .setDescription("Shows the help menu")
+        .setDMPermission(false),
     category: "Other Commands",
     subcategory: "General",
     ignoreNotSameVoiceChannels: true,
-    description: "Shows the help menu",
     botPermissions: ['SendMessages', 'EmbedLinks'],
     
     execute: async (bot: IBot, interaction: CommandInteraction) => {

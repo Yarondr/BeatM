@@ -1,11 +1,13 @@
-import { CommandInteraction } from "discord.js";
+import { CommandInteraction, SlashCommandBuilder } from "discord.js";
 import { IBot } from "../../../utils/interfaces/IBot";
 import { ISlashCommand } from "../../../utils/interfaces/ISlashCommand";
 
 module.exports = {
-    name: "karaoke",
+    data: new SlashCommandBuilder()
+        .setName("karaoke")
+        .setDescription("Remove most of the vocals from the music")
+        .setDMPermission(false),
     category: "Music Commands",
-    description: "Remove most of the vocals from the music",
     botPermissions: ['SendMessages', 'EmbedLinks'],
 
     execute: async (bot: IBot, interaction: CommandInteraction) => {
@@ -16,7 +18,7 @@ module.exports = {
                 
         player.karaoke = true;
         
-        return interaction.editReply(`Filter **${module.exports.name}** has been applied to the music!`);
+        return interaction.editReply(`Filter **${module.exports.data.name}** has been applied to the music!`);
     }
 
 } as ISlashCommand;

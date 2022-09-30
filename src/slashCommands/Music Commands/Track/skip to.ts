@@ -1,24 +1,21 @@
-import { ApplicationCommandOptionType, CommandInteraction } from "discord.js";
+import { ApplicationCommandOptionType, CommandInteraction, SlashCommandBuilder } from "discord.js";
 import { IBot } from "../../../utils/interfaces/IBot";
 import { ISlashCommand } from "../../../utils/interfaces/ISlashCommand";
 import { isValidDuration } from "../../../utils/numbers";
 import { convertMilisecondsToTime, playerDurationToMiliseconds } from "../../../utils/player";
 
 module.exports = {
-    name: "skipto",
+    data: new SlashCommandBuilder()
+        .setName("skipto")
+        .setDescription("Skips to a specific time in the current track")
+        .setDMPermission(false)
+        .addStringOption(option => option
+            .setName("time")
+            .setDescription("The time of the song to skip to")
+            .setRequired(true)),
     category: "Music Commands",
-    description: "Skips to a specific time in the current track",
     botPermissions: ['SendMessages', 'EmbedLinks'],
     DJOnly: true,
-    options: [
-        {
-            name: "time",
-            description: "The time of the song to skip to",
-            type: ApplicationCommandOptionType.String,
-            minValue: 1,
-            required: true,
-        }
-    ],
     
     execute: async (bot: IBot, interaction: CommandInteraction) => {
         if (!interaction.isChatInputCommand()) return;

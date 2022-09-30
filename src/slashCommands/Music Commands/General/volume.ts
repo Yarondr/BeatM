@@ -1,23 +1,20 @@
-import { ApplicationCommandOptionType, CommandInteraction } from "discord.js";
+import { ApplicationCommandOptionType, CommandInteraction, SlashCommandBuilder } from "discord.js";
 import { IBot } from "../../../utils/interfaces/IBot";
 import { ISlashCommand } from "../../../utils/interfaces/ISlashCommand";
 import { isIntNumber } from "../../../utils/numbers";
 
 module.exports = {
-    name: "volume",
+    data: new SlashCommandBuilder()
+        .setName("volume")
+        .setDescription("Sets the volume of the bot")
+        .setDMPermission(false)
+        .addStringOption(option => option
+            .setName("volume")
+            .setDescription("The volume to set the bot to")
+            .setRequired(true)),
     category: "Music Commands",
-    description: "Sets the volume of the bot",
     botPermissions: ['SendMessages', 'EmbedLinks'],
     DJOnly: true,
-    options: [
-        {
-            name: "volume",
-            description: "The volume to set the bot to",
-            minValue: 1,
-            type: ApplicationCommandOptionType.String,
-            required: true,
-        }
-    ],
     
     execute: async (bot: IBot, interaction: CommandInteraction) => {
         if (!interaction.isChatInputCommand()) return;

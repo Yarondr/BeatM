@@ -1,11 +1,13 @@
-import { CommandInteraction } from "discord.js";
+import { CommandInteraction, SlashCommandBuilder } from "discord.js";
 import { IBot } from "../../../utils/interfaces/IBot";
 import { ISlashCommand } from "../../../utils/interfaces/ISlashCommand";
 
 module.exports = {
-    name: "clear",
+    data: new SlashCommandBuilder()
+        .setName("clear")
+        .setDescription("Clears the queue")
+        .setDMPermission(false),
     category: "Music Commands",
-    description: "Clears the queue",
     botPermissions: ['SendMessages', 'EmbedLinks'],
     DJOnly: true,
     

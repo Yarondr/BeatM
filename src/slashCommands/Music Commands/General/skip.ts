@@ -1,13 +1,15 @@
-import { CommandInteraction, GuildMember } from "discord.js";
+import { CommandInteraction, GuildMember, SlashCommandBuilder } from "discord.js";
 import { getMember } from "../../../utils/djs";
 import { IBot } from "../../../utils/interfaces/IBot";
 import { ISlashCommand } from "../../../utils/interfaces/ISlashCommand";
 import { skip } from "../../../utils/player";
 
 module.exports = {
-    name: "skip",
+    data: new SlashCommandBuilder()
+        .setName("skip")
+        .setDescription("The url or search query to play")
+        .setDMPermission(false),
     category: "Music Commands",
-    description: "Vote to skip the current song",
     botPermissions: ['SendMessages', 'EmbedLinks'],
 
     execute: async (bot: IBot, interaction: CommandInteraction) => {

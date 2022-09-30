@@ -2,7 +2,7 @@ console.log("Starting bot...")
 import { Manager } from '@yarond/erela.js';
 import Filter from '@yarond/erela.js-filters';
 import Spotify from '@yarond/erela.js-spotify';
-import { Client, Collection, GatewayIntentBits } from 'discord.js';
+import { Client, Collection, GatewayIntentBits, REST, RESTPostAPIApplicationCommandsJSONBody, Routes } from 'discord.js';
 import { loadEvents } from './handlers/eventsHandler';
 import { loadSlashCommands } from './handlers/slashCommandsHandler';
 import { getBotOwners, getBotToken, getLavalinkNodes, getSpotifyClientID, getSpotifyClientSecret, getTestServers, loadConfig } from './utils/config/config';
@@ -57,5 +57,27 @@ const bot: IBot = {
 
 loadEvents(bot, false);
 loadSlashCommands(bot, false);
+
+const rest = new REST({ version: '10' }).setToken(getBotToken());
+
+(async () => {
+	try {
+		console.log(`Started refreshing ${bot.slashCommands.size} application (/) commands.`);
+
+        const commands: RESTPostAPIApplicationCommandsJSONBody[] = [];
+        bot.slashCommands.mapValues((command) => {
+            commands.push(command.data.toJSON());
+        });
+
+		const data = await rest.put(
+			Routes.applicationCommands('887024111275114528'),
+			{ body: commands },
+		);
+
+		// console.log(`Successfully reloaded ${data} application (/) commands.`);
+	} catch (error) {
+		console.error(error);
+	}
+})();
 
 client.login(getBotToken());

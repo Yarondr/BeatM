@@ -1,11 +1,13 @@
-import { CommandInteraction } from "discord.js";
+import { CommandInteraction, SlashCommandBuilder } from "discord.js";
 import { IBot } from "../../../utils/interfaces/IBot";
 import { ISlashCommand } from "../../../utils/interfaces/ISlashCommand";
 
 module.exports = {
-    name: "replay",
+    data: new SlashCommandBuilder()
+        .setName("replay")
+        .setDescription("Add the current song to the start of the queue")
+        .setDMPermission(false),
     category: "Music Commands",
-    description: "Add the current song to the start of the queue",
     botPermissions: ['SendMessages', 'EmbedLinks', 'Connect', 'Speak'],
 
     execute: async (bot: IBot, interaction: CommandInteraction) => {

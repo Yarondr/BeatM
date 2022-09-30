@@ -1,22 +1,20 @@
-import { ApplicationCommand, ApplicationCommandOptionType, CommandInteraction } from "discord.js"
+import { ApplicationCommand, ApplicationCommandOptionType, CommandInteraction, SlashCommandBuilder } from "discord.js"
 import { IBot } from "../../utils/interfaces/IBot";
 import { ISlashCommand } from "../../utils/interfaces/ISlashCommand";
 
 module.exports = {
-    name: "unregister",
+    data: new SlashCommandBuilder()
+        .setName("unregister")
+        .setDescription("Unregister a command")
+        .setDMPermission(false)
+        .addStringOption(option => option
+            .setName("command")
+            .setDescription("The command name to unregister")
+            .setRequired(true)),
     category: "Commands Manager",
     ownerOnly: true,
-    description: "Unregister a command",
     permissions: ['Administrator'],
     botPermissions: ['SendMessages'],
-    options: [
-        {
-            name: 'command',
-            description: "The command name to unregister",
-            type: ApplicationCommandOptionType.String,
-            required: true,
-        }
-    ],
     execute: async (bot: IBot, interaction: CommandInteraction) => {
         if (!interaction.isChatInputCommand()) return;
         
@@ -36,7 +34,7 @@ module.exports = {
                 const clientCommand: ApplicationCommand = guildCommands?.find(c => c.name === command)!;
                 await guild?.commands.delete(clientCommand.id);
                 slashCommands.delete(command);
-                await interaction.editReply({content: `Command ${cmd.name} has been unregistered!`});
+                await interaction.editReply({content: `Command ${cmd.data.name} has been unregistered!`});
             }
         } catch (e) {
             console.error(e);

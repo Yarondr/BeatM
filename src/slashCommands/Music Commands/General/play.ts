@@ -1,4 +1,4 @@
-import { ApplicationCommandOptionType, AutocompleteInteraction, CommandInteraction, GuildMember, Message, TextChannel } from "discord.js";
+import { ApplicationCommandOptionType, AutocompleteInteraction, CommandInteraction, GuildMember, Message, SlashCommandBuilder, TextChannel } from "discord.js";
 import { getMember } from "../../../utils/djs";
 import { playSearchAutocomplete } from "../../../utils/autocomplete";
 import { IBot } from "../../../utils/interfaces/IBot";
@@ -7,20 +7,18 @@ import { basicSearch, createPlayer, joinChannel, play, searchQuery } from "../..
 import { isURL } from "../../../utils/url";
 
 module.exports = {
-    name: "play",
+    data: new SlashCommandBuilder()
+        .setName("play")
+        .setDescription("Plays a song from a url or a search query")
+        .setDMPermission(false)
+        .addStringOption(option => option
+            .setName("search-query")
+            .setDescription("The url or search query to play")
+            .setRequired(true)
+            .setAutocomplete(true)),
     category: "Music Commands",
-    description: "Plays a song from a url or a search query",
     botPermissions: ['SendMessages', 'EmbedLinks', 'Connect', 'Speak'],
     ignoreNotSameVoiceChannels: true,
-    options: [
-        {
-            name: "search-query",
-            description: "The url or search query to play.",
-            type: ApplicationCommandOptionType.String,
-            required: true,
-            autocomplete: true,
-        }
-    ],
 
     execute: async (bot: IBot, interaction: CommandInteraction) => {
         if (!interaction.isChatInputCommand()) return;

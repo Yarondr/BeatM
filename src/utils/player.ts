@@ -30,7 +30,7 @@ export function playlistLength(playlist: PlaylistInfo) {
 }
 
 export function isTrackLive(track: Track | UnresolvedTrack) {
-    return track.duration === 0;
+    return track.duration === 0 || track.isStream;
 }
 
 export function haveLiveTrack(queue: Queue) {
@@ -145,6 +145,7 @@ export async function skip(member: GuildMember, player: Player, interaction: Com
         return interaction.editReply("You already voted to skip this song.");
     }
     skipVotes.push(member.id);
+    player.set("skip_votes", skipVotes);
     if (skipVotes.length >= voiceMembers) {
         player.stop();
         if (player.paused) {

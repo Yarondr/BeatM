@@ -13,7 +13,7 @@ module.exports = {
 
         commands.forEach((command) => {
             embed.addFields(
-                {name: command.originalName!, value: command.description}
+                {name: command.originalName!, value: command.data.description}
             )
         });
 

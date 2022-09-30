@@ -1,3 +1,4 @@
+import { SlashCommandBuilder } from "discord.js";
 import * as fs from "fs";
 import path from "path";
 import { getFiles, hasFolders } from "../utils/filesReader";
@@ -26,7 +27,7 @@ function getFolderCommands(bot: IBot, folderPath: string, mainCategory: string =
                 command.category = category;
             }
             
-            bot.slashCommands.set(command.name, command)
+            bot.slashCommands.set(command.data.name, command)
         })
 
         if (hasFolders(commandPath)) {
@@ -43,8 +44,8 @@ export function getSubcategoryCommands(bot: IBot, subcategory: string) {
         : order = filtersCommandsOrder;
 
     return bot.slashCommands
-        .filter((command) => order.includes(command.name))
-        .sort((a, b) => order.indexOf(a.name) - order.indexOf(b.name))
+        .filter((command) => order.includes(command.data.name))
+        .sort((a, b) => order.indexOf(a.data.name) - order.indexOf(b.data.name))
 }
 
 const generalCommandsOrder = [
