@@ -176,5 +176,5 @@ export async function scheduleQueueLeave(bot: IBot, player: Player | undefined, 
         player.disconnect();
         player.destroy();
         bot.manager.players.delete(player.guild);
-    }, 60000));
+    }, 1000 * 60 * 5));
 }
