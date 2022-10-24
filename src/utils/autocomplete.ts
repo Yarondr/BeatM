@@ -15,5 +15,9 @@ export async function playSearchAutocomplete(bot: IBot, interaction: Autocomplet
     const member: GuildMember = await getMember(guild, interaction.member?.user.id!);
     const res = await basicSearch(member.user.tag, bot.manager, search);
     res.tracks.slice(0, 6).forEach(track => choices.push(track.title));
-    return await interaction.respond(choices.map((choice) => ({ name: choice, value: choice })));
+    try {
+        return await interaction.respond(choices.map((choice) => ({ name: choice, value: choice })));
+    } catch (e) {
+        console.log(e);
+    }
 }
