@@ -19,7 +19,7 @@ export async function handleMessageComponent(interaction: Interaction, bot: IBot
         else customButtonId = customButtonId.replaceAll(" ", "");
         
         const slashCommand: ISlashCommand | undefined = bot.slashCommands.get(customButtonId!);
-        interaction.deferReply({ ephemeral: slashCommand?.ephemeral });
+        await interaction.deferReply({ ephemeral: slashCommand?.ephemeral });
 
         // handle slash command for command checks only before execute the command
         await handleSlashCommand(interaction, slashCommand, bot, true).catch((err) => {
