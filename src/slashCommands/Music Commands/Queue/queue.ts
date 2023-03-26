@@ -23,8 +23,6 @@ module.exports = {
         const player = bot.manager.get(interaction.guildId!)!;
         const queue = player.queue;
 
-        await interaction.deferReply();
-
         if (!queue.current && queue.length == 0) {
             return interaction.editReply("The queue is empty!\nUse the /play command to add a song to the queue.");
         }

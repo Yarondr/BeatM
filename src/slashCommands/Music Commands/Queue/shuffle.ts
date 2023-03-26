@@ -16,8 +16,6 @@ module.exports = {
         
         const player = bot.manager.get(interaction.guildId!)!;
         const queue = player.queue;
-
-        await interaction.deferReply();
         
         if (queue.length == 0) {
             return interaction.editReply("Can't shuffle, queue is empty!");

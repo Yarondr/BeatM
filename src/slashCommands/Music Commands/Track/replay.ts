@@ -18,7 +18,6 @@ module.exports = {
         if (!player.queue.current) {
             return interaction.editReply("Can't replay, I am not playing anything right now!");
         }
-        await interaction.deferReply();
 
         player.seek(0);
         return interaction.editReply(`Replayed: \`${player.queue.current.title}\``);

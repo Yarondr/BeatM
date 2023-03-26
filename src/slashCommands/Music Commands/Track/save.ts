@@ -11,6 +11,7 @@ module.exports = {
         .setDescription("Send the current song to your DMs.")
         .setDMPermission(false),
     category: "Music Commands",
+    ephemeral: true,
     botPermissions: ['SendMessages', 'EmbedLinks'],
     
     execute: async (bot: IBot, interaction: CommandInteraction) => {
@@ -18,8 +19,6 @@ module.exports = {
         
         const guild = bot.client.guilds.cache.get(interaction.guildId!)!;
         let player = bot.manager.get(interaction.guildId!)!;
-
-        await interaction.deferReply({ ephemeral: true });
         
         const song = player.queue.current;
         if (!song) {

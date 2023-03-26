@@ -29,9 +29,8 @@ module.exports = {
         const manager = bot.manager;
 
         if (!member.voice.channel) {
-            return interaction.reply("You must be in a voice channel to play music.");
+            return interaction.editReply("You must be in a voice channel to play music.");
         }
-        await interaction.deferReply();
 
         const player = createPlayer(guild, manager, member.voice.channel, channel);
         const message: Message | undefined = await joinChannel(bot, member, interaction, player, guild, channel);

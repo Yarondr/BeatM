@@ -19,8 +19,6 @@ module.exports = {
         const member: GuildMember = await getMember(guild, interaction.member?.user.id!);
         const channel = guild?.channels.cache.get(interaction.channelId!)! as TextChannel;
         let player = bot.manager.get(interaction.guildId!)!;
-
-        await interaction.deferReply();
         
         if (!player.queue.current) {
             return interaction.editReply("Can't stop, I am not playing anything right now!");

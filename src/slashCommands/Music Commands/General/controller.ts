@@ -12,10 +12,6 @@ module.exports = {
     
     execute: async (bot: IBot, interaction: CommandInteraction) => {
         if (!interaction.isChatInputCommand()) return;
-        
-        const guild = bot.client.guilds.cache.get(interaction.guildId!)!;
-
-        await interaction.deferReply();
 
         const controllerEmbed = new EmbedBuilder()
             .setColor('Random')

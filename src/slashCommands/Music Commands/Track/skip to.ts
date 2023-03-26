@@ -22,8 +22,6 @@ module.exports = {
         
         const timeToSkip: string = interaction.options.getString('time')!;
         let player = bot.manager.get(interaction.guildId!)!;
-
-        await interaction.deferReply();
         
         if (!player.queue.current) {
             return interaction.editReply("Can't skip to a specific time, I am not playing anything right now!");

@@ -15,8 +15,6 @@ module.exports = {
     execute: async (bot: IBot, interaction: CommandInteraction) => {
         if (!interaction.isChatInputCommand()) return;
 
-        await interaction.deferReply();
-
         const ping = Date.now() - interaction.createdTimestamp;
         await interaction.editReply(`🏓 Pong!\nLatency is ${ping}ms`);
     }

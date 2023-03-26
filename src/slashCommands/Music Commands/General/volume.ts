@@ -20,8 +20,6 @@ module.exports = {
         if (!interaction.isChatInputCommand()) return;
         
         let player = bot.manager.get(interaction.guildId!)!;
-
-        await interaction.deferReply();
         
         let volume: number | string = interaction.options.getString('volume')!;
         if (!isIntNumber(volume) && volume != "reset") {

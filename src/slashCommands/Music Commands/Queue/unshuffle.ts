@@ -17,8 +17,6 @@ module.exports = {
         
         const player = bot.manager.get(interaction.guildId!)!;
 
-        await interaction.deferReply();
-
         const oldQueue = player.get("previousQueue") as Track[];
         if (!oldQueue) {
             return interaction.editReply("Can't unshuffle, queue is not shuffled!");

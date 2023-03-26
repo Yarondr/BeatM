@@ -18,8 +18,6 @@ module.exports = {
         const guild = bot.client.guilds.cache.get(interaction.guildId!)!;
         const member: GuildMember = await getMember(guild, interaction.member?.user.id!);
         const player = bot.manager.get(interaction.guildId!)!;
-
-        await interaction.deferReply();
         
         if (!player.queue.current) {
             return interaction.editReply("Can't skip, I am not playing anything right now!");

@@ -22,8 +22,6 @@ module.exports = {
         const songIndex = interaction.options.getNumber('song-number')!;
         let player = bot.manager.get(interaction.guildId!)!;
 
-        await interaction.deferReply();
-
         if (player.queue.length == 0) {
             return interaction.editReply("Can't jump to a song when there are no songs in the queue!");
         }

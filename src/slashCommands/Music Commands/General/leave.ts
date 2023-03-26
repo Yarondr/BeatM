@@ -17,8 +17,6 @@ module.exports = {
         const guild = bot.client.guilds.cache.get(interaction.guildId!)!;
         const member: GuildMember = await getMember(guild, interaction.member?.user.id!);
         const player = bot.manager.get(interaction.guildId!)!;
-
-        await interaction.deferReply();
         
         player.disconnect();
         await interaction.editReply(`Disconnected from \`${member.voice.channel!.name}\``);

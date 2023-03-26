@@ -21,8 +21,6 @@ module.exports = {
         
         const songIndex = interaction.options.getNumber('song-number')! -1;
         let player = bot.manager.get(interaction.guildId!)!;
-
-        await interaction.deferReply();
         
         if (player.queue.length === 0) {
             return interaction.editReply("Can't remove a song from the queue, because the queue is empty!");

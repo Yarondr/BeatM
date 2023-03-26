@@ -18,8 +18,6 @@ module.exports = {
         const player = bot.manager.get(interaction.guildId!)!;
         const queue = player.queue;
 
-        await interaction.deferReply();
-
         if (!queue.current) {
             return interaction.editReply("I am not playing anything right now!");
         }

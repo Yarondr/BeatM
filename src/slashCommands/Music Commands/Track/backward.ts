@@ -23,8 +23,6 @@ module.exports = {
         const secondToSkip = interaction.options.getNumber('seconds')!;
         let player = bot.manager.get(interaction.guildId!)!;
 
-        await interaction.deferReply();
-
         if (!player.queue.current) {
             return interaction.editReply("Can't skip backward, I am not playing anything right now!");
         }

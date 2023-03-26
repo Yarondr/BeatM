@@ -28,8 +28,6 @@ module.exports = {
         const newSongIndex = interaction.options.getNumber('new-song-number')! -1;
         let player = bot.manager.get(interaction.guildId!)!;
 
-        await interaction.deferReply();
-
         if (player.queue.length == 0) {
             return interaction.editReply("Can't move a song when there are no songs in the queue!");
         }

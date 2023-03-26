@@ -15,8 +15,6 @@ module.exports = {
         if (!interaction.isChatInputCommand()) return;
         
         let player = bot.manager.get(interaction.guildId!)!;
-
-        await interaction.deferReply();
                 
         if (player.queue.length == 0) {
             return interaction.editReply("Can't clear, the queue is already empty!");

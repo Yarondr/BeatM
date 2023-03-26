@@ -14,8 +14,6 @@ module.exports = {
         if (!interaction.isChatInputCommand()) return;
         
         const player = bot.manager.get(interaction.guildId!)!;
-
-        await interaction.deferReply();
         
         if (!player.queue.current) {
             return interaction.editReply("Can't resume, I am not playing anything right now!");

@@ -27,9 +27,8 @@ module.exports = {
         const player = bot.manager.get(interaction.guildId!)!;
 
         if (!player.queue.current) {
-            return interaction.reply("Can't play next when there is no song playing.");
+            return interaction.editReply("Can't play next when there is no song playing.");
         }
-        await interaction.deferReply();
 
         joinChannel(bot, member, interaction, player, guild, channel);
         

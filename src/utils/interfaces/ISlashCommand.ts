@@ -8,6 +8,7 @@ export interface ISlashCommand {
     subcategory?: string,
     ownerOnly?: boolean,
     DJOnly?: boolean,
+    ephemeral?: boolean,
     ignoreNotSameVoiceChannels?: boolean,
     permissions?: PermissionResolvable[],
     botPermissions?: PermissionResolvable[],

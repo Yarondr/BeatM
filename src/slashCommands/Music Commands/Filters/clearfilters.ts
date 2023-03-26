@@ -13,8 +13,6 @@ module.exports = {
     execute: async (bot: IBot, interaction: CommandInteraction) => {
         if (!interaction.isChatInputCommand()) return;
         const player = bot.manager.get(interaction.guildId!)! as any;
-        
-        await interaction.deferReply();
                 
         player.reset();
         

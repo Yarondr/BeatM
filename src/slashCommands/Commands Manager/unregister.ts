@@ -13,6 +13,7 @@ module.exports = {
             .setRequired(true)),
     category: "Commands Manager",
     ownerOnly: true,
+    ephemeral: true,
     permissions: ['Administrator'],
     botPermissions: ['SendMessages'],
     execute: async (bot: IBot, interaction: CommandInteraction) => {
@@ -21,8 +22,6 @@ module.exports = {
         const { options } = interaction;
         const { slashCommands } = bot;
         const command = options.getString('command')!;
-
-        await interaction.deferReply({ ephemeral: true });
 
         try {
             if (!slashCommands.has(command)) {

@@ -16,8 +16,6 @@ module.exports = {
         
         let player = bot.manager.get(interaction.guildId!)!;
 
-        await interaction.deferReply();
-
         const autoplay = !await player.get("autoplay");
         await player.set("autoplay", autoplay);
         await interaction.editReply(`Autoplay is now ${autoplay ? "enabled" : "disabled"}`);
