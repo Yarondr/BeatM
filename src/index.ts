@@ -5,16 +5,23 @@ import Spotify from '@yarond/erela.js-spotify';
 import { Client, Collection, GatewayIntentBits, REST, RESTPostAPIApplicationCommandsJSONBody, Routes } from 'discord.js';
 import { loadEvents } from './handlers/eventsHandler';
 import { loadSlashCommands } from './handlers/slashCommandsHandler';
-import { getBotOwners, getBotToken, getLavalinkNodes, getSpotifyClientID, getSpotifyClientSecret, getTestServers, loadConfig } from './utils/config/config';
 import { IBot } from './utils/interfaces/IBot';
 import { IEvent } from './utils/interfaces/IEvent';
 import { ISlashCommand } from './utils/interfaces/ISlashCommand';
+import dotenv from 'dotenv';
+dotenv.config();
 
-// load config
-if (!loadConfig()) {
-    throw new Error("Config file created, please fill it out and restart the bot.");
-}
+const testServers = process.env.TEST_SERVERS?.split(", ") || [];
 
+export const owners = [process.env.OWNER_ID || ''];
+
+const nodes = [
+    {
+        host: "localhost",
+        password: "youshallnotpass",
+        port: 2333,
+    }
+];
 
 const client = new Client({
     intents: [
@@ -33,19 +40,19 @@ const bot: IBot = {
     client,
     events,
     slashCommands,
-    owners: getBotOwners(),
-    testServers: getTestServers(),
+    owners: owners,
+    testServers: testServers,
     manager: new Manager(
         {
-            nodes: getLavalinkNodes(),
+            nodes: nodes,
             send: (id, payload) => {
                 const guild = client.guilds.cache.get(id);
                 if (guild) guild.shard.send(payload);
             },
             plugins: [
                 new Spotify({
-                    clientID: getSpotifyClientID(),
-                    clientSecret: getSpotifyClientSecret()
+                    clientID: process.env.SPOTIFY_CLIENT_ID || '',
+                    clientSecret: process.env.SPOTIFY_CLIENT_SECRET || ''
                 }),
                 new Filter()
             ]
@@ -58,7 +65,7 @@ const bot: IBot = {
 loadEvents(bot, false);
 loadSlashCommands(bot, false);
 
-const rest = new REST({ version: '10' }).setToken(getBotToken());
+const rest = new REST({ version: '10' }).setToken(process.env.token!);
 
 (async () => {
 	try {
@@ -79,4 +86,4 @@ const rest = new REST({ version: '10' }).setToken(getBotToken());
 	}
 })();
 
-client.login(getBotToken());
+client.login(process.env.TOKEN);

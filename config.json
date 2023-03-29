@@ -1,0 +1,22 @@
+{
+    "token": "ODg3MDI0MTExMjc1MTE0NTI4.YT-HlA.SFm2TjWqEfUZKp_sMKyYjauKI5M",
+    "ownersIDs": [
+        "306449257831989248"
+    ],
+    "testServers": [
+        "851789251754328064"
+    ],
+    "lavalink": {
+        "nodes": [
+            {
+                "host": "localhost",
+                "port": 2333,
+                "password": "youshallnotpass"
+            }
+        ]
+    },
+    "spotify": {
+        "clientID": "d4d1dda83b6a47c5a1dfe77a6368ebe7",
+        "clientSecret": "88802a771958449099e6792d37ebe2a6"
+    }
+}
