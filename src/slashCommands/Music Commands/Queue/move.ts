@@ -38,7 +38,7 @@ module.exports = {
             return interaction.editReply("Invalid new song number!");
         }
 
-        const song = player.queue[songIndex + 1];
+        const song = player.queue[songIndex];
         player.queue.splice(songIndex, 1);
         player.queue.splice(newSongIndex, 0, song);
         return interaction.editReply(`Moved song to position ${newSongIndex + 1}!`);
