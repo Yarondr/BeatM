@@ -15,9 +15,9 @@ yarn
 ```
 ---
 ### 📑 Configuration
-Copy the `.env.example` file to `.env` and fill in the values
+Copy the `config.example.json` file to `config.json` and fill in the values
 ```bash
-cp .env.example .env
+cp config.example.json config.json
 ```
 ---
 ### 📑 Running
